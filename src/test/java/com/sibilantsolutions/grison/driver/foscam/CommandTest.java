@@ -43,4 +43,45 @@ public class CommandTest
         assertEquals( expected, ds );
     }
 
+    @Test
+    public void testToDatastream03()
+    {
+        Command c = new Command();
+
+        c.setProtocol( Protocol.OPERATION_PROTOCOL );
+        c.setOpCode( OperationProtocolOpCode.Verify_Req );
+        VerifyReqText text = new VerifyReqText();
+        c.setCommandText( text );
+        text.setUsername( "camvis" );
+        text.setPassword( "vis,FOSbuy1v" );
+
+        String expected = ResourceLoader.loadResource( "/samples/verify_req.bin" );
+        String ds = c.toDatastream();
+
+//        System.out.println( HexDump.prettyDump( expected ) );
+//        System.out.println( HexDump.prettyDump( ds ) );
+
+        assertEquals( expected, ds );
+    }
+
+    @Test
+    public void testToDatastream04()
+    {
+        Command c = new Command();
+
+        c.setProtocol( Protocol.OPERATION_PROTOCOL );
+        c.setOpCode( OperationProtocolOpCode.Verify_Resp );
+        VerifyRespText text = new VerifyRespText();
+        c.setCommandText( text );
+        text.setResult( VerifyRespResult.CORRECT );
+
+        String expected = ResourceLoader.loadResource( "/samples/verify_resp.bin" );
+        String ds = c.toDatastream();
+
+//        System.out.println( HexDump.prettyDump( expected ) );
+//        System.out.println( HexDump.prettyDump( ds ) );
+
+        assertEquals( expected, ds );
+    }
+
 }
