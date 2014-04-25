@@ -84,4 +84,69 @@ public class CommandTest
         assertEquals( expected, ds );
     }
 
+    @Test
+    public void testToDatastream05()
+    {
+        Command c = new Command();
+
+        c.setProtocol( Protocol.OPERATION_PROTOCOL );
+        c.setOpCode( OperationProtocolOpCode.UNK01 );
+        c.setCommandText( new EmptyText() );
+
+        String expected = ResourceLoader.loadResource( "/samples/UNK01.bin" );
+        String ds = c.toDatastream();
+
+//        System.out.println( HexDump.prettyDump( expected ) );
+//        System.out.println( HexDump.prettyDump( ds ) );
+
+        assertEquals( expected, ds );
+    }
+
+    @Test
+    public void testToDatastream06()
+    {
+        Command c = new Command();
+
+        c.setProtocol( Protocol.OPERATION_PROTOCOL );
+        c.setOpCode( OperationProtocolOpCode.UNK02 );
+        Unk02Text text = new Unk02Text();
+        c.setCommandText( text );
+        final int SIZE = 1152;  //0x0480
+        StringBuilder buf = new StringBuilder( SIZE );
+        for ( int i = 0; i < SIZE; i++ )
+            buf.append( (char)0 );
+        text.setData( buf.toString() );
+
+        String expected = ResourceLoader.loadResource( "/samples/UNK02.bin" );
+        String ds = c.toDatastream();
+
+//        System.out.println( HexDump.prettyDump( expected ) );
+//        System.out.println( HexDump.prettyDump( ds ) );
+
+        assertEquals( expected, ds );
+    }
+
+    @Test
+    public void testToDatastream07()
+    {
+        Command c = new Command();
+
+        c.setProtocol( Protocol.OPERATION_PROTOCOL );
+        c.setOpCode( OperationProtocolOpCode.UNK03 );
+        Unk03Text text = new Unk03Text();
+        c.setCommandText( text );
+        StringBuilder buf = new StringBuilder();
+        buf.append( "" + (char)0x20 + (char)0xA3 + (char)0x00 + (char)0x02 + (char)0x02 +
+                (char)0x00 + (char)0x00 + (char)0x00 );
+        text.setData( buf.toString() );
+
+        String expected = ResourceLoader.loadResource( "/samples/UNK03.bin" );
+        String ds = c.toDatastream();
+
+//        System.out.println( HexDump.prettyDump( expected ) );
+//        System.out.println( HexDump.prettyDump( ds ) );
+
+        assertEquals( expected, ds );
+    }
+
 }

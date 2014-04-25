@@ -16,7 +16,10 @@ public enum OperationProtocolOpCode implements OpCodeI
     Talk_Start_Req( Values.Talk_Start_Req ),
     Talk_Start_Resp( Values.Talk_Start_Resp ),
     Talk_End( Values.Talk_End ),
+    UNK01( Values.UNK01 ),
+    UNK03( Values.UNK03 ),
     Alarm_Notify( Values.Alarm_Notify ),
+    UNK02( Values.UNK02 ),
     Keep_Alive( Values.Keep_Alive ),
     ;
 
@@ -35,7 +38,10 @@ public enum OperationProtocolOpCode implements OpCodeI
         final static public int Talk_Start_Req      = 11;   //user -> ipcamera
         final static public int Talk_Start_Resp     = 12;   //ipcamera -> user
         final static public int Talk_End            = 13;   //user -> ipcamera
+        final static public int UNK01               = 16;   //user -> ipcamera
+        final static public int UNK03               = 17;   //ipcamera -> user
         final static public int Alarm_Notify        = 25;   //ipcamera -> user
+        final static public int UNK02               = 28;   //ipcamera -> user
         final static public int Keep_Alive          = 255;  //ipcamera <-> user
     }
 
