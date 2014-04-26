@@ -5,17 +5,17 @@ import com.sibilantsolutions.grison.util.Convert;
 public class VerifyRespText implements DatastreamI
 {
 
-    private VerifyRespResult result;    //INT16 (2 bytes; little endian)
+    private ResultCode resultCode;    //INT16 (2 bytes; little endian)
     //private int RESERVE               //INT8
 
-    public VerifyRespResult getResult()
+    public ResultCode getResultCode()
     {
-        return result;
+        return resultCode;
     }
 
-    public void setResult( VerifyRespResult result )
+    public void setResultCode( ResultCode resultCode )
     {
-        this.result = result;
+        this.resultCode = resultCode;
     }
 
     @Override
@@ -23,7 +23,7 @@ public class VerifyRespText implements DatastreamI
     {
         StringBuilder buf = new StringBuilder( 2 + 1 );
 
-        buf.append( Convert.toLittleEndian( result.getValue(), 2 ) );
+        buf.append( Convert.toLittleEndian( resultCode.getValue(), 2 ) );
 
             //RESERVED
         buf.append( (char)0 );

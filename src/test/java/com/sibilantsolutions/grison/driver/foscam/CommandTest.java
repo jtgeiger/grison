@@ -73,7 +73,7 @@ public class CommandTest
         c.setOpCode( OperationProtocolOpCode.Verify_Resp );
         VerifyRespText text = new VerifyRespText();
         c.setCommandText( text );
-        text.setResult( VerifyRespResult.CORRECT );
+        text.setResultCode( ResultCode.CORRECT );
 
         String expected = ResourceLoader.loadResource( "/samples/verify_resp.bin" );
         String ds = c.toDatastream();
@@ -141,6 +141,47 @@ public class CommandTest
         text.setData( buf.toString() );
 
         String expected = ResourceLoader.loadResource( "/samples/UNK03.bin" );
+        String ds = c.toDatastream();
+
+//        System.out.println( HexDump.prettyDump( expected ) );
+//        System.out.println( HexDump.prettyDump( ds ) );
+
+        assertEquals( expected, ds );
+    }
+
+    @Test
+    public void testToDatastream08()
+    {
+        Command c = new Command();
+
+        c.setProtocol( Protocol.OPERATION_PROTOCOL );
+        c.setOpCode( OperationProtocolOpCode.Audio_Start_Req );
+        AudioStartReqText text = new AudioStartReqText();
+        c.setCommandText( text );
+        text.setData( 2 );
+
+        String expected = ResourceLoader.loadResource( "/samples/audio_start_req.bin" );
+        String ds = c.toDatastream();
+
+//        System.out.println( HexDump.prettyDump( expected ) );
+//        System.out.println( HexDump.prettyDump( ds ) );
+
+        assertEquals( expected, ds );
+    }
+
+    @Test
+    public void testToDatastream09()
+    {
+        Command c = new Command();
+
+        c.setProtocol( Protocol.OPERATION_PROTOCOL );
+        c.setOpCode( OperationProtocolOpCode.Audio_Start_Resp );
+        AudioStartRespText text = new AudioStartRespText();
+        c.setCommandText( text );
+        text.setResultCode( ResultCode.CORRECT );
+        text.setDataConnectionId( "" + (char)0x00 + (char)0x58 + (char)0xEA + (char)0x58 );
+
+        String expected = ResourceLoader.loadResource( "/samples/audio_start_resp.bin" );
         String ds = c.toDatastream();
 
 //        System.out.println( HexDump.prettyDump( expected ) );
