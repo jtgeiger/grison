@@ -62,6 +62,26 @@ public class AudioDataText implements DatastreamI
         this.dataContent = dataContent;
     }
 
+    public static AudioDataText parse( String data )
+    {
+        AudioDataText text = new AudioDataText();
+
+        int i = 0;
+
+        text.timestamp = Convert.toNumLittleEndian( data.substring( i, i += 4 ) );
+        text.serialNumber = Convert.toNumLittleEndian( data.substring( i, i += 4 ) );
+        text.gatherTime = Convert.toNumLittleEndian( data.substring( i, i += 4 ) );
+
+        text.audioFormat = AudioFormat.fromValue( data.charAt( i++ ) );
+
+        long dataLen = Convert.toNumLittleEndian( data.substring( i, i += 4 ) );
+
+        String dc = data.substring( i, i += dataLen );
+        text.dataContent = dc;
+
+        return text;
+    }
+
     @Override
     public String toDatastream()
     {

@@ -33,7 +33,7 @@ public class CommandTest
         c.setOpCode( OperationProtocolOpCode.Login_Resp );
         LoginRespText lrt = new LoginRespText();
         c.setCommandText( lrt  );
-        lrt.setResult( 0 );
+        lrt.setResultCode( ResultCode.CORRECT );
         lrt.setCameraId( "00626E4E72BF" );
         lrt.setFirmwareVersion( "" + (char)11 + (char)37 + (char)2 + (char)56 );
 

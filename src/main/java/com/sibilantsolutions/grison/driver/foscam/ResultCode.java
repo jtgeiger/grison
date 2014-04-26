@@ -30,4 +30,28 @@ public enum ResultCode
         return value;
     }
 
+    public static ResultCode fromValue( int value )
+    {
+        switch ( value )
+        {
+            case Values.CORRECT:
+                return CORRECT;
+
+            case Values.USER_WRONG:
+                return USER_WRONG;
+
+            case Values.REFUSE_OVER_MAX_CONNS:
+                return REFUSE_OVER_MAX_CONNS;
+
+            case Values.PWD_ERROR:
+                return PWD_ERROR;
+
+            case Values.UNSUPPORTED:
+                return UNSUPPORTED;
+
+            default:
+                throw new IllegalArgumentException( "Unexpected value=" + value );
+        }
+    }
+
 }

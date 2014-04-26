@@ -5,4 +5,6 @@ public interface OpCodeI
 
     public int getValue();
 
+    public DatastreamI parse( String data );
+
 }

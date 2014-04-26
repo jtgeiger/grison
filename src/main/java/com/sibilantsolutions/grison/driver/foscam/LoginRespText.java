@@ -5,20 +5,20 @@ import com.sibilantsolutions.grison.util.Convert;
 public class LoginRespText implements DatastreamI
 {
 
-    private int result;                 //INT16 (2 bytes; little endian)
+    private ResultCode resultCode;      //INT16 (2 bytes; little endian)
     private String cameraId;            //BINARY_STREAM[13]
     //private String RESERVE            //BINARY_STREAM[4]
     //private String RESERVE            //BINARY_STREAM[4]
     private String firmwareVersion;     //BINARY_STREAM[4]
 
-    public int getResult()
+    public ResultCode getResultCode()
     {
-        return result;
+        return resultCode;
     }
 
-    public void setResult( int result )
+    public void setResultCode( ResultCode resultCode )
     {
-        this.result = result;
+        this.resultCode = resultCode;
     }
 
     public String getCameraId()
@@ -41,12 +41,35 @@ public class LoginRespText implements DatastreamI
         this.firmwareVersion = firmwareVersion;
     }
 
+    static public LoginRespText parse( String data )
+    {
+        LoginRespText text = new LoginRespText();
+
+        int i = 0;
+
+        int resultCodeNum = (int)Convert.toNumLittleEndian( data.substring( i, i += 2 ) );
+
+        text.resultCode = ResultCode.fromValue( resultCodeNum );
+
+        String cameraId = data.substring( i, i += 13 );
+        cameraId = cameraId.trim();
+        text.cameraId = cameraId;
+
+        i += 4;
+        i += 4;
+
+        String firmwareVersion = data.substring( i, i += 4 );
+        text.firmwareVersion = firmwareVersion;
+
+        return text;
+    }
+
     @Override
     public String toDatastream()
     {
         StringBuilder buf = new StringBuilder( 2 + 13 + 4 + 4 + 4 );
 
-        buf.append( Convert.toLittleEndian( result, 2 ) );
+        buf.append( Convert.toLittleEndian( resultCode.getValue(), 2 ) );
 
         buf.append( cameraId ); //12 bytes
         buf.append( (char)0x00 );   //Null terminator.

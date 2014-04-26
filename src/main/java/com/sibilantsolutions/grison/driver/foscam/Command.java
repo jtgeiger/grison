@@ -43,6 +43,44 @@ public class Command implements DatastreamI
         this.commandText = commandText;
     }
 
+    static public Command parse( String data )
+    {
+        Command c = new Command();
+
+        int i = 0;
+
+        c.protocol = Protocol.fromValue( data.substring( i, i += 4 ) );
+
+        int opCodeNum = (int)Convert.toNumLittleEndian( data.substring( i, i += 2 ) );
+
+        switch( c.protocol )
+        {
+            case OPERATION_PROTOCOL:
+                c.opCode = OperationProtocolOpCode.fromValue( opCodeNum );
+                break;
+
+            case AUDIO_VIDEO_PROTOCOL:
+                c.opCode = AudioVideoProtocolOpCode.fromValue( opCodeNum );
+                break;
+
+            default:
+                throw new IllegalArgumentException( "Unexpected value=" + c.protocol );
+        }
+
+        i += 1;
+        i += 8;
+
+        int textLength = (int)Convert.toNumLittleEndian( data.substring( i, i += 4 ) );
+
+        i += 4;
+
+        String textStr = data.substring( i, i += textLength );
+
+        c.commandText = c.opCode.parse( textStr );
+
+        return c;
+    }
+
     @Override
     public String toDatastream()
     {

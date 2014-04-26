@@ -28,6 +28,21 @@ public class AudioStartRespText implements DatastreamI
         this.dataConnectionId = dataConnectionId;
     }
 
+    public static AudioStartRespText parse( String data )
+    {
+        AudioStartRespText text = new AudioStartRespText();
+
+        int i = 0;
+
+        int resultNum = (int)Convert.toNumLittleEndian( data.substring( i, i += 2 ) );
+        text.resultCode = ResultCode.fromValue( resultNum );
+
+        String id = data.substring( i, i += 4 );
+        text.dataConnectionId = id;
+
+        return text;
+    }
+
     @Override
     public String toDatastream()
     {

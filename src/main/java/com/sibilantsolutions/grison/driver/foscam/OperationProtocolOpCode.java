@@ -52,10 +52,137 @@ public enum OperationProtocolOpCode implements OpCodeI
         this.value = value;
     }
 
+    static public OperationProtocolOpCode fromValue( int value )
+    {
+        switch ( value )
+        {
+            case Values.Login_Req:
+                return Login_Req;
+
+            case Values.Login_Resp:
+                return Login_Resp;
+
+            case Values.Verify_Req:
+                return Verify_Req;
+
+            case Values.Verify_Resp:
+                return Verify_Resp;
+
+            case Values.Video_Start_Req:
+                return Video_Start_Req;
+
+            case Values.Video_Start_Resp:
+                return Video_Start_Resp;
+
+            case Values.Video_End:
+                return Video_End;
+
+            case Values.Audio_Start_Req:
+                return Audio_Start_Req;
+
+            case Values.Audio_Start_Resp:
+                return Audio_Start_Resp;
+
+            case Values.Audio_End:
+                return Audio_End;
+
+            case Values.Talk_Start_Req:
+                return Talk_Start_Req;
+
+            case Values.Talk_Start_Resp:
+                return Talk_Start_Resp;
+
+            case Values.Talk_End:
+                return Talk_End;
+
+            case Values.UNK01:
+                return UNK01;
+
+            case Values.UNK03:
+                return UNK03;
+
+            case Values.Alarm_Notify:
+                return Alarm_Notify;
+
+            case Values.UNK02:
+                return UNK02;
+
+            case Values.Keep_Alive:
+                return Keep_Alive;
+
+            default:
+                throw new IllegalArgumentException( "Unexpected value=" + value );
+        }
+    }
+
     @Override
     public int getValue()
     {
         return value;
+    }
+
+    @Override
+    public DatastreamI parse( String data )
+    {
+        switch ( this )
+        {
+//            case Login_Req:
+//                return LoginReqText.parse( data );
+
+            case Login_Resp:
+                return LoginRespText.parse( data );
+
+//            case Verify_Req:
+//                return VerifyReqText.parse( data );
+//
+//            case Verify_Resp:
+//                return VerifyRespText.parse( data );
+/*
+            case Video_Start_Req:
+                return Video_Start_Req.parse( data );
+
+            case Video_Start_Resp:
+                return Video_Start_Resp.parse( data );
+
+            case Video_End:
+                return Video_End.parse( data );
+*/
+//            case Audio_Start_Req:
+//                return AudioStartReqText.parse( data );
+//
+            case Audio_Start_Resp:
+                return AudioStartRespText.parse( data );
+/*
+            case Audio_End:
+                return Audio_End.parse( data );
+
+            case Talk_Start_Req:
+                return Talk_Start_Req.parse( data );
+
+            case Talk_Start_Resp:
+                return Talk_Start_Resp.parse( data );
+
+            case Talk_End:
+                return Talk_End.parse( data );
+
+            case UNK01:
+                return UNK01.parse( data );
+*/
+//            case UNK03:
+//                return Unk03Text.parse( data );
+/*
+            case Alarm_Notify:
+                return Alarm_Notify.parse( data );
+*/
+//            case UNK02:
+//                return Unk02Text.parse( data );
+/*
+            case Keep_Alive:
+                return Keep_Alive.parse( data );
+*/
+            default:
+                throw new IllegalArgumentException( "Unexpected value=" + this );
+        }
     }
 
 }

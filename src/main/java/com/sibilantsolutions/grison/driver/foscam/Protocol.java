@@ -19,6 +19,21 @@ public enum Protocol
         this.value = value;
     }
 
+    public static Protocol fromValue( String value )
+    {
+        switch ( value )
+        {
+            case Values.OPERATION_PROTOCOL:
+                return OPERATION_PROTOCOL;
+
+            case Values.AUDIO_VIDEO_PROTOCOL:
+                return AUDIO_VIDEO_PROTOCOL;
+
+            default:
+                throw new IllegalArgumentException( "Unexpected value=" + value );
+        }
+    }
+
     public String getValue()
     {
         return value;

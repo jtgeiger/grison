@@ -24,10 +24,46 @@ public enum AudioVideoProtocolOpCode implements OpCodeI
         this.value = value;
     }
 
+    public static AudioVideoProtocolOpCode fromValue( int value )
+    {
+        switch ( value )
+        {
+            case Values.Login_Req:
+                return Login_Req;
+
+            case Values.Video_Data:
+                return Video_Data;
+
+            case Values.Audio_Data:
+                return Audio_Data;
+
+            case Values.Talk_Data:
+                return Talk_Data;
+
+            default:
+                throw new IllegalArgumentException( "Unexpected value=" + value );
+        }
+    }
+
     @Override
     public int getValue()
     {
         return value;
+    }
+
+    @Override
+    public DatastreamI parse( String data )
+    {
+        switch ( this )
+        {
+            case Audio_Data:
+                return AudioDataText.parse( data );
+
+                //TODO
+
+            default:
+                throw new IllegalArgumentException( "Unexpected value=" + this );
+        }
     }
 
 }

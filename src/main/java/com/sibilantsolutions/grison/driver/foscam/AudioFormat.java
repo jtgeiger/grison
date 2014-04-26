@@ -22,4 +22,16 @@ public enum AudioFormat
         return value;
     }
 
+    public static AudioFormat fromValue( char value )
+    {
+        switch ( value )
+        {
+            case Values.ADPCM:
+                return ADPCM;
+
+            default:
+                throw new IllegalArgumentException( "Unexpected value=" + value );
+        }
+    }
+
 }
