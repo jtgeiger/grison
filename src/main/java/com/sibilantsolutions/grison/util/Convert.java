@@ -34,6 +34,36 @@ public abstract class Convert
         return padRear( val, numBytes, (char)0 );
     }
 
+    static public long toNum( String str )
+    {
+        long num = 0;
+
+        for ( int i = 0; i < str.length(); i++ )
+        {
+            num <<= 8;
+
+            char c1 = str.charAt( i );
+            num += c1;
+        }
+
+        return num;
+    }
+
+    static public long toNumLittleEndian( String str )
+    {
+        long num = 0;
+
+        for ( int i = str.length() - 1; i >= 0 ; i-- )
+        {
+            num <<= 8;
+
+            char c1 = str.charAt( i );
+            num += c1;
+        }
+
+        return num;
+    }
+
     public static String padRear( String val, int numBytes, char padChar )
     {
         StringBuilder buf = new StringBuilder( val );

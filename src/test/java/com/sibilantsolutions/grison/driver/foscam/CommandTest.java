@@ -4,6 +4,7 @@ import static org.junit.Assert.assertEquals;
 
 import org.junit.Test;
 
+import com.sibilantsolutions.grison.util.Convert;
 import com.sibilantsolutions.grison.util.ResourceLoader;
 
 public class CommandTest
@@ -16,7 +17,9 @@ public class CommandTest
 
         c.setProtocol( Protocol.OPERATION_PROTOCOL );
         c.setOpCode( OperationProtocolOpCode.Login_Req );
-        c.setCommandText( new EmptyText() );
+        LoginReqText text = new LoginReqText();
+        c.setCommandText( text );
+        text.setDataConnectionId( "" );
 
         assertEquals( ResourceLoader.loadResource( "/samples/login_req.bin" ), c.toDatastream() );
     }
@@ -182,6 +185,54 @@ public class CommandTest
         text.setDataConnectionId( "" + (char)0x00 + (char)0x58 + (char)0xEA + (char)0x58 );
 
         String expected = ResourceLoader.loadResource( "/samples/audio_start_resp.bin" );
+        String ds = c.toDatastream();
+
+//        System.out.println( HexDump.prettyDump( expected ) );
+//        System.out.println( HexDump.prettyDump( ds ) );
+
+        assertEquals( expected, ds );
+    }
+
+    @Test
+    public void testToDatastream10()
+    {
+        Command c = new Command();
+
+        c.setProtocol( Protocol.AUDIO_VIDEO_PROTOCOL );
+        c.setOpCode( AudioVideoProtocolOpCode.Login_Req );
+        LoginReqText text = new LoginReqText();
+        c.setCommandText( text );
+        text.setDataConnectionId( "" + (char)0x00 + (char)0x58 + (char)0xEA + (char)0x58 );
+
+        String expected = ResourceLoader.loadResource( "/samples/audio_login_req.bin" );
+        String ds = c.toDatastream();
+
+//        System.out.println( HexDump.prettyDump( expected ) );
+//        System.out.println( HexDump.prettyDump( ds ) );
+
+        assertEquals( expected, ds );
+    }
+
+    @Test
+    public void testToDatastream11()
+    {
+        Command c = new Command();
+
+        c.setProtocol( Protocol.AUDIO_VIDEO_PROTOCOL );
+        c.setOpCode( AudioVideoProtocolOpCode.Audio_Data );
+        AudioDataText text = new AudioDataText();
+        c.setCommandText( text );
+        text.setTimestamp( Convert.toNumLittleEndian( "" + (char)0x18 + (char)0xD9 + (char)0x03 + (char)0x00 ) );
+        text.setSerialNumber( Convert.toNumLittleEndian( "" + (char)0xDC + (char)0xF5 + (char)0x00 + (char)0x00 ) );
+        text.setGatherTime( Convert.toNumLittleEndian( "" + (char)0x6A + (char)0x75 + (char)0x5A + (char)0x53 ) );
+        text.setAudioFormat( AudioFormat.ADPCM );
+        final int SIZE = 160;   //0xA0
+        StringBuilder buf = new StringBuilder( SIZE );
+        for ( char i = 0; i < SIZE; i++ )
+            buf.append( (char)( i + 1 ) );
+        text.setDataContent( buf.toString() );
+
+        String expected = ResourceLoader.loadResource( "/samples/audio_data-scrubbed.bin" );
         String ds = c.toDatastream();
 
 //        System.out.println( HexDump.prettyDump( expected ) );

@@ -37,6 +37,18 @@ public class ConvertTest
     }
 
     @Test
+    public void testToNum()
+    {
+        assertEquals( 0x003D918, Convert.toNum( "" + (char)0x00 + (char)0x03 + (char)0xD9 + (char)0x18 ) );
+    }
+
+    @Test
+    public void testToNumLittleEndian()
+    {
+        assertEquals( 0x003D918, Convert.toNumLittleEndian( "" + (char)0x18 + (char)0xD9 + (char)0x03 + (char)0x00 ) );
+    }
+
+    @Test
     public void testPadRear()
     {
         assertEquals( "abcZZZ", Convert.padRear( "abc", 6, 'Z' ) );

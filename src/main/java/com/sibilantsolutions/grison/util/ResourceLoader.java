@@ -12,6 +12,10 @@ abstract public class ResourceLoader
     {
         StringBuilder sBuf = new StringBuilder();
         InputStream ins = ResourceLoader.class.getResourceAsStream( path );
+
+        if ( ins == null )
+            throw new IllegalArgumentException( "Resource not found: " + path );
+
         int numRead;
         byte[] buf = new byte[1024];
         try
