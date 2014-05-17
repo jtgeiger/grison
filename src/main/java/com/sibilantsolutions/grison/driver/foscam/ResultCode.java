@@ -18,7 +18,7 @@ public enum ResultCode
         final static public int UNSUPPORTED             = 7;
     }
 
-    private int value;
+    final private int value;
 
     private ResultCode( int value )
     {

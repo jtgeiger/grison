@@ -34,15 +34,15 @@ public enum OperationProtocolOpCode implements OpCodeI
         final static public int Video_End           = 6;    //user -> ipcamera
         final static public int Audio_Start_Req     = 8;    //user -> ipcamera
         final static public int Audio_Start_Resp    = 9;    //ipcamera -> user
-        final static public int Audio_End           = 10;   //user -> ipcamera
-        final static public int Talk_Start_Req      = 11;   //user -> ipcamera
-        final static public int Talk_Start_Resp     = 12;   //ipcamera -> user
-        final static public int Talk_End            = 13;   //user -> ipcamera
-        final static public int UNK01               = 16;   //user -> ipcamera
-        final static public int UNK03               = 17;   //ipcamera -> user
-        final static public int Alarm_Notify        = 25;   //ipcamera -> user
-        final static public int UNK02               = 28;   //ipcamera -> user
-        final static public int Keep_Alive          = 255;  //ipcamera <-> user
+        final static public int Audio_End           = 10;   //0x0A  //user -> ipcamera
+        final static public int Talk_Start_Req      = 11;   //0x0B  //user -> ipcamera
+        final static public int Talk_Start_Resp     = 12;   //0x0C  //ipcamera -> user
+        final static public int Talk_End            = 13;   //0x0D  //user -> ipcamera
+        final static public int UNK01               = 16;   //0x10  //user -> ipcamera
+        final static public int UNK03               = 17;   //0x11  //ipcamera -> user
+        final static public int Alarm_Notify        = 25;   //0x19  //ipcamera -> user
+        final static public int UNK02               = 28;   //0x1C  //ipcamera -> user
+        final static public int Keep_Alive          = 255;  //0xFF  //ipcamera <-> user
     }
 
     private int value;
@@ -135,8 +135,8 @@ public enum OperationProtocolOpCode implements OpCodeI
 //            case Verify_Req:
 //                return VerifyReqText.parse( data );
 //
-//            case Verify_Resp:
-//                return VerifyRespText.parse( data );
+            case Verify_Resp:
+                return VerifyRespText.parse( data );
 /*
             case Video_Start_Req:
                 return Video_Start_Req.parse( data );
@@ -170,10 +170,10 @@ public enum OperationProtocolOpCode implements OpCodeI
 */
 //            case UNK03:
 //                return Unk03Text.parse( data );
-/*
+
             case Alarm_Notify:
-                return Alarm_Notify.parse( data );
-*/
+                return AlarmNotifyText.parse( data );
+
 //            case UNK02:
 //                return Unk02Text.parse( data );
 /*

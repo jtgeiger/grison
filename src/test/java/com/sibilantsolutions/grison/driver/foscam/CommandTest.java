@@ -11,6 +11,30 @@ public class CommandTest
 {
 
     @Test
+    public void testParse01()
+    {
+        String bin = ResourceLoader.loadResource( "/samples/verify_resp.bin" );
+
+        Command c = Command.parse( bin );
+
+        VerifyRespText text = (VerifyRespText)c.getCommandText();
+
+        assertEquals( ResultCode.CORRECT, text.getResultCode() );
+    }
+
+    @Test
+    public void testParse02()
+    {
+        String bin = ResourceLoader.loadResource( "/samples/alarm_notify.bin" );
+
+        Command c = Command.parse( bin );
+
+        AlarmNotifyText text = (AlarmNotifyText)c.getCommandText();
+
+        assertEquals( AlarmTypeE.UNK_01, text.getAlarmType() );
+    }
+
+    @Test
     public void testToDatastream01()
     {
         Command c = new Command();

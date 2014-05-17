@@ -18,6 +18,22 @@ public class VerifyRespText implements DatastreamI
         this.resultCode = resultCode;
     }
 
+    public static VerifyRespText parse( String data )
+    {
+        VerifyRespText text = new VerifyRespText();
+
+        int i = 0;
+
+        int resultCodeNum = (int)Convert.toNumLittleEndian( data.substring( i, i += 2 ) );
+
+        text.resultCode = ResultCode.fromValue( resultCodeNum );
+
+            //RESERVED
+        i++;
+
+        return text;
+    }
+
     @Override
     public String toDatastream()
     {
