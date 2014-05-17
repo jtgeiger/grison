@@ -15,6 +15,15 @@ public class Unk02Text implements DatastreamI
         this.data = data;
     }
 
+    public static Unk02Text parse( String data )
+    {
+        Unk02Text text = new Unk02Text();
+
+        text.data = data;
+
+        return text;
+    }
+
     @Override
     public String toDatastream()
     {

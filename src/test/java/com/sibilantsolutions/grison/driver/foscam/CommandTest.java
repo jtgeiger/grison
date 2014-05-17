@@ -35,6 +35,23 @@ public class CommandTest
     }
 
     @Test
+    public void testParse03()
+    {
+        String bin = ResourceLoader.loadResource( "/samples/UNK02.bin" );
+
+        Command c = Command.parse( bin );
+
+        Unk02Text text = (Unk02Text)c.getCommandText();
+
+        final int SIZE = 1152;  //0x0480
+        StringBuilder buf = new StringBuilder( SIZE );
+        for ( int i = 0; i < SIZE; i++ )
+            buf.append( (char)0 );
+
+        assertEquals( buf.toString(), text.getData() );
+    }
+
+    @Test
     public void testToDatastream01()
     {
         Command c = new Command();
