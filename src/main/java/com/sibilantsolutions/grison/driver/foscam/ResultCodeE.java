@@ -1,6 +1,6 @@
 package com.sibilantsolutions.grison.driver.foscam;
 
-public enum ResultCode
+public enum ResultCodeE
 {
     CORRECT( Values.CORRECT ),
     USER_WRONG( Values.USER_WRONG ),
@@ -20,7 +20,7 @@ public enum ResultCode
 
     final private int value;
 
-    private ResultCode( int value )
+    private ResultCodeE( int value )
     {
         this.value = value;
     }
@@ -30,7 +30,7 @@ public enum ResultCode
         return value;
     }
 
-    public static ResultCode fromValue( int value )
+    public static ResultCodeE fromValue( int value )
     {
         switch ( value )
         {

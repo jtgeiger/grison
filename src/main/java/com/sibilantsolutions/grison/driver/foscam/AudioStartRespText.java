@@ -5,15 +5,15 @@ import com.sibilantsolutions.grison.util.Convert;
 public class AudioStartRespText implements DatastreamI
 {
 
-    private ResultCode resultCode;      //INT16 (2 bytes; little endian)
+    private ResultCodeE resultCode;     //INT16 (2 bytes; little endian)
     private String dataConnectionId;    //INT32 (4 bytes; little endian)
 
-    public ResultCode getResultCode()
+    public ResultCodeE getResultCode()
     {
         return resultCode;
     }
 
-    public void setResultCode( ResultCode resultCode )
+    public void setResultCode( ResultCodeE resultCode )
     {
         this.resultCode = resultCode;
     }
@@ -35,7 +35,7 @@ public class AudioStartRespText implements DatastreamI
         int i = 0;
 
         int resultNum = (int)Convert.toNumLittleEndian( data.substring( i, i += 2 ) );
-        text.resultCode = ResultCode.fromValue( resultNum );
+        text.resultCode = ResultCodeE.fromValue( resultNum );
 
         String id = data.substring( i, i += 4 );
         text.dataConnectionId = id;

@@ -1,6 +1,6 @@
 package com.sibilantsolutions.grison.driver.foscam;
 
-public enum AudioFormat
+public enum AudioFormatE
 {
     ADPCM( Values.ADPCM ),
     ;
@@ -12,7 +12,7 @@ public enum AudioFormat
 
     private int value;
 
-    private AudioFormat( int value )
+    private AudioFormatE( int value )
     {
         this.value = value;
     }
@@ -22,7 +22,7 @@ public enum AudioFormat
         return value;
     }
 
-    public static AudioFormat fromValue( char value )
+    public static AudioFormatE fromValue( char value )
     {
         switch ( value )
         {

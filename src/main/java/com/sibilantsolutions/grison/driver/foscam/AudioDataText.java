@@ -8,7 +8,7 @@ public class AudioDataText implements DatastreamI
     private long timestamp;             //INT32 (4 bytes; little endian); 10ms
     private long serialNumber;          //INT32 (4 bytes; little endian); increase from zero
     private long gatherTime;            //INT32 (4 bytes; little endian); From 1970.1.1 to current time
-    private AudioFormat audioFormat;    //INT8; =0: adpcm
+    private AudioFormatE audioFormat;   //INT8; =0: adpcm
     //private long dataLength;          //INT32 (4 bytes; little endian); =160
     private String dataContent;         //BINARY_STREAM[n]
 
@@ -42,12 +42,12 @@ public class AudioDataText implements DatastreamI
         this.gatherTime = gatherTime;
     }
 
-    public AudioFormat getAudioFormat()
+    public AudioFormatE getAudioFormat()
     {
         return audioFormat;
     }
 
-    public void setAudioFormat( AudioFormat audioFormat )
+    public void setAudioFormat( AudioFormatE audioFormat )
     {
         this.audioFormat = audioFormat;
     }
@@ -72,7 +72,7 @@ public class AudioDataText implements DatastreamI
         text.serialNumber = Convert.toNumLittleEndian( data.substring( i, i += 4 ) );
         text.gatherTime = Convert.toNumLittleEndian( data.substring( i, i += 4 ) );
 
-        text.audioFormat = AudioFormat.fromValue( data.charAt( i++ ) );
+        text.audioFormat = AudioFormatE.fromValue( data.charAt( i++ ) );
 
         long dataLen = Convert.toNumLittleEndian( data.substring( i, i += 4 ) );
 

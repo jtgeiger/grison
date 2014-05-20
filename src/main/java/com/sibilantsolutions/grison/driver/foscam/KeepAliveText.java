@@ -1,12 +1,11 @@
 package com.sibilantsolutions.grison.driver.foscam;
 
-public class KeepAlive implements DatastreamI
+public class KeepAliveText implements DatastreamI
 {
 
-
-    public static KeepAlive parse( String data )
+    public static KeepAliveText parse( String data )
     {
-        KeepAlive text = new KeepAlive();
+        KeepAliveText text = new KeepAliveText();
 
         //No-op.
 

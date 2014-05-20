@@ -1,7 +1,6 @@
 package com.sibilantsolutions.grison.driver.foscam;
 
-
-public enum Protocol
+public enum ProtocolE
 {
     OPERATION_PROTOCOL( Values.OPERATION_PROTOCOL ),
     AUDIO_VIDEO_PROTOCOL( Values.AUDIO_VIDEO_PROTOCOL );
@@ -14,12 +13,12 @@ public enum Protocol
 
     private String value;
 
-    private Protocol( String value )
+    private ProtocolE( String value )
     {
         this.value = value;
     }
 
-    public static Protocol fromValue( String value )
+    public static ProtocolE fromValue( String value )
     {
         switch ( value )
         {

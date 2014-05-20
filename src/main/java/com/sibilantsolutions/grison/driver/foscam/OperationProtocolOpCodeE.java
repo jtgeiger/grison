@@ -1,6 +1,6 @@
 package com.sibilantsolutions.grison.driver.foscam;
 
-public enum OperationProtocolOpCode implements OpCodeI
+public enum OperationProtocolOpCodeE implements OpCodeI
 {
 
     Login_Req( Values.Login_Req ),
@@ -47,12 +47,12 @@ public enum OperationProtocolOpCode implements OpCodeI
 
     private int value;
 
-    private OperationProtocolOpCode( int value )
+    private OperationProtocolOpCodeE( int value )
     {
         this.value = value;
     }
 
-    static public OperationProtocolOpCode fromValue( int value )
+    static public OperationProtocolOpCodeE fromValue( int value )
     {
         switch ( value )
         {
@@ -178,7 +178,7 @@ public enum OperationProtocolOpCode implements OpCodeI
                 return Unk02Text.parse( data );
 
             case Keep_Alive:
-                return KeepAlive.parse( data );
+                return KeepAliveText.parse( data );
 
             default:
                 throw new IllegalArgumentException( "Unexpected value=" + this );

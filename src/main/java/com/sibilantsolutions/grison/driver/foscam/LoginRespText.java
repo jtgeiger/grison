@@ -5,18 +5,18 @@ import com.sibilantsolutions.grison.util.Convert;
 public class LoginRespText implements DatastreamI
 {
 
-    private ResultCode resultCode;      //INT16 (2 bytes; little endian)
+    private ResultCodeE resultCode;     //INT16 (2 bytes; little endian)
     private String cameraId;            //BINARY_STREAM[13]
     //private String RESERVE            //BINARY_STREAM[4]
     //private String RESERVE            //BINARY_STREAM[4]
     private String firmwareVersion;     //BINARY_STREAM[4]
 
-    public ResultCode getResultCode()
+    public ResultCodeE getResultCode()
     {
         return resultCode;
     }
 
-    public void setResultCode( ResultCode resultCode )
+    public void setResultCode( ResultCodeE resultCode )
     {
         this.resultCode = resultCode;
     }
@@ -49,7 +49,7 @@ public class LoginRespText implements DatastreamI
 
         int resultCodeNum = (int)Convert.toNumLittleEndian( data.substring( i, i += 2 ) );
 
-        text.resultCode = ResultCode.fromValue( resultCodeNum );
+        text.resultCode = ResultCodeE.fromValue( resultCodeNum );
 
         String cameraId = data.substring( i, i += 13 );
         cameraId = cameraId.trim();

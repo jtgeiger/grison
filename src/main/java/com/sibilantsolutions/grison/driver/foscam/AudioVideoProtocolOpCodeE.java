@@ -1,6 +1,6 @@
 package com.sibilantsolutions.grison.driver.foscam;
 
-public enum AudioVideoProtocolOpCode implements OpCodeI
+public enum AudioVideoProtocolOpCodeE implements OpCodeI
 {
 
     Login_Req( Values.Login_Req ),
@@ -19,12 +19,12 @@ public enum AudioVideoProtocolOpCode implements OpCodeI
 
     private int value;
 
-    private AudioVideoProtocolOpCode( int value )
+    private AudioVideoProtocolOpCodeE( int value )
     {
         this.value = value;
     }
 
-    public static AudioVideoProtocolOpCode fromValue( int value )
+    public static AudioVideoProtocolOpCodeE fromValue( int value )
     {
         switch ( value )
         {

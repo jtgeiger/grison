@@ -5,7 +5,7 @@ import com.sibilantsolutions.grison.util.Convert;
 public class Command implements DatastreamI
 {
 
-    private Protocol protocol;  //BINARY_STREAM[4]
+    private ProtocolE protocol; //BINARY_STREAM[4]
     private OpCodeI opCode;     //INT16 (2 bytes; little endian)
     //private RESERVE=0         //INT8 (1 byte)
     //private RESERVE           //BINARY_STREAM[8]
@@ -13,12 +13,12 @@ public class Command implements DatastreamI
     //private RESERVE           //INT32 (4 bytes; little endian)
     private DatastreamI commandText;   //BINARY_STREAM[n]
 
-    public Protocol getProtocol()
+    public ProtocolE getProtocol()
     {
         return protocol;
     }
 
-    public void setProtocol( Protocol protocol )
+    public void setProtocol( ProtocolE protocol )
     {
         this.protocol = protocol;
     }
@@ -49,18 +49,18 @@ public class Command implements DatastreamI
 
         int i = 0;
 
-        c.protocol = Protocol.fromValue( data.substring( i, i += 4 ) );
+        c.protocol = ProtocolE.fromValue( data.substring( i, i += 4 ) );
 
         int opCodeNum = (int)Convert.toNumLittleEndian( data.substring( i, i += 2 ) );
 
         switch( c.protocol )
         {
             case OPERATION_PROTOCOL:
-                c.opCode = OperationProtocolOpCode.fromValue( opCodeNum );
+                c.opCode = OperationProtocolOpCodeE.fromValue( opCodeNum );
                 break;
 
             case AUDIO_VIDEO_PROTOCOL:
-                c.opCode = AudioVideoProtocolOpCode.fromValue( opCodeNum );
+                c.opCode = AudioVideoProtocolOpCodeE.fromValue( opCodeNum );
                 break;
 
             default:

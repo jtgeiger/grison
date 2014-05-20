@@ -5,15 +5,15 @@ import com.sibilantsolutions.grison.util.Convert;
 public class VerifyRespText implements DatastreamI
 {
 
-    private ResultCode resultCode;    //INT16 (2 bytes; little endian)
+    private ResultCodeE resultCode;     //INT16 (2 bytes; little endian)
     //private int RESERVE               //INT8
 
-    public ResultCode getResultCode()
+    public ResultCodeE getResultCode()
     {
         return resultCode;
     }
 
-    public void setResultCode( ResultCode resultCode )
+    public void setResultCode( ResultCodeE resultCode )
     {
         this.resultCode = resultCode;
     }
@@ -26,7 +26,7 @@ public class VerifyRespText implements DatastreamI
 
         int resultCodeNum = (int)Convert.toNumLittleEndian( data.substring( i, i += 2 ) );
 
-        text.resultCode = ResultCode.fromValue( resultCodeNum );
+        text.resultCode = ResultCodeE.fromValue( resultCodeNum );
 
             //RESERVED
         i++;
