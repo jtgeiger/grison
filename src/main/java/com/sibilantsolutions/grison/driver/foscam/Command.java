@@ -96,7 +96,10 @@ public class Command implements DatastreamI
         for ( int i = 0; i < 8; i++ )
             buf.append( (char)0x00 );
 
-        String commandTextStr = commandText.toDatastream();
+        String commandTextStr = "";
+
+        if ( commandText != null )
+            commandTextStr = commandText.toDatastream();
 
         buf.append( Convert.toLittleEndian( commandTextStr.length(), 4 ) );
 

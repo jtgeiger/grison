@@ -176,10 +176,10 @@ public enum OperationProtocolOpCode implements OpCodeI
 
             case UNK02:
                 return Unk02Text.parse( data );
-/*
+
             case Keep_Alive:
-                return Keep_Alive.parse( data );
-*/
+                return KeepAlive.parse( data );
+
             default:
                 throw new IllegalArgumentException( "Unexpected value=" + this );
         }

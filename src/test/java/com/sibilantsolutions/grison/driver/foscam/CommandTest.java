@@ -1,6 +1,7 @@
 package com.sibilantsolutions.grison.driver.foscam;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 
 import org.junit.Test;
 
@@ -49,6 +50,18 @@ public class CommandTest
             buf.append( (char)0 );
 
         assertEquals( buf.toString(), text.getData() );
+    }
+
+    @Test
+    public void testParse04()
+    {
+        String bin = ResourceLoader.loadResource( "/samples/keep_alive.bin" );
+
+        Command c = Command.parse( bin );
+
+        KeepAlive text = (KeepAlive)c.getCommandText();
+
+        assertNotNull( text );
     }
 
     @Test
@@ -274,6 +287,23 @@ public class CommandTest
         text.setDataContent( buf.toString() );
 
         String expected = ResourceLoader.loadResource( "/samples/audio_data-scrubbed.bin" );
+        String ds = c.toDatastream();
+
+//        System.out.println( HexDump.prettyDump( expected ) );
+//        System.out.println( HexDump.prettyDump( ds ) );
+
+        assertEquals( expected, ds );
+    }
+
+    @Test
+    public void testToDatastream12()
+    {
+        Command c = new Command();
+
+        c.setProtocol( Protocol.OPERATION_PROTOCOL );
+        c.setOpCode( OperationProtocolOpCode.Keep_Alive );
+
+        String expected = ResourceLoader.loadResource( "/samples/keep_alive.bin" );
         String ds = c.toDatastream();
 
 //        System.out.println( HexDump.prettyDump( expected ) );
