@@ -65,6 +65,56 @@ public class CommandTest
     }
 
     @Test
+    public void testParse05()
+    {
+        String bin = ResourceLoader.loadResource( "/samples/video_start_req.bin" );
+
+        Command c = Command.parse( bin );
+
+        VideoStartReqText text = (VideoStartReqText)c.getCommandText();
+
+        assertEquals( 1, text.getData() );
+    }
+
+    @Test
+    public void testParse06()
+    {
+        String bin = ResourceLoader.loadResource( "/samples/video_start_resp.bin" );
+
+        Command c = Command.parse( bin );
+
+        VideoStartRespText text = (VideoStartRespText)c.getCommandText();
+
+        assertEquals( ResultCodeE.CORRECT, text.getResultCode() );
+        assertEquals( "" + (char)0x40 + (char)0x1B + (char)0x25 + (char)0x60, text.getDataConnectionId() );
+    }
+
+    @Test
+    public void testParse07()
+    {
+        String bin = ResourceLoader.loadResource( "/samples/talk_start_req.bin" );
+
+        Command c = Command.parse( bin );
+
+        TalkStartReqText text = (TalkStartReqText)c.getCommandText();
+
+        assertEquals( 1, text.getData() );
+    }
+
+    @Test
+    public void testParse08()
+    {
+        String bin = ResourceLoader.loadResource( "/samples/talk_start_resp.bin" );
+
+        Command c = Command.parse( bin );
+
+        TalkStartRespText text = (TalkStartRespText)c.getCommandText();
+
+        assertEquals( ResultCodeE.CORRECT, text.getResultCode() );
+        assertEquals( "" + (char)0x7D + (char)0x26 + (char)0xF6 + (char)0x38, text.getDataConnectionId() );
+    }
+
+    @Test
     public void testToDatastream01()
     {
         Command c = new Command();
@@ -304,6 +354,88 @@ public class CommandTest
         c.setOpCode( OperationProtocolOpCodeE.Keep_Alive );
 
         String expected = ResourceLoader.loadResource( "/samples/keep_alive.bin" );
+        String ds = c.toDatastream();
+
+//        System.out.println( HexDump.prettyDump( expected ) );
+//        System.out.println( HexDump.prettyDump( ds ) );
+
+        assertEquals( expected, ds );
+    }
+
+    @Test
+    public void testToDatastream13()
+    {
+        Command c = new Command();
+
+        c.setProtocol( ProtocolE.OPERATION_PROTOCOL );
+        c.setOpCode( OperationProtocolOpCodeE.Video_Start_Req );
+        VideoStartReqText text = new VideoStartReqText();
+        c.setCommandText( text );
+        text.setData( 1 );
+
+        String expected = ResourceLoader.loadResource( "/samples/video_start_req.bin" );
+        String ds = c.toDatastream();
+
+//        System.out.println( HexDump.prettyDump( expected ) );
+//        System.out.println( HexDump.prettyDump( ds ) );
+
+        assertEquals( expected, ds );
+    }
+
+    @Test
+    public void testToDatastream14()
+    {
+        Command c = new Command();
+
+        c.setProtocol( ProtocolE.OPERATION_PROTOCOL );
+        c.setOpCode( OperationProtocolOpCodeE.Video_Start_Resp );
+        VideoStartRespText text = new VideoStartRespText();
+        c.setCommandText( text );
+        text.setResultCode( ResultCodeE.CORRECT );
+        text.setDataConnectionId( "" + (char)0x40 + (char)0x1B + (char)0x25 + (char)0x60 );
+
+        String expected = ResourceLoader.loadResource( "/samples/video_start_resp.bin" );
+        String ds = c.toDatastream();
+
+//        System.out.println( HexDump.prettyDump( expected ) );
+//        System.out.println( HexDump.prettyDump( ds ) );
+
+        assertEquals( expected, ds );
+    }
+
+    @Test
+    public void testToDatastream15()
+    {
+        Command c = new Command();
+
+        c.setProtocol( ProtocolE.OPERATION_PROTOCOL );
+        c.setOpCode( OperationProtocolOpCodeE.Talk_Start_Req );
+        TalkStartReqText text = new TalkStartReqText();
+        c.setCommandText( text );
+        text.setData( 1 );
+
+        String expected = ResourceLoader.loadResource( "/samples/talk_start_req.bin" );
+        String ds = c.toDatastream();
+
+//        System.out.println( HexDump.prettyDump( expected ) );
+//        System.out.println( HexDump.prettyDump( ds ) );
+
+        assertEquals( expected, ds );
+    }
+
+    @Test
+    public void testToDatastream16()
+    {
+        Command c = new Command();
+
+        c.setProtocol( ProtocolE.OPERATION_PROTOCOL );
+        c.setOpCode( OperationProtocolOpCodeE.Talk_Start_Resp );
+        TalkStartRespText text = new TalkStartRespText();
+        c.setCommandText( text );
+        text.setResultCode( ResultCodeE.CORRECT );
+        text.setDataConnectionId( "" + (char)0x7D + (char)0x26 + (char)0xF6 + (char)0x38 );
+
+        String expected = ResourceLoader.loadResource( "/samples/talk_start_resp.bin" );
         String ds = c.toDatastream();
 
 //        System.out.println( HexDump.prettyDump( expected ) );

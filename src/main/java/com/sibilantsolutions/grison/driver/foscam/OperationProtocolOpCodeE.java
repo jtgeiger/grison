@@ -137,13 +137,13 @@ public enum OperationProtocolOpCodeE implements OpCodeI
 //
             case Verify_Resp:
                 return VerifyRespText.parse( data );
-/*
+
             case Video_Start_Req:
-                return Video_Start_Req.parse( data );
+                return VideoStartReqText.parse( data );
 
             case Video_Start_Resp:
-                return Video_Start_Resp.parse( data );
-
+                return VideoStartRespText.parse( data );
+/*
             case Video_End:
                 return Video_End.parse( data );
 */
@@ -155,13 +155,13 @@ public enum OperationProtocolOpCodeE implements OpCodeI
 /*
             case Audio_End:
                 return Audio_End.parse( data );
-
+*/
             case Talk_Start_Req:
-                return Talk_Start_Req.parse( data );
+                return TalkStartReqText.parse( data );
 
             case Talk_Start_Resp:
-                return Talk_Start_Resp.parse( data );
-
+                return TalkStartRespText.parse( data );
+/*
             case Talk_End:
                 return Talk_End.parse( data );
 
