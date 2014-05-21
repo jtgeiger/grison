@@ -56,6 +56,9 @@ public enum AudioVideoProtocolOpCodeE implements OpCodeI
     {
         switch ( this )
         {
+            case Video_Data:
+                return VideoDataText.parse( data );
+
             case Audio_Data:
                 return AudioDataText.parse( data );
 

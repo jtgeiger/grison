@@ -17,6 +17,8 @@ public class CommandTest
         String bin = ResourceLoader.loadResource( "/samples/verify_resp.bin" );
 
         Command c = Command.parse( bin );
+        assertEquals( ProtocolE.OPERATION_PROTOCOL, c.getProtocol() );
+        assertEquals( OperationProtocolOpCodeE.Verify_Resp, c.getOpCode() );
 
         VerifyRespText text = (VerifyRespText)c.getCommandText();
 
@@ -29,6 +31,8 @@ public class CommandTest
         String bin = ResourceLoader.loadResource( "/samples/alarm_notify.bin" );
 
         Command c = Command.parse( bin );
+        assertEquals( ProtocolE.OPERATION_PROTOCOL, c.getProtocol() );
+        assertEquals( OperationProtocolOpCodeE.Alarm_Notify, c.getOpCode() );
 
         AlarmNotifyText text = (AlarmNotifyText)c.getCommandText();
 
@@ -41,6 +45,8 @@ public class CommandTest
         String bin = ResourceLoader.loadResource( "/samples/UNK02.bin" );
 
         Command c = Command.parse( bin );
+        assertEquals( ProtocolE.OPERATION_PROTOCOL, c.getProtocol() );
+        assertEquals( OperationProtocolOpCodeE.UNK02, c.getOpCode() );
 
         Unk02Text text = (Unk02Text)c.getCommandText();
 
@@ -58,6 +64,8 @@ public class CommandTest
         String bin = ResourceLoader.loadResource( "/samples/keep_alive.bin" );
 
         Command c = Command.parse( bin );
+        assertEquals( ProtocolE.OPERATION_PROTOCOL, c.getProtocol() );
+        assertEquals( OperationProtocolOpCodeE.Keep_Alive, c.getOpCode() );
 
         KeepAliveText text = (KeepAliveText)c.getCommandText();
 
@@ -70,6 +78,8 @@ public class CommandTest
         String bin = ResourceLoader.loadResource( "/samples/video_start_req.bin" );
 
         Command c = Command.parse( bin );
+        assertEquals( ProtocolE.OPERATION_PROTOCOL, c.getProtocol() );
+        assertEquals( OperationProtocolOpCodeE.Video_Start_Req, c.getOpCode() );
 
         VideoStartReqText text = (VideoStartReqText)c.getCommandText();
 
@@ -82,6 +92,8 @@ public class CommandTest
         String bin = ResourceLoader.loadResource( "/samples/video_start_resp.bin" );
 
         Command c = Command.parse( bin );
+        assertEquals( ProtocolE.OPERATION_PROTOCOL, c.getProtocol() );
+        assertEquals( OperationProtocolOpCodeE.Video_Start_Resp, c.getOpCode() );
 
         VideoStartRespText text = (VideoStartRespText)c.getCommandText();
 
@@ -95,6 +107,8 @@ public class CommandTest
         String bin = ResourceLoader.loadResource( "/samples/talk_start_req.bin" );
 
         Command c = Command.parse( bin );
+        assertEquals( ProtocolE.OPERATION_PROTOCOL, c.getProtocol() );
+        assertEquals( OperationProtocolOpCodeE.Talk_Start_Req, c.getOpCode() );
 
         TalkStartReqText text = (TalkStartReqText)c.getCommandText();
 
@@ -107,11 +121,29 @@ public class CommandTest
         String bin = ResourceLoader.loadResource( "/samples/talk_start_resp.bin" );
 
         Command c = Command.parse( bin );
+        assertEquals( ProtocolE.OPERATION_PROTOCOL, c.getProtocol() );
+        assertEquals( OperationProtocolOpCodeE.Talk_Start_Resp, c.getOpCode() );
 
         TalkStartRespText text = (TalkStartRespText)c.getCommandText();
 
         assertEquals( ResultCodeE.CORRECT, text.getResultCode() );
         assertEquals( "" + (char)0x7D + (char)0x26 + (char)0xF6 + (char)0x38, text.getDataConnectionId() );
+    }
+
+    @Test
+    public void testParse09()
+    {
+        String bin = ResourceLoader.loadResource( "/samples/video_data.bin" );
+
+        Command c = Command.parse( bin );
+        assertEquals( ProtocolE.AUDIO_VIDEO_PROTOCOL, c.getProtocol() );
+        assertEquals( AudioVideoProtocolOpCodeE.Video_Data, c.getOpCode() );
+
+        VideoDataText text = (VideoDataText)c.getCommandText();
+
+        assertEquals( 0x0000E6E4, text.getTimestamp() );
+        assertEquals( 0x537CCE75, text.getFramesPerSec() );
+        assertEquals( 0x0000AE38, text.getDataContent().length() ); //44600
     }
 
     @Test
@@ -436,6 +468,31 @@ public class CommandTest
         text.setDataConnectionId( "" + (char)0x7D + (char)0x26 + (char)0xF6 + (char)0x38 );
 
         String expected = ResourceLoader.loadResource( "/samples/talk_start_resp.bin" );
+        String ds = c.toDatastream();
+
+//        System.out.println( HexDump.prettyDump( expected ) );
+//        System.out.println( HexDump.prettyDump( ds ) );
+
+        assertEquals( expected, ds );
+    }
+
+    @Test
+    public void testToDatastream17()
+    {
+        Command c = new Command();
+
+        c.setProtocol( ProtocolE.AUDIO_VIDEO_PROTOCOL );
+        c.setOpCode( AudioVideoProtocolOpCodeE.Video_Data );
+        VideoDataText text = new VideoDataText();
+        c.setCommandText( text );
+        text.setTimestamp( 0x0000E6E4 );
+        text.setFramesPerSec( 0x537CCE75 );
+
+        String expected = ResourceLoader.loadResource( "/samples/video_data.bin" );
+
+        String data = expected.substring( 0x24 );   //Cheating to create the data.
+        text.setDataContent( data );
+
         String ds = c.toDatastream();
 
 //        System.out.println( HexDump.prettyDump( expected ) );
