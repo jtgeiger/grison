@@ -10,11 +10,29 @@ abstract public class ResourceLoader
 
     static public String loadResource( String path )
     {
-        StringBuilder sBuf = new StringBuilder();
         InputStream ins = ResourceLoader.class.getResourceAsStream( path );
 
         if ( ins == null )
             throw new IllegalArgumentException( "Resource not found: " + path );
+
+        String data = readInputStream( ins );
+
+        try
+        {
+            ins.close();
+        }
+        catch ( IOException e )
+        {
+            // TODO Auto-generated catch block
+            throw new UnsupportedOperationException( "OGTE TODO!", e );
+        }
+
+        return data;
+    }
+
+    public static String readInputStream( InputStream ins )
+    {
+        StringBuilder sBuf = new StringBuilder();
 
         int numRead;
         byte[] buf = new byte[1024];
