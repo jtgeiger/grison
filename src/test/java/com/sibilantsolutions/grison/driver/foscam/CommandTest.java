@@ -14,7 +14,7 @@ public class CommandTest
     @Test
     public void testParse01()
     {
-        String bin = ResourceLoader.loadResource( "/samples/verify_resp.bin" );
+        String bin = ResourceLoader.loadResourceAsString( "/samples/verify_resp.bin" );
 
         Command c = Command.parse( bin );
         assertEquals( ProtocolE.OPERATION_PROTOCOL, c.getProtocol() );
@@ -28,7 +28,7 @@ public class CommandTest
     @Test
     public void testParse02()
     {
-        String bin = ResourceLoader.loadResource( "/samples/alarm_notify.bin" );
+        String bin = ResourceLoader.loadResourceAsString( "/samples/alarm_notify.bin" );
 
         Command c = Command.parse( bin );
         assertEquals( ProtocolE.OPERATION_PROTOCOL, c.getProtocol() );
@@ -42,7 +42,7 @@ public class CommandTest
     @Test
     public void testParse03()
     {
-        String bin = ResourceLoader.loadResource( "/samples/UNK02.bin" );
+        String bin = ResourceLoader.loadResourceAsString( "/samples/UNK02.bin" );
 
         Command c = Command.parse( bin );
         assertEquals( ProtocolE.OPERATION_PROTOCOL, c.getProtocol() );
@@ -61,7 +61,7 @@ public class CommandTest
     @Test
     public void testParse04()
     {
-        String bin = ResourceLoader.loadResource( "/samples/keep_alive.bin" );
+        String bin = ResourceLoader.loadResourceAsString( "/samples/keep_alive.bin" );
 
         Command c = Command.parse( bin );
         assertEquals( ProtocolE.OPERATION_PROTOCOL, c.getProtocol() );
@@ -75,7 +75,7 @@ public class CommandTest
     @Test
     public void testParse05()
     {
-        String bin = ResourceLoader.loadResource( "/samples/video_start_req.bin" );
+        String bin = ResourceLoader.loadResourceAsString( "/samples/video_start_req.bin" );
 
         Command c = Command.parse( bin );
         assertEquals( ProtocolE.OPERATION_PROTOCOL, c.getProtocol() );
@@ -89,7 +89,7 @@ public class CommandTest
     @Test
     public void testParse06()
     {
-        String bin = ResourceLoader.loadResource( "/samples/video_start_resp.bin" );
+        String bin = ResourceLoader.loadResourceAsString( "/samples/video_start_resp.bin" );
 
         Command c = Command.parse( bin );
         assertEquals( ProtocolE.OPERATION_PROTOCOL, c.getProtocol() );
@@ -104,7 +104,7 @@ public class CommandTest
     @Test
     public void testParse07()
     {
-        String bin = ResourceLoader.loadResource( "/samples/talk_start_req.bin" );
+        String bin = ResourceLoader.loadResourceAsString( "/samples/talk_start_req.bin" );
 
         Command c = Command.parse( bin );
         assertEquals( ProtocolE.OPERATION_PROTOCOL, c.getProtocol() );
@@ -118,7 +118,7 @@ public class CommandTest
     @Test
     public void testParse08()
     {
-        String bin = ResourceLoader.loadResource( "/samples/talk_start_resp.bin" );
+        String bin = ResourceLoader.loadResourceAsString( "/samples/talk_start_resp.bin" );
 
         Command c = Command.parse( bin );
         assertEquals( ProtocolE.OPERATION_PROTOCOL, c.getProtocol() );
@@ -133,7 +133,7 @@ public class CommandTest
     @Test
     public void testParse09()
     {
-        String bin = ResourceLoader.loadResource( "/samples/video_data.bin" );
+        String bin = ResourceLoader.loadResourceAsString( "/samples/video_data.bin" );
 
         Command c = Command.parse( bin );
         assertEquals( ProtocolE.AUDIO_VIDEO_PROTOCOL, c.getProtocol() );
@@ -157,7 +157,7 @@ public class CommandTest
         c.setCommandText( text );
         text.setDataConnectionId( "" );
 
-        assertEquals( ResourceLoader.loadResource( "/samples/login_req.bin" ), c.toDatastream() );
+        assertEquals( ResourceLoader.loadResourceAsString( "/samples/login_req.bin" ), c.toDatastream() );
     }
 
     @Test
@@ -173,7 +173,7 @@ public class CommandTest
         lrt.setCameraId( "00626E4E72BF" );
         lrt.setFirmwareVersion( "" + (char)11 + (char)37 + (char)2 + (char)56 );
 
-        String expected = ResourceLoader.loadResource( "/samples/login_resp.bin" );
+        String expected = ResourceLoader.loadResourceAsString( "/samples/login_resp.bin" );
         String ds = c.toDatastream();
 
 //        System.out.println( HexDump.prettyDump( expected ) );
@@ -194,7 +194,7 @@ public class CommandTest
         text.setUsername( "camvis" );
         text.setPassword( "vis,FOSbuy1v" );
 
-        String expected = ResourceLoader.loadResource( "/samples/verify_req.bin" );
+        String expected = ResourceLoader.loadResourceAsString( "/samples/verify_req.bin" );
         String ds = c.toDatastream();
 
 //        System.out.println( HexDump.prettyDump( expected ) );
@@ -214,7 +214,7 @@ public class CommandTest
         c.setCommandText( text );
         text.setResultCode( ResultCodeE.CORRECT );
 
-        String expected = ResourceLoader.loadResource( "/samples/verify_resp.bin" );
+        String expected = ResourceLoader.loadResourceAsString( "/samples/verify_resp.bin" );
         String ds = c.toDatastream();
 
 //        System.out.println( HexDump.prettyDump( expected ) );
@@ -232,7 +232,7 @@ public class CommandTest
         c.setOpCode( OperationProtocolOpCodeE.UNK01 );
         c.setCommandText( new EmptyText() );
 
-        String expected = ResourceLoader.loadResource( "/samples/UNK01.bin" );
+        String expected = ResourceLoader.loadResourceAsString( "/samples/UNK01.bin" );
         String ds = c.toDatastream();
 
 //        System.out.println( HexDump.prettyDump( expected ) );
@@ -256,7 +256,7 @@ public class CommandTest
             buf.append( (char)0 );
         text.setData( buf.toString() );
 
-        String expected = ResourceLoader.loadResource( "/samples/UNK02.bin" );
+        String expected = ResourceLoader.loadResourceAsString( "/samples/UNK02.bin" );
         String ds = c.toDatastream();
 
 //        System.out.println( HexDump.prettyDump( expected ) );
@@ -279,7 +279,7 @@ public class CommandTest
                 (char)0x00 + (char)0x00 + (char)0x00 );
         text.setData( buf.toString() );
 
-        String expected = ResourceLoader.loadResource( "/samples/UNK03.bin" );
+        String expected = ResourceLoader.loadResourceAsString( "/samples/UNK03.bin" );
         String ds = c.toDatastream();
 
 //        System.out.println( HexDump.prettyDump( expected ) );
@@ -299,7 +299,7 @@ public class CommandTest
         c.setCommandText( text );
         text.setData( 2 );
 
-        String expected = ResourceLoader.loadResource( "/samples/audio_start_req.bin" );
+        String expected = ResourceLoader.loadResourceAsString( "/samples/audio_start_req.bin" );
         String ds = c.toDatastream();
 
 //        System.out.println( HexDump.prettyDump( expected ) );
@@ -320,7 +320,7 @@ public class CommandTest
         text.setResultCode( ResultCodeE.CORRECT );
         text.setDataConnectionId( "" + (char)0x00 + (char)0x58 + (char)0xEA + (char)0x58 );
 
-        String expected = ResourceLoader.loadResource( "/samples/audio_start_resp.bin" );
+        String expected = ResourceLoader.loadResourceAsString( "/samples/audio_start_resp.bin" );
         String ds = c.toDatastream();
 
 //        System.out.println( HexDump.prettyDump( expected ) );
@@ -340,7 +340,7 @@ public class CommandTest
         c.setCommandText( text );
         text.setDataConnectionId( "" + (char)0x00 + (char)0x58 + (char)0xEA + (char)0x58 );
 
-        String expected = ResourceLoader.loadResource( "/samples/audio_login_req.bin" );
+        String expected = ResourceLoader.loadResourceAsString( "/samples/audio_login_req.bin" );
         String ds = c.toDatastream();
 
 //        System.out.println( HexDump.prettyDump( expected ) );
@@ -368,7 +368,7 @@ public class CommandTest
             buf.append( (char)( i + 1 ) );
         text.setDataContent( buf.toString() );
 
-        String expected = ResourceLoader.loadResource( "/samples/audio_data-scrubbed.bin" );
+        String expected = ResourceLoader.loadResourceAsString( "/samples/audio_data-scrubbed.bin" );
         String ds = c.toDatastream();
 
 //        System.out.println( HexDump.prettyDump( expected ) );
@@ -385,7 +385,7 @@ public class CommandTest
         c.setProtocol( ProtocolE.OPERATION_PROTOCOL );
         c.setOpCode( OperationProtocolOpCodeE.Keep_Alive );
 
-        String expected = ResourceLoader.loadResource( "/samples/keep_alive.bin" );
+        String expected = ResourceLoader.loadResourceAsString( "/samples/keep_alive.bin" );
         String ds = c.toDatastream();
 
 //        System.out.println( HexDump.prettyDump( expected ) );
@@ -405,7 +405,7 @@ public class CommandTest
         c.setCommandText( text );
         text.setData( 1 );
 
-        String expected = ResourceLoader.loadResource( "/samples/video_start_req.bin" );
+        String expected = ResourceLoader.loadResourceAsString( "/samples/video_start_req.bin" );
         String ds = c.toDatastream();
 
 //        System.out.println( HexDump.prettyDump( expected ) );
@@ -426,7 +426,7 @@ public class CommandTest
         text.setResultCode( ResultCodeE.CORRECT );
         text.setDataConnectionId( "" + (char)0x40 + (char)0x1B + (char)0x25 + (char)0x60 );
 
-        String expected = ResourceLoader.loadResource( "/samples/video_start_resp.bin" );
+        String expected = ResourceLoader.loadResourceAsString( "/samples/video_start_resp.bin" );
         String ds = c.toDatastream();
 
 //        System.out.println( HexDump.prettyDump( expected ) );
@@ -446,7 +446,7 @@ public class CommandTest
         c.setCommandText( text );
         text.setData( 1 );
 
-        String expected = ResourceLoader.loadResource( "/samples/talk_start_req.bin" );
+        String expected = ResourceLoader.loadResourceAsString( "/samples/talk_start_req.bin" );
         String ds = c.toDatastream();
 
 //        System.out.println( HexDump.prettyDump( expected ) );
@@ -467,7 +467,7 @@ public class CommandTest
         text.setResultCode( ResultCodeE.CORRECT );
         text.setDataConnectionId( "" + (char)0x7D + (char)0x26 + (char)0xF6 + (char)0x38 );
 
-        String expected = ResourceLoader.loadResource( "/samples/talk_start_resp.bin" );
+        String expected = ResourceLoader.loadResourceAsString( "/samples/talk_start_resp.bin" );
         String ds = c.toDatastream();
 
 //        System.out.println( HexDump.prettyDump( expected ) );
@@ -488,7 +488,7 @@ public class CommandTest
         text.setTimestamp( 0x0000E6E4 );
         text.setFramesPerSec( 0x537CCE75 );
 
-        String expected = ResourceLoader.loadResource( "/samples/video_data.bin" );
+        String expected = ResourceLoader.loadResourceAsString( "/samples/video_data.bin" );
 
         String data = expected.substring( 0x24 );   //Cheating to create the data.
         text.setDataContent( data );
