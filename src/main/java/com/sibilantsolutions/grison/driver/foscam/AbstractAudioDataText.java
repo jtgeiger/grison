@@ -81,7 +81,7 @@ abstract public class AbstractAudioDataText implements DatastreamI
     @Override
     public String toDatastream()
     {
-        StringBuilder buf = new StringBuilder( 177 );
+        StringBuilder buf = new StringBuilder( 4 + 4 + 4 + 1 + 4 + dataContent.length() );  //177
 
         buf.append( Convert.toLittleEndian( timestamp, 4 ) );
         buf.append( Convert.toLittleEndian( serialNumber, 4 ) );
