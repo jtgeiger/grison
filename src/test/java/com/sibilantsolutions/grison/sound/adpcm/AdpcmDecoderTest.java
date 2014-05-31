@@ -31,7 +31,6 @@ public class AdpcmDecoderTest
         assertArrayEquals( expected, actual );
     }
 
-
     @Test
     public void testDecodeByteArrayAll()
     {
