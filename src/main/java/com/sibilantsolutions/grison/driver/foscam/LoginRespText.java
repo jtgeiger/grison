@@ -71,6 +71,7 @@ public class LoginRespText implements DatastreamI
 
         buf.append( Convert.toLittleEndian( resultCode.getValue(), 2 ) );
 
+            //TODO: Truncate if necessary; pad if necessary.
         buf.append( cameraId ); //12 bytes
         buf.append( (char)0x00 );   //Null terminator.
 

@@ -501,4 +501,24 @@ public class CommandTest
         assertEquals( expected, ds );
     }
 
+    @Test
+    public void testToDatastream18()
+    {
+        Command c = new Command();
+
+        c.setProtocol( ProtocolE.SEARCH_PROTOCOL );
+        c.setOpCode( SearchProtocolOpCodeE.Search_Req );
+        SearchReqText text = new SearchReqText();
+        c.setCommandText( text );
+
+        String expected = ResourceLoader.loadResourceAsString( "/samples/search_req.bin" );
+
+        String ds = c.toDatastream();
+
+//        System.out.println( HexDump.prettyDump( expected ) );
+//        System.out.println( HexDump.prettyDump( ds ) );
+
+        assertEquals( expected, ds );
+    }
+
 }
