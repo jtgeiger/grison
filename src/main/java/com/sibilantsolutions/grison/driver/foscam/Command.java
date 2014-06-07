@@ -63,6 +63,10 @@ public class Command implements DatastreamI
                 c.opCode = AudioVideoProtocolOpCodeE.fromValue( opCodeNum );
                 break;
 
+            case SEARCH_PROTOCOL:
+                c.opCode = SearchProtocolOpCodeE.fromValue( opCodeNum );
+                break;
+
             default:
                 throw new IllegalArgumentException( "Unexpected value=" + c.protocol );
         }

@@ -2,6 +2,7 @@ package com.sibilantsolutions.grison.driver.foscam;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
 
@@ -144,6 +145,29 @@ public class CommandTest
         assertEquals( 0x0000E6E4, text.getTimestamp() );
         assertEquals( 0x537CCE75, text.getFramesPerSec() );
         assertEquals( 0x0000AE38, text.getDataContent().length() ); //44600
+    }
+
+    @Test
+    public void testParse10()
+    {
+        String bin = ResourceLoader.loadResourceAsString( "/samples/search_resp.bin" );
+
+        Command c = Command.parse( bin );
+        assertEquals( ProtocolE.SEARCH_PROTOCOL, c.getProtocol() );
+        assertEquals( SearchProtocolOpCodeE.Search_Resp, c.getOpCode() );
+
+        SearchRespText text = (SearchRespText)c.getCommandText();
+
+        assertEquals( "00626E4E72BF", text.getCameraId() );
+        assertEquals( "cam1", text.getCameraName() );
+        assertEquals( Convert.toNum( "" + (char)192 + (char)168 + (char)69 + (char)21 ), text.getCameraIP() );
+        assertEquals( Convert.toNum( "" + (char)255 + (char)255 + (char)255 + (char)0 ), text.getNetmask() );
+        assertEquals( Convert.toNum( "" + (char)192 + (char)168 + (char)69 + (char)1 ), text.getGatewayIP() );
+        assertEquals( Convert.toNum( "" + (char)192 + (char)168 + (char)69 + (char)1 ), text.getDnsIP() );
+        assertEquals( "" + (char)11 + (char)37 + (char)2 + (char)56, text.getSysSoftwareVersion() );
+        assertEquals( "" + (char)2 + (char)4 + (char)10 + (char)10, text.getAppSoftwareVersion() );
+        assertEquals( 80, text.getCameraPort() );
+        assertTrue( text.isDhcpEnabled() );
     }
 
     @Test
@@ -512,6 +536,37 @@ public class CommandTest
         c.setCommandText( text );
 
         String expected = ResourceLoader.loadResourceAsString( "/samples/search_req.bin" );
+
+        String ds = c.toDatastream();
+
+//        System.out.println( HexDump.prettyDump( expected ) );
+//        System.out.println( HexDump.prettyDump( ds ) );
+
+        assertEquals( expected, ds );
+    }
+
+    @Test
+    public void testToDatastream19()
+    {
+        Command c = new Command();
+
+        c.setProtocol( ProtocolE.SEARCH_PROTOCOL );
+        c.setOpCode( SearchProtocolOpCodeE.Search_Resp );
+        SearchRespText text = new SearchRespText();
+        c.setCommandText( text );
+
+        text.setCameraId( "00626E4E72BF" );
+        text.setCameraName( "cam1" );
+        text.setCameraIP( Convert.toNum( "" + (char)192 + (char)168 + (char)69 + (char)21 ) );
+        text.setNetmask( Convert.toNum( "" + (char)255 + (char)255 + (char)255 + (char)0 ) );
+        text.setGatewayIP( Convert.toNum( "" + (char)192 + (char)168 + (char)69 + (char)1 ) );
+        text.setDnsIP( Convert.toNum( "" + (char)192 + (char)168 + (char)69 + (char)1 ) );
+        text.setSysSoftwareVersion( "" + (char)11 + (char)37 + (char)2 + (char)56 );
+        text.setAppSoftwareVersion( "" + (char)2 + (char)4 + (char)10 + (char)10 );
+        text.setCameraPort( 80 );
+        text.setDhcpEnabled( true );
+
+        String expected = ResourceLoader.loadResourceAsString( "/samples/search_resp.bin" );
 
         String ds = c.toDatastream();
 

@@ -56,7 +56,8 @@ public enum SearchProtocolOpCodeE implements OpCodeI
     {
         switch ( this )
         {
-                //TODO
+            case Search_Resp:
+                return SearchRespText.parse( data );
 
             default:
                 throw new IllegalArgumentException( "Unexpected value=" + this );
