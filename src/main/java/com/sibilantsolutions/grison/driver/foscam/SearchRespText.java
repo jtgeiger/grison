@@ -17,6 +17,106 @@ public class SearchRespText implements DatastreamI
     private long cameraPort;            //INT16_R (2 bytes; big endian)
     private boolean dhcpEnabled;        //INT8
 
+    public String getCameraId()
+    {
+        return cameraId;
+    }
+
+    public void setCameraId( String cameraId )
+    {
+        this.cameraId = cameraId;
+    }
+
+    public String getCameraName()
+    {
+        return cameraName;
+    }
+
+    public void setCameraName( String cameraName )
+    {
+        this.cameraName = cameraName;
+    }
+
+    public long getCameraIP()
+    {
+        return cameraIP;
+    }
+
+    public void setCameraIP( long cameraIP )
+    {
+        this.cameraIP = cameraIP;
+    }
+
+    public long getNetmask()
+    {
+        return netmask;
+    }
+
+    public void setNetmask( long netmask )
+    {
+        this.netmask = netmask;
+    }
+
+    public long getGatewayIP()
+    {
+        return gatewayIP;
+    }
+
+    public void setGatewayIP( long gatewayIP )
+    {
+        this.gatewayIP = gatewayIP;
+    }
+
+    public long getDnsIP()
+    {
+        return dnsIP;
+    }
+
+    public void setDnsIP( long dnsIP )
+    {
+        this.dnsIP = dnsIP;
+    }
+
+    public String getSysSoftwareVersion()
+    {
+        return sysSoftwareVersion;
+    }
+
+    public void setSysSoftwareVersion( String sysSoftwareVersion )
+    {
+        this.sysSoftwareVersion = sysSoftwareVersion;
+    }
+
+    public String getAppSoftwareVersion()
+    {
+        return appSoftwareVersion;
+    }
+
+    public void setAppSoftwareVersion( String appSoftwareVersion )
+    {
+        this.appSoftwareVersion = appSoftwareVersion;
+    }
+
+    public long getCameraPort()
+    {
+        return cameraPort;
+    }
+
+    public void setCameraPort( long cameraPort )
+    {
+        this.cameraPort = cameraPort;
+    }
+
+    public boolean isDhcpEnabled()
+    {
+        return dhcpEnabled;
+    }
+
+    public void setDhcpEnabled( boolean dhcpEnabled )
+    {
+        this.dhcpEnabled = dhcpEnabled;
+    }
+
     static public SearchRespText parse( String data )
     {
         SearchRespText text = new SearchRespText();
@@ -51,12 +151,30 @@ public class SearchRespText implements DatastreamI
     @Override
     public String toDatastream()
     {
-        StringBuilder buf = new StringBuilder( 13 + 21 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 2 + 1 );
+        final int LEN = 13 + 21 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 2 + 1;
+        StringBuilder buf = new StringBuilder( LEN );
 
-        //TODO: Truncate strings if necessary; pad if necessary.
+        buf.append( Convert.padRearOrTruncate( cameraId, 12, (char)0 ) );
+        buf.append( (char)0 );
+        buf.append( Convert.padRearOrTruncate( cameraName, 20, (char)0 ) );
+        buf.append( (char)0 );
 
-        //return buf.toString();
-        throw new UnsupportedOperationException( "OGTE TODO!" );
+        buf.append( Convert.toBigEndian( cameraIP, 4 ) );
+        buf.append( Convert.toBigEndian( netmask, 4 ) );
+        buf.append( Convert.toBigEndian( gatewayIP, 4 ) );
+        buf.append( Convert.toBigEndian( dnsIP, 4 ) );
+
+        for ( int i = 0; i < 4; i++ )
+            buf.append( (char)0 );
+
+        buf.append( Convert.padRearOrTruncate( sysSoftwareVersion, 4, (char)0 ) );
+        buf.append( Convert.padRearOrTruncate( appSoftwareVersion, 4, (char)0 ) );
+
+        buf.append( Convert.toBigEndian( cameraPort, 2 ) );
+
+        buf.append( dhcpEnabled ? (char)1: (char)0 );
+
+        return buf.toString();
     }
 
 }

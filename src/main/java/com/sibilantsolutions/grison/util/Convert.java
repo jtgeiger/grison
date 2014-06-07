@@ -9,6 +9,63 @@ public abstract class Convert
 
     private Convert() {}    //Prevent instantiation.
 
+    public static String padFront( String val, int numBytes, char padChar )
+    {
+        StringBuilder buf = new StringBuilder( val );
+
+        for ( ; buf.length() < numBytes; )
+        {
+            buf.insert( 0, padChar );
+        }
+
+        return buf.toString();
+    }
+
+    public static String padRear( String val, int numBytes, char padChar )
+    {
+        StringBuilder buf = new StringBuilder( val );
+
+        for ( ; buf.length() < numBytes; )
+        {
+            buf.append( padChar );
+        }
+
+        return buf.toString();
+    }
+
+    public static String padRearOrTruncate( String val, int numBytes, char padChar )
+    {
+        if ( val.length() > numBytes )
+            return val.substring( 0, numBytes );
+
+        return padRear( val, numBytes, padChar );
+    }
+
+    public static String toBigEndian( long num )
+    {
+        StringBuilder buf = new StringBuilder();
+
+        do
+        {
+            char cur = (char)( num & 0xFF );
+            buf.insert( 0, cur );
+            num >>= 8;
+
+        } while ( num > 0 );
+
+        return buf.toString();
+    }
+
+    static public String toBigEndian( long num, int numBytes )
+    {
+        String val = toBigEndian( num );
+
+        if ( val.length() > numBytes )
+            throw new IllegalArgumentException( "Overflow: num=" + num + ", numBytes=" + numBytes );
+
+        return padFront( val, numBytes, (char)0 );
+    }
+
     public static String toLittleEndian( long num )
     {
         StringBuilder buf = new StringBuilder();
@@ -62,18 +119,6 @@ public abstract class Convert
         }
 
         return num;
-    }
-
-    public static String padRear( String val, int numBytes, char padChar )
-    {
-        StringBuilder buf = new StringBuilder( val );
-
-        for ( ; buf.length() < numBytes; )
-        {
-            buf.append( padChar );
-        }
-
-        return buf.toString();
     }
 
 }
