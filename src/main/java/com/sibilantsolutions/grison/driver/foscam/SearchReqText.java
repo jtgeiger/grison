@@ -1,7 +1,5 @@
 package com.sibilantsolutions.grison.driver.foscam;
 
-import com.sibilantsolutions.grison.util.Convert;
-
 public class SearchReqText implements DatastreamI
 {
 

@@ -160,10 +160,10 @@ public class CommandTest
 
         assertEquals( "00626E4E72BF", text.getCameraId() );
         assertEquals( "cam1", text.getCameraName() );
-        assertEquals( Convert.toNum( "" + (char)192 + (char)168 + (char)69 + (char)21 ), text.getCameraIP() );
-        assertEquals( Convert.toNum( "" + (char)255 + (char)255 + (char)255 + (char)0 ), text.getNetmask() );
-        assertEquals( Convert.toNum( "" + (char)192 + (char)168 + (char)69 + (char)1 ), text.getGatewayIP() );
-        assertEquals( Convert.toNum( "" + (char)192 + (char)168 + (char)69 + (char)1 ), text.getDnsIP() );
+        assertEquals( SearchRespText.getByAddress( new byte[]{ (byte)192, (byte)168, 69, 21 }  ), text.getCameraIP() );
+        assertEquals( SearchRespText.getByAddress( new byte[]{ (byte)255, (byte)255, (byte)255, 0 }  ), text.getNetmask() );
+        assertEquals( SearchRespText.getByAddress( new byte[]{ (byte)192, (byte)168, 69, 1 }  ), text.getGatewayIP() );
+        assertEquals( SearchRespText.getByAddress( new byte[]{ (byte)192, (byte)168, 69, 1 }  ), text.getDnsIP() );
         assertEquals( "" + (char)11 + (char)37 + (char)2 + (char)56, text.getSysSoftwareVersion() );
         assertEquals( "" + (char)2 + (char)4 + (char)10 + (char)10, text.getAppSoftwareVersion() );
         assertEquals( 80, text.getCameraPort() );
@@ -557,10 +557,10 @@ public class CommandTest
 
         text.setCameraId( "00626E4E72BF" );
         text.setCameraName( "cam1" );
-        text.setCameraIP( Convert.toNum( "" + (char)192 + (char)168 + (char)69 + (char)21 ) );
-        text.setNetmask( Convert.toNum( "" + (char)255 + (char)255 + (char)255 + (char)0 ) );
-        text.setGatewayIP( Convert.toNum( "" + (char)192 + (char)168 + (char)69 + (char)1 ) );
-        text.setDnsIP( Convert.toNum( "" + (char)192 + (char)168 + (char)69 + (char)1 ) );
+        text.setCameraIP( SearchRespText.getByAddress( new byte[]{ (byte)192, (byte)168, 69, 21 }  ) );
+        text.setNetmask( SearchRespText.getByAddress( new byte[]{ (byte)255, (byte)255, (byte)255, 0 }  ) );
+        text.setGatewayIP( SearchRespText.getByAddress( new byte[]{ (byte)192, (byte)168, 69, 1 }  ) );
+        text.setDnsIP( SearchRespText.getByAddress( new byte[]{ (byte)192, (byte)168, 69, 1 }  ) );
         text.setSysSoftwareVersion( "" + (char)11 + (char)37 + (char)2 + (char)56 );
         text.setAppSoftwareVersion( "" + (char)2 + (char)4 + (char)10 + (char)10 );
         text.setCameraPort( 80 );

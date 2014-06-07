@@ -1,5 +1,8 @@
 package com.sibilantsolutions.grison.driver.foscam;
 
+import java.net.InetAddress;
+import java.net.UnknownHostException;
+
 import com.sibilantsolutions.grison.util.Convert;
 
 public class SearchRespText implements DatastreamI
@@ -7,14 +10,14 @@ public class SearchRespText implements DatastreamI
 
     private String cameraId;            //BINARY_STREAM[13]
     private String cameraName;          //BINARY_STREAM[21]
-    private long cameraIP;              //INT32_R (4 bytes; big endian)
-    private long netmask;               //INT32_R (4 bytes; big endian)
-    private long gatewayIP;             //INT32_R (4 bytes; big endian)
-    private long dnsIP;                 //INT32_R (4 bytes; big endian)
+    private InetAddress cameraIP;       //INT32_R (4 bytes; big endian)
+    private InetAddress netmask;        //INT32_R (4 bytes; big endian)
+    private InetAddress gatewayIP;      //INT32_R (4 bytes; big endian)
+    private InetAddress dnsIP;          //INT32_R (4 bytes; big endian)
     //private String RESERVE            //BINARY_STREAM[4]
     private String sysSoftwareVersion;  //BINARY_STREAM[4]
     private String appSoftwareVersion;  //BINARY_STREAM[4]
-    private long cameraPort;            //INT16_R (2 bytes; big endian)
+    private int cameraPort;             //INT16_R (2 bytes; big endian)
     private boolean dhcpEnabled;        //INT8
 
     public String getCameraId()
@@ -37,42 +40,42 @@ public class SearchRespText implements DatastreamI
         this.cameraName = cameraName;
     }
 
-    public long getCameraIP()
+    public InetAddress getCameraIP()
     {
         return cameraIP;
     }
 
-    public void setCameraIP( long cameraIP )
+    public void setCameraIP( InetAddress cameraIP )
     {
         this.cameraIP = cameraIP;
     }
 
-    public long getNetmask()
+    public InetAddress getNetmask()
     {
         return netmask;
     }
 
-    public void setNetmask( long netmask )
+    public void setNetmask( InetAddress netmask )
     {
         this.netmask = netmask;
     }
 
-    public long getGatewayIP()
+    public InetAddress getGatewayIP()
     {
         return gatewayIP;
     }
 
-    public void setGatewayIP( long gatewayIP )
+    public void setGatewayIP( InetAddress gatewayIP )
     {
         this.gatewayIP = gatewayIP;
     }
 
-    public long getDnsIP()
+    public InetAddress getDnsIP()
     {
         return dnsIP;
     }
 
-    public void setDnsIP( long dnsIP )
+    public void setDnsIP( InetAddress dnsIP )
     {
         this.dnsIP = dnsIP;
     }
@@ -97,12 +100,12 @@ public class SearchRespText implements DatastreamI
         this.appSoftwareVersion = appSoftwareVersion;
     }
 
-    public long getCameraPort()
+    public int getCameraPort()
     {
         return cameraPort;
     }
 
-    public void setCameraPort( long cameraPort )
+    public void setCameraPort( int cameraPort )
     {
         this.cameraPort = cameraPort;
     }
@@ -131,17 +134,17 @@ public class SearchRespText implements DatastreamI
         cameraName = cameraName.trim();
         text.cameraName = cameraName;
 
-        text.cameraIP = Convert.toNum( data.substring( i, i += 4 ) );
-        text.netmask = Convert.toNum( data.substring( i, i += 4 ) );
-        text.gatewayIP = Convert.toNum( data.substring( i, i += 4 ) );
-        text.dnsIP = Convert.toNum( data.substring( i, i += 4 ) );
+        text.cameraIP = getByAddress( data.substring( i, i += 4 ) );
+        text.netmask = getByAddress( data.substring( i, i += 4 ) );
+        text.gatewayIP = getByAddress( data.substring( i, i += 4 ) );
+        text.dnsIP = getByAddress( data.substring( i, i += 4 ) );
 
         i += 4;
 
         text.sysSoftwareVersion = data.substring( i, i += 4 );
         text.appSoftwareVersion = data.substring( i, i += 4 );
 
-        text.cameraPort = Convert.toNum( data.substring( i, i += 2 ) );
+        text.cameraPort = (int)Convert.toNum( data.substring( i, i += 2 ) );
 
         text.dhcpEnabled = ( data.charAt( i ) == 1 );
 
@@ -159,10 +162,10 @@ public class SearchRespText implements DatastreamI
         buf.append( Convert.padRearOrTruncate( cameraName, 20, (char)0 ) );
         buf.append( (char)0 );
 
-        buf.append( Convert.toBigEndian( cameraIP, 4 ) );
-        buf.append( Convert.toBigEndian( netmask, 4 ) );
-        buf.append( Convert.toBigEndian( gatewayIP, 4 ) );
-        buf.append( Convert.toBigEndian( dnsIP, 4 ) );
+        buf.append( new String( cameraIP.getAddress(), Convert.cs ) );
+        buf.append( new String( netmask.getAddress(), Convert.cs ) );
+        buf.append( new String( gatewayIP.getAddress(), Convert.cs ) );
+        buf.append( new String( dnsIP.getAddress(), Convert.cs ) );
 
         for ( int i = 0; i < 4; i++ )
             buf.append( (char)0 );
@@ -175,6 +178,24 @@ public class SearchRespText implements DatastreamI
         buf.append( dhcpEnabled ? (char)1: (char)0 );
 
         return buf.toString();
+    }
+
+    static public InetAddress getByAddress( String str )
+    {
+        return getByAddress( str.getBytes( Convert.cs ) );
+    }
+
+    static public InetAddress getByAddress( byte[] bytes )
+    {
+        try
+        {
+            return InetAddress.getByAddress( bytes );
+        }
+        catch ( UnknownHostException e )
+        {
+            // TODO Auto-generated catch block
+            throw new UnsupportedOperationException( "OGTE TODO!", e );
+        }
     }
 
 }
