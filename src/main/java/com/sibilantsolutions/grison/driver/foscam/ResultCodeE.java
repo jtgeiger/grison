@@ -6,6 +6,7 @@ public enum ResultCodeE
     USER_WRONG( Values.USER_WRONG ),
     REFUSE_OVER_MAX_CONNS( Values.REFUSE_OVER_MAX_CONNS ),
     PWD_ERROR( Values.PWD_ERROR ),
+    PRI_ERROR( Values.PRI_ERROR ),
     UNSUPPORTED( Values.UNSUPPORTED ),
     ;
 
@@ -15,6 +16,7 @@ public enum ResultCodeE
         final static public int USER_WRONG              = 1;
         final static public int REFUSE_OVER_MAX_CONNS   = 2;
         final static public int PWD_ERROR               = 5;
+        final static public int PRI_ERROR               = 6;
         final static public int UNSUPPORTED             = 7;
     }
 
@@ -45,6 +47,9 @@ public enum ResultCodeE
 
             case Values.PWD_ERROR:
                 return PWD_ERROR;
+
+            case Values.PRI_ERROR:
+                return PRI_ERROR;
 
             case Values.UNSUPPORTED:
                 return UNSUPPORTED;

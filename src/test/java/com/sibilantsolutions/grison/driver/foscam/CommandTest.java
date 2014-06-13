@@ -171,6 +171,48 @@ public class CommandTest
     }
 
     @Test
+    public void testParse11()
+    {
+        String bin = ResourceLoader.loadResourceAsString( "/samples/init_resp-pri_error.bin" );
+
+        Command c = Command.parse( bin );
+        assertEquals( ProtocolE.SEARCH_PROTOCOL, c.getProtocol() );
+        assertEquals( SearchProtocolOpCodeE.Init_Resp, c.getOpCode() );
+
+        InitRespText text = (InitRespText)c.getCommandText();
+
+        assertEquals( ResultCodeE.PRI_ERROR, text.getResultCode() );
+    }
+
+    @Test
+    public void testParse12()
+    {
+        String bin = ResourceLoader.loadResourceAsString( "/samples/init_resp-user_wrong.bin" );
+
+        Command c = Command.parse( bin );
+        assertEquals( ProtocolE.SEARCH_PROTOCOL, c.getProtocol() );
+        assertEquals( SearchProtocolOpCodeE.Init_Resp, c.getOpCode() );
+
+        InitRespText text = (InitRespText)c.getCommandText();
+
+        assertEquals( ResultCodeE.USER_WRONG, text.getResultCode() );
+    }
+
+    @Test
+    public void testParse13()
+    {
+        String bin = ResourceLoader.loadResourceAsString( "/samples/init_resp-succeed.bin" );
+
+        Command c = Command.parse( bin );
+        assertEquals( ProtocolE.SEARCH_PROTOCOL, c.getProtocol() );
+        assertEquals( SearchProtocolOpCodeE.Init_Resp, c.getOpCode() );
+
+        InitRespText text = (InitRespText)c.getCommandText();
+
+        assertEquals( ResultCodeE.CORRECT, text.getResultCode() );
+    }
+
+    @Test
     public void testToDatastream01()
     {
         Command c = new Command();
@@ -567,6 +609,35 @@ public class CommandTest
         text.setDhcpEnabled( true );
 
         String expected = ResourceLoader.loadResourceAsString( "/samples/search_resp.bin" );
+
+        String ds = c.toDatastream();
+
+//        System.out.println( HexDump.prettyDump( expected ) );
+//        System.out.println( HexDump.prettyDump( ds ) );
+
+        assertEquals( expected, ds );
+    }
+
+    @Test
+    public void testToDatastream20()
+    {
+        Command c = new Command();
+
+        c.setProtocol( ProtocolE.SEARCH_PROTOCOL );
+        c.setOpCode( SearchProtocolOpCodeE.Init_Req );
+        InitReqText text = new InitReqText();
+        c.setCommandText( text );
+
+        text.setCameraId( "00626E4E72BF" );
+        text.setUsername( "camvis" );
+        text.setPassword( "vis,FOSbuy1v" );
+        text.setCameraIP( SearchRespText.getByAddress( new byte[]{ (byte)192, (byte)168, 69, 22 }  ) );
+        text.setNetmask( SearchRespText.getByAddress( new byte[]{ (byte)255, (byte)255, (byte)255, 0 }  ) );
+        text.setGatewayIP( SearchRespText.getByAddress( new byte[]{ (byte)192, (byte)168, 69, 1 }  ) );
+        text.setDnsIP( SearchRespText.getByAddress( new byte[]{ (byte)192, (byte)168, 69, 1 }  ) );
+        text.setCameraPort( 80 );
+
+        String expected = ResourceLoader.loadResourceAsString( "/samples/init_req.bin" );
 
         String ds = c.toDatastream();
 

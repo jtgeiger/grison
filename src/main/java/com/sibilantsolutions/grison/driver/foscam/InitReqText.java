@@ -80,6 +80,26 @@ public class InitReqText implements DatastreamI
         this.cameraPort = cameraPort;
     }
 
+    public String getUsername()
+    {
+        return username;
+    }
+
+    public void setUsername( String username )
+    {
+        this.username = username;
+    }
+
+    public String getPassword()
+    {
+        return password;
+    }
+
+    public void setPassword( String password )
+    {
+        this.password = password;
+    }
+
     static public InitReqText parse( String data )
     {
         InitReqText text = new InitReqText();

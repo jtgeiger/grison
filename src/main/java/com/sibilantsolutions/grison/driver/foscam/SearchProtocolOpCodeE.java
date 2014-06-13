@@ -59,6 +59,9 @@ public enum SearchProtocolOpCodeE implements OpCodeI
             case Search_Resp:
                 return SearchRespText.parse( data );
 
+            case Init_Resp:
+                return InitRespText.parse( data );
+
             default:
                 throw new IllegalArgumentException( "Unexpected value=" + this );
         }
