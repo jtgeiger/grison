@@ -39,6 +39,18 @@ public class FoscamService
         return (AudioStartRespText)response.getCommandText();
     }
 
+    public void audioVideoLogin( String dataConnectionId )
+    {
+        Command c = new Command();
+        c.setProtocol( ProtocolE.AUDIO_VIDEO_PROTOCOL );
+        c.setOpCode( OperationProtocolOpCodeE.Login_Req );
+        LoginReqText login = new LoginReqText();
+        c.setCommandText( login );
+        login.setDataConnectionId( dataConnectionId );
+
+        connection.sendNoReceive( c );
+    }
+
     public LoginRespText login()
     {
         Command c = new Command();

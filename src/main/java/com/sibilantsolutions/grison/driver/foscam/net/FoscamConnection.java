@@ -27,6 +27,8 @@ import com.sibilantsolutions.grison.driver.foscam.domain.SearchProtocolOpCodeE;
 import com.sibilantsolutions.grison.util.Convert;
 import com.sibilantsolutions.iptools.event.ReceiveEvt;
 import com.sibilantsolutions.iptools.event.SocketListenerI;
+import com.sibilantsolutions.iptools.util.DurationLoggingCallable;
+import com.sibilantsolutions.iptools.util.DurationLoggingRunnable;
 import com.sibilantsolutions.iptools.util.LengthByteBuffer;
 import com.sibilantsolutions.iptools.util.LengthByteBuffer.LengthByteType;
 import com.sibilantsolutions.iptools.util.Socker;
@@ -99,6 +101,25 @@ public class FoscamConnection
         return text;
     }
 
+    protected void sendNoReceive( final Command request )
+    {
+        Runnable task = new Runnable() {
+
+            @Override
+            public void run()
+            {
+                log.info( "Send request: p={}, o={}.", request.getProtocol(), request.getOpCode() );
+
+                Socker.send( request.toDatastream(), socket );
+            }
+        };
+
+        task = new DurationLoggingRunnable( task,
+                "sendNoReceive p=" + request.getProtocol() + ", o=" + request.getOpCode() );
+
+        execute( Executors.callable( task ) );
+    }
+
     protected Command sendReceive( final Command request )
     {
         Callable<Command> task = new Callable<Command>() {
@@ -115,6 +136,9 @@ public class FoscamConnection
                 return response;
             }
         };
+
+        task = new DurationLoggingCallable<Command>( task,
+                "sendReceive p=" + request.getProtocol() + ", o=" + request.getOpCode() );
 
         return execute( task );
     }
