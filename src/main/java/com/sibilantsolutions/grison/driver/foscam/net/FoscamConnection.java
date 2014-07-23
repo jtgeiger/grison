@@ -25,6 +25,7 @@ import com.sibilantsolutions.grison.driver.foscam.domain.OperationProtocolOpCode
 import com.sibilantsolutions.grison.driver.foscam.domain.ProtocolE;
 import com.sibilantsolutions.grison.driver.foscam.domain.SearchProtocolOpCodeE;
 import com.sibilantsolutions.grison.util.Convert;
+import com.sibilantsolutions.iptools.event.LostConnectionEvt;
 import com.sibilantsolutions.iptools.event.ReceiveEvt;
 import com.sibilantsolutions.iptools.event.SocketListenerI;
 import com.sibilantsolutions.iptools.util.DurationLoggingCallable;
@@ -152,6 +153,23 @@ public class FoscamConnection
             this.queue = queue;
         }
 
+        private void keepAlive( ReceiveEvt evt )
+        {
+            Command c = new Command();
+            c.setProtocol( ProtocolE.OPERATION_PROTOCOL );
+            c.setOpCode( OperationProtocolOpCodeE.Keep_Alive );
+
+            String datastream = c.toDatastream();
+            Socker.send( datastream, evt.getSource() );
+        }
+
+        @Override
+        public void onLostConnection( LostConnectionEvt evt )
+        {
+            // TODO Auto-generated method stub
+            throw new UnsupportedOperationException( "MY TODO!" );
+        }
+
         @Override
         public void onReceive( ReceiveEvt evt )
         {
@@ -191,16 +209,6 @@ public class FoscamConnection
                 log.info( "UNSOLICITED!" );
                 //TODO fire to an UnsolicitedHandlerI.
             }
-        }
-
-        private void keepAlive( ReceiveEvt evt )
-        {
-            Command c = new Command();
-            c.setProtocol( ProtocolE.OPERATION_PROTOCOL );
-            c.setOpCode( OperationProtocolOpCodeE.Keep_Alive );
-
-            String datastream = c.toDatastream();
-            Socker.send( datastream, evt.getSource() );
         }
 
     }
