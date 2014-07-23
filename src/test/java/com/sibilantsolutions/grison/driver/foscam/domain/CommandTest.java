@@ -2,6 +2,7 @@ package com.sibilantsolutions.grison.driver.foscam.domain;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
@@ -210,6 +211,21 @@ public class CommandTest
         InitRespText text = (InitRespText)c.getCommandText();
 
         assertEquals( ResultCodeE.CORRECT, text.getResultCode() );
+    }
+
+    @Test
+    public void testParse14()
+    {
+        String bin = ResourceLoader.loadResourceAsString( "/samples/video_start_resp-no_data_conn_id.bin" );
+
+        Command c = Command.parse( bin );
+        assertEquals( ProtocolE.OPERATION_PROTOCOL, c.getProtocol() );
+        assertEquals( OperationProtocolOpCodeE.Video_Start_Resp, c.getOpCode() );
+
+        VideoStartRespText text = (VideoStartRespText)c.getCommandText();
+
+        assertEquals( ResultCodeE.CORRECT, text.getResultCode() );
+        assertNull( text.getDataConnectionId() );
     }
 
     @Test

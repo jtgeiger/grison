@@ -35,8 +35,13 @@ abstract public class AbstractStartRespText implements DatastreamI
         int resultNum = (int)Convert.toNumLittleEndian( data.substring( i, i += 2 ) );
         this.resultCode = ResultCodeE.fromValue( resultNum );
 
-        String id = data.substring( i, i += 4 );
-        this.dataConnectionId = id;
+            //If an audio/video connection is already open and another start request is sent,
+            //the response will have resultCode==0 and no data connection id.
+        if ( i < data.length() )
+        {
+            String id = data.substring( i, i += 4 );
+            this.dataConnectionId = id;
+        }
     }
 
     @Override
