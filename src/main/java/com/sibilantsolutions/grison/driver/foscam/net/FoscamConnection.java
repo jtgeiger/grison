@@ -19,11 +19,16 @@ import java.util.concurrent.TimeoutException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.sibilantsolutions.grison.driver.foscam.domain.AudioDataText;
+import com.sibilantsolutions.grison.driver.foscam.domain.AudioVideoProtocolOpCodeE;
 import com.sibilantsolutions.grison.driver.foscam.domain.Command;
 import com.sibilantsolutions.grison.driver.foscam.domain.OpCodeI;
 import com.sibilantsolutions.grison.driver.foscam.domain.OperationProtocolOpCodeE;
 import com.sibilantsolutions.grison.driver.foscam.domain.ProtocolE;
 import com.sibilantsolutions.grison.driver.foscam.domain.SearchProtocolOpCodeE;
+import com.sibilantsolutions.grison.driver.foscam.domain.VideoDataText;
+import com.sibilantsolutions.grison.evt.AudioHandlerI;
+import com.sibilantsolutions.grison.evt.ImageHandlerI;
 import com.sibilantsolutions.grison.util.Convert;
 import com.sibilantsolutions.iptools.event.LostConnectionEvt;
 import com.sibilantsolutions.iptools.event.ReceiveEvt;
@@ -38,6 +43,14 @@ public class FoscamConnection
 {
 
     final static private Logger log = LoggerFactory.getLogger( FoscamConnection.class );
+
+        //These will only come in response to a corresponding request.
+        //All other opcodes are unsolicited.
+    final static private List<? extends OpCodeI> synchronousResponseOpcodes = Arrays.asList(
+        OperationProtocolOpCodeE.Audio_Start_Resp, OperationProtocolOpCodeE.Login_Resp,
+        OperationProtocolOpCodeE.Talk_Start_Resp, OperationProtocolOpCodeE.Verify_Resp,
+        OperationProtocolOpCodeE.Video_Start_Resp,
+        SearchProtocolOpCodeE.Init_Resp, SearchProtocolOpCodeE.Search_Resp );
 
     private Socket socket;
 
@@ -54,13 +67,8 @@ public class FoscamConnection
 
     private BlockingQueue<Command> q = new LinkedBlockingQueue<Command>();
 
-        //These will only come in response to a corresponding request.
-        //All other opcodes are unsolicited.
-    final static private List<? extends OpCodeI> synchronousResponseOpcodes = Arrays.asList(
-        OperationProtocolOpCodeE.Audio_Start_Resp, OperationProtocolOpCodeE.Login_Resp,
-        OperationProtocolOpCodeE.Talk_Start_Resp, OperationProtocolOpCodeE.Verify_Resp,
-        OperationProtocolOpCodeE.Video_Start_Resp,
-        SearchProtocolOpCodeE.Init_Resp, SearchProtocolOpCodeE.Search_Resp );
+    private AudioHandlerI audioHandler = new NoOpAudioHandler();    //Default no-op impl.
+    private ImageHandlerI imageHandler = new NoOpImageHandler();    //Default no-op impl.
 
     private FoscamConnection( Socket socket )
     {
@@ -100,6 +108,26 @@ public class FoscamConnection
         }
 
         return text;
+    }
+
+    public AudioHandlerI getAudioHandler()
+    {
+        return audioHandler;
+    }
+
+    public void setAudioHandler( AudioHandlerI audioHandler )
+    {
+        this.audioHandler = audioHandler;
+    }
+
+    public ImageHandlerI getImageHandler()
+    {
+        return imageHandler;
+    }
+
+    public void setImageHandler( ImageHandlerI imageHandler )
+    {
+        this.imageHandler = imageHandler;
     }
 
     protected void sendNoReceive( final Command request )
@@ -144,7 +172,7 @@ public class FoscamConnection
         return execute( task );
     }
 
-    static private class ReceiverProducer implements SocketListenerI
+    private class ReceiverProducer implements SocketListenerI
     {
         private BlockingQueue<Command> queue;
 
@@ -208,6 +236,25 @@ public class FoscamConnection
             {
                 log.info( "UNSOLICITED!" );
                 //TODO fire to an UnsolicitedHandlerI.
+
+                if ( protocol == ProtocolE.AUDIO_VIDEO_PROTOCOL )
+                {
+                    AudioVideoProtocolOpCodeE avOpCode = (AudioVideoProtocolOpCodeE)opCode;
+
+                    switch ( avOpCode )
+                    {
+                        case Audio_Data:
+                            audioHandler.onReceive( (AudioDataText)command.getCommandText() );
+                            break;
+
+                        case Video_Data:
+                            imageHandler.onReceive( (VideoDataText)command.getCommandText() );
+                            break;
+
+                        default:
+                            throw new RuntimeException( "Unexpected opcode=" + avOpCode );
+                    }
+                }
             }
         }
 

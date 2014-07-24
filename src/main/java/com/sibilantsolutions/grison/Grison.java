@@ -9,6 +9,9 @@ import java.net.URLConnection;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.sibilantsolutions.grison.demo.Demo;
+import com.sibilantsolutions.iptools.util.DurationLoggingRunnable;
+
 /**
  * Grisons, also known as South American wolverines, are mustelids native to Central and South America.
  *   -- Wikipedia
@@ -18,17 +21,21 @@ public class Grison
 
     final static private Logger log = LoggerFactory.getLogger( Grison.class );
 
-    static public void main( String[] args )
+    static public void main( final String[] args )
     {
-        long startMs = System.currentTimeMillis();
         log.info( "main() started." );
 
-        new Grison().init( args[0] );
+        new DurationLoggingRunnable( new Runnable() {
 
-        long endMs = System.currentTimeMillis();
-        log.info( "main() finished; duration={} ms.", endMs - startMs );
+            @Override
+            public void run()
+            {
+                Demo.demo( args[0], Integer.parseInt( args[1] ), args[2], args[3] );
+            }
+        }, "main" ).run();
     }
 
+    @SuppressWarnings( "unused" )
     private void init( String url )
     {
         URL u;
