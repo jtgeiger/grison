@@ -1,6 +1,7 @@
 package com.sibilantsolutions.grison.driver.foscam.domain;
 
-import com.sibilantsolutions.grison.util.Convert;
+import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
 
 abstract public class AbstractAudioDataText implements DatastreamI
 {
@@ -10,7 +11,7 @@ abstract public class AbstractAudioDataText implements DatastreamI
     private long gatherTime;            //INT32 (4 bytes; little endian); From 1970.1.1 to current time
     private AudioFormatE audioFormat;   //INT8; =0: adpcm
     //private long dataLength;          //INT32 (4 bytes; little endian); =160
-    private String dataContent;         //BINARY_STREAM[n]
+    private byte[] dataContent;         //BINARY_STREAM[n]
 
     public long getTimestamp()
     {
@@ -52,45 +53,48 @@ abstract public class AbstractAudioDataText implements DatastreamI
         this.audioFormat = audioFormat;
     }
 
-    public String getDataContent()
+    public byte[] getDataContent()
     {
         return dataContent;
     }
 
-    public void setDataContent( String dataContent )
+    public void setDataContent( byte[] dataContent )
     {
         this.dataContent = dataContent;
     }
 
-    protected void parseImpl( String data )
+    protected void parseImpl( byte[] data, int offset, int length )
     {
-        int i = 0;
+        ByteBuffer bb = ByteBuffer.wrap( data, offset, length );
+        bb.order( ByteOrder.LITTLE_ENDIAN );
 
-        this.timestamp = Convert.toNumLittleEndian( data.substring( i, i += 4 ) );
-        this.serialNumber = Convert.toNumLittleEndian( data.substring( i, i += 4 ) );
-        this.gatherTime = Convert.toNumLittleEndian( data.substring( i, i += 4 ) );
+        this.timestamp = bb.getInt();
+        this.serialNumber = bb.getInt();
+        this.gatherTime = bb.getInt();
 
-        this.audioFormat = AudioFormatE.fromValue( data.charAt( i++ ) );
+        this.audioFormat = AudioFormatE.fromValue( (char)bb.get() );
 
-        long dataLen = Convert.toNumLittleEndian( data.substring( i, i += 4 ) );
+        int dataLen = bb.getInt();
 
-        String dc = data.substring( i, i += dataLen );
+        byte[] dc = new byte[dataLen];
+        bb.get( dc );
         this.dataContent = dc;
     }
 
     @Override
-    public String toDatastream()
+    public byte[] toDatastream()
     {
-        StringBuilder buf = new StringBuilder( 4 + 4 + 4 + 1 + 4 + dataContent.length() );  //177
+        ByteBuffer bb = ByteBuffer.allocate( 4 + 4 + 4 + 1 + 4 + dataContent.length );  //177
+        bb.order( ByteOrder.LITTLE_ENDIAN );
 
-        buf.append( Convert.toLittleEndian( timestamp, 4 ) );
-        buf.append( Convert.toLittleEndian( serialNumber, 4 ) );
-        buf.append( Convert.toLittleEndian( gatherTime, 4 ) );
-        buf.append( Convert.toLittleEndian( audioFormat.getValue(), 1 ) );
-        buf.append( Convert.toLittleEndian( dataContent.length(), 4 ) );
-        buf.append( dataContent );
+        bb.putInt( (int)timestamp );
+        bb.putInt( (int)serialNumber );
+        bb.putInt( (int)gatherTime );
+        bb.put( (byte)audioFormat.getValue() );
+        bb.putInt( dataContent.length );
+        bb.put( dataContent );
 
-        return buf.toString();
+        return bb.array();
     }
 
 }

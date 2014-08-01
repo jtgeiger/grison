@@ -1,5 +1,7 @@
 package com.sibilantsolutions.grison.driver.foscam.domain;
 
+import com.sibilantsolutions.grison.util.Convert;
+
 public class Unk03Text implements DatastreamI
 {
 
@@ -16,9 +18,9 @@ public class Unk03Text implements DatastreamI
     }
 
     @Override
-    public String toDatastream()
+    public byte[] toDatastream()
     {
-        return data;
+        return data.getBytes( Convert.cs );
     }
 
 }

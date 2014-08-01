@@ -3,8 +3,8 @@ package com.sibilantsolutions.grison.driver.foscam.domain;
 public interface OpCodeI
 {
 
-    public int getValue();
+    public short getValue();
 
-    public DatastreamI parse( String data );
+    public DatastreamI parse( byte[] data, int offset, int length );
 
 }

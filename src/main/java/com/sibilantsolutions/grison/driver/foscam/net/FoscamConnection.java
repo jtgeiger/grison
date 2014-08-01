@@ -29,7 +29,6 @@ import com.sibilantsolutions.grison.driver.foscam.domain.SearchProtocolOpCodeE;
 import com.sibilantsolutions.grison.driver.foscam.domain.VideoDataText;
 import com.sibilantsolutions.grison.evt.AudioHandlerI;
 import com.sibilantsolutions.grison.evt.ImageHandlerI;
-import com.sibilantsolutions.grison.util.Convert;
 import com.sibilantsolutions.iptools.event.LostConnectionEvt;
 import com.sibilantsolutions.iptools.event.ReceiveEvt;
 import com.sibilantsolutions.iptools.event.SocketListenerI;
@@ -187,7 +186,7 @@ public class FoscamConnection
             c.setProtocol( ProtocolE.OPERATION_PROTOCOL );
             c.setOpCode( OperationProtocolOpCodeE.Keep_Alive );
 
-            String datastream = c.toDatastream();
+            byte[] datastream = c.toDatastream();
             Socker.send( datastream, evt.getSource() );
         }
 
@@ -207,9 +206,7 @@ public class FoscamConnection
 
             //log.info( "Receive packet: \n{}", HexDumpDeferred.prettyDump( bytes, offset, nbytes ) );
 
-            String data = new String( bytes, offset, nbytes, Convert.cs );
-
-            Command command = Command.parse( data );
+            Command command = Command.parse( bytes, offset, nbytes );
 
             ProtocolE protocol = command.getProtocol();
             OpCodeI opCode = command.getOpCode();

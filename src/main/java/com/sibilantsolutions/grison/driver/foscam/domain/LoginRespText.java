@@ -1,5 +1,8 @@
 package com.sibilantsolutions.grison.driver.foscam.domain;
 
+import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
+
 import com.sibilantsolutions.grison.util.Convert;
 
 public class LoginRespText implements DatastreamI
@@ -41,51 +44,51 @@ public class LoginRespText implements DatastreamI
         this.firmwareVersion = firmwareVersion;
     }
 
-    static public LoginRespText parse( String data )
+    static public LoginRespText parse( byte[] data, int offset, int length )
     {
         LoginRespText text = new LoginRespText();
 
-        int i = 0;
+        ByteBuffer bb = ByteBuffer.wrap( data, offset, length );
+        bb.order( ByteOrder.LITTLE_ENDIAN );
 
-        int resultCodeNum = (int)Convert.toNumLittleEndian( data.substring( i, i += 2 ) );
+        short resultCodeNum = bb.getShort();
 
         text.resultCode = ResultCodeE.fromValue( resultCodeNum );
 
-        String cameraId = data.substring( i, i += 13 );
+        String cameraId = Convert.get( 13, bb );
         cameraId = cameraId.trim();
         text.cameraId = cameraId;
 
-        i += 4;
-        i += 4;
+        bb.position( bb.position() + 4 );
+        bb.position( bb.position() + 4 );
 
-        String firmwareVersion = data.substring( i, i += 4 );
+        String firmwareVersion = Convert.get( 4, bb );
         text.firmwareVersion = firmwareVersion;
 
         return text;
     }
 
     @Override
-    public String toDatastream()
+    public byte[] toDatastream()
     {
-        StringBuilder buf = new StringBuilder( 2 + 13 + 4 + 4 + 4 );
+        ByteBuffer bb = ByteBuffer.allocate( 2 + 13 + 4 + 4 + 4 );
+        bb.order( ByteOrder.LITTLE_ENDIAN );
 
-        buf.append( Convert.toLittleEndian( resultCode.getValue(), 2 ) );
+        bb.putShort( resultCode.getValue() );
 
-        buf.append( Convert.padRearOrTruncate( cameraId, 12, (char)0 ) ); //12 bytes
-        buf.append( (char)0x00 );   //Null terminator.
+        Convert.put( Convert.padRearOrTruncate( cameraId, 12, (char)0 ), bb ); //12 bytes
+        bb.put( (byte)0x00 );   //Null terminator.
 
             //RESERVED
-        //for ( int i = 0; i < 4; i++ )
-        //    buf.append( (char)0x00 );
-        buf.append( "" + (char)0x00 + (char)0x00 + (char)0x00 + (char)0x01 );
+        bb.put( new byte[] { 0, 0, 0, 1 } );
 
             //RESERVED
         for ( int i = 0; i < 4; i++ )
-            buf.append( (char)0x00 );
+            bb.put( (byte)0x00 );
 
-        buf.append( firmwareVersion );
+        Convert.put( firmwareVersion, bb );
 
-        return buf.toString();
+        return bb.array();
     }
 
 }

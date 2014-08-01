@@ -12,27 +12,27 @@ public enum ResultCodeE
 
     static private interface Values
     {
-        final static public int CORRECT                 = 0;
-        final static public int USER_WRONG              = 1;
-        final static public int REFUSE_OVER_MAX_CONNS   = 2;
-        final static public int PWD_ERROR               = 5;
-        final static public int PRI_ERROR               = 6;
-        final static public int UNSUPPORTED             = 7;
+        final static public short CORRECT                 = 0;
+        final static public short USER_WRONG              = 1;
+        final static public short REFUSE_OVER_MAX_CONNS   = 2;
+        final static public short PWD_ERROR               = 5;
+        final static public short PRI_ERROR               = 6;
+        final static public short UNSUPPORTED             = 7;
     }
 
-    final private int value;
+    final private short value;
 
-    private ResultCodeE( int value )
+    private ResultCodeE( short value )
     {
         this.value = value;
     }
 
-    public int getValue()
+    public short getValue()
     {
         return value;
     }
 
-    public static ResultCodeE fromValue( int value )
+    public static ResultCodeE fromValue( short value )
     {
         switch ( value )
         {

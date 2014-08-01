@@ -1,5 +1,6 @@
 package com.sibilantsolutions.grison.util;
 
+import java.nio.ByteBuffer;
 import java.nio.charset.Charset;
 
 public abstract class Convert
@@ -8,6 +9,15 @@ public abstract class Convert
     final static public Charset cs = Charset.forName( "ISO-8859-1" );
 
     private Convert() {}    //Prevent instantiation.
+
+    public static String get( int length, ByteBuffer b )
+    {
+        byte[] bytes = new byte[length];
+
+        b.get( bytes );
+
+        return new String( bytes, 0, bytes.length, Convert.cs );
+    }
 
     public static String padFront( String val, int numBytes, char padChar )
     {
@@ -39,6 +49,11 @@ public abstract class Convert
             return val.substring( 0, numBytes );
 
         return padRear( val, numBytes, padChar );
+    }
+
+    static public void put( String s, ByteBuffer b )
+    {
+        b.put( s.getBytes( Convert.cs ) );
     }
 
     public static String toBigEndian( long num )

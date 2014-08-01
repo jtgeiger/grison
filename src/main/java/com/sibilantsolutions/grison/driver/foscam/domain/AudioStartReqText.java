@@ -1,7 +1,5 @@
 package com.sibilantsolutions.grison.driver.foscam.domain;
 
-import com.sibilantsolutions.grison.util.Convert;
-
 public class AudioStartReqText implements DatastreamI
 {
 
@@ -18,9 +16,9 @@ public class AudioStartReqText implements DatastreamI
     }
 
     @Override
-    public String toDatastream()
+    public byte[] toDatastream()
     {
-        return Convert.toLittleEndian( data, 1 );
+        return new byte[] { (byte)data };
     }
 
 }

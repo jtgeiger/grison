@@ -1,6 +1,7 @@
 package com.sibilantsolutions.grison.driver.foscam.domain;
 
-import com.sibilantsolutions.grison.util.Convert;
+import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
 
 public class VideoDataText implements DatastreamI
 {
@@ -9,7 +10,7 @@ public class VideoDataText implements DatastreamI
     private long framesPerSec;          //INT32 (4 bytes; little endian); From 1970.1.1 to current time
     //private RESERVE                   //INT8
     //private long dataLength;          //INT32 (4 bytes; little endian);
-    private String dataContent;         //BINARY_STREAM[n]
+    private byte[] dataContent;         //BINARY_STREAM[n]
 
     public long getTimestamp()
     {
@@ -31,47 +32,50 @@ public class VideoDataText implements DatastreamI
         this.framesPerSec = framesPerSec;
     }
 
-    public String getDataContent()
+    public byte[] getDataContent()
     {
         return dataContent;
     }
 
-    public void setDataContent( String dataContent )
+    public void setDataContent( byte[] dataContent )
     {
         this.dataContent = dataContent;
     }
 
-    public static VideoDataText parse( String data )
+    public static VideoDataText parse( byte[] data, int offset, int length )
     {
         VideoDataText text = new VideoDataText();
 
-        int i = 0;
+        ByteBuffer bb = ByteBuffer.wrap( data, offset, length );
+        bb.order( ByteOrder.LITTLE_ENDIAN );
 
-        text.timestamp = Convert.toNumLittleEndian( data.substring( i, i += 4 ) );
-        text.framesPerSec = Convert.toNumLittleEndian( data.substring( i, i += 4 ) );
+        text.timestamp = bb.getInt();
+        text.framesPerSec = bb.getInt();
 
-        i++;    //RESERVE
+        bb.position( bb.position() + 1 );    //RESERVE
 
-        long dataLen = Convert.toNumLittleEndian( data.substring( i, i += 4 ) );
+        int dataLen = bb.getInt();
 
-        String dc = data.substring( i, i += dataLen );
+        byte[] dc = new byte[dataLen];
+        bb.get( dc );
         text.dataContent = dc;
 
         return text;
     }
 
     @Override
-    public String toDatastream()
+    public byte[] toDatastream()
     {
-        StringBuilder buf = new StringBuilder( 177 );
+        ByteBuffer bb = ByteBuffer.allocate( 4 + 4 + 1 + 4 + dataContent.length );    //177
+        bb.order( ByteOrder.LITTLE_ENDIAN );
 
-        buf.append( Convert.toLittleEndian( timestamp, 4 ) );
-        buf.append( Convert.toLittleEndian( framesPerSec, 4 ) );
-        buf.append( (char)0 );    //RESERVE
-        buf.append( Convert.toLittleEndian( dataContent.length(), 4 ) );
-        buf.append( dataContent );
+        bb.putInt( (int)timestamp );
+        bb.putInt( (int)framesPerSec );
+        bb.put( (byte)0 );    //RESERVE
+        bb.putInt( dataContent.length );
+        bb.put( dataContent );
 
-        return buf.toString();
+        return bb.array();
     }
 
 }

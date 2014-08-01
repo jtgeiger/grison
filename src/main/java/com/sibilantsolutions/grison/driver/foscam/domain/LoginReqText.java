@@ -1,5 +1,7 @@
 package com.sibilantsolutions.grison.driver.foscam.domain;
 
+import com.sibilantsolutions.grison.util.Convert;
+
 public class LoginReqText implements DatastreamI
 {
 
@@ -16,9 +18,9 @@ public class LoginReqText implements DatastreamI
     }
 
     @Override
-    public String toDatastream()
+    public byte[] toDatastream()
     {
-        return dataConnectionId;
+        return dataConnectionId.getBytes( Convert.cs );
     }
 
 }

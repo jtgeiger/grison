@@ -1,5 +1,8 @@
 package com.sibilantsolutions.grison.driver.foscam.domain;
 
+import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
+
 import com.sibilantsolutions.grison.util.Convert;
 
 public class Command implements DatastreamI
@@ -43,15 +46,16 @@ public class Command implements DatastreamI
         this.commandText = commandText;
     }
 
-    static public Command parse( String data )
+    static public Command parse( byte[] data, int offset, int length )
     {
         Command c = new Command();
 
-        int i = 0;
+        ByteBuffer bb = ByteBuffer.wrap( data, offset, length );
+        bb.order( ByteOrder.LITTLE_ENDIAN );
 
-        c.protocol = ProtocolE.fromValue( data.substring( i, i += 4 ) );
+        c.protocol = ProtocolE.fromValue( Convert.get( 4, bb ) );
 
-        int opCodeNum = (int)Convert.toNumLittleEndian( data.substring( i, i += 2 ) );
+        short opCodeNum = bb.getShort();
 
         switch( c.protocol )
         {
@@ -71,50 +75,50 @@ public class Command implements DatastreamI
                 throw new IllegalArgumentException( "Unexpected value=" + c.protocol );
         }
 
-        i += 1;
-        i += 8;
+        bb.position( bb.position() + 1 );
+        bb.position( bb.position() + 8 );
 
-        int textLength = (int)Convert.toNumLittleEndian( data.substring( i, i += 4 ) );
+        int textLength = bb.getInt();
 
-        i += 4;
+        bb.position( bb.position() + 4 );
 
-        String textStr = data.substring( i, i += textLength );
+        byte[] textBytes = new byte[textLength];
+        bb.get( textBytes );
 
-        c.commandText = c.opCode.parse( textStr );
+        c.commandText = c.opCode.parse( textBytes, 0, textBytes.length );
 
         return c;
     }
 
     @Override
-    public String toDatastream()
+    public byte[] toDatastream()
     {
-        StringBuilder buf = new StringBuilder();
+        byte[] commandTextData = new byte[0];
 
-        buf.append( protocol.getValue() );
-        buf.append( Convert.toLittleEndian( opCode.getValue(), 2 ) );
+        if ( commandText != null )
+            commandTextData = commandText.toDatastream();
+
+        ByteBuffer bb = ByteBuffer.allocate( 4 + 2 + 1 + 8 + 4 + 4 + commandTextData.length );
+        bb.order( ByteOrder.LITTLE_ENDIAN );
+
+        Convert.put( protocol.getValue(), bb );
+        bb.putShort( opCode.getValue() );
 
             //RESERVED
-        buf.append( (char)0x00 );
+        bb.put( (byte)0x00 );
 
             //RESERVED
         for ( int i = 0; i < 8; i++ )
-            buf.append( (char)0x00 );
+            bb.put( (byte)0x00 );
 
-        String commandTextStr = "";
+        bb.putInt( commandTextData.length );
 
-        if ( commandText != null )
-            commandTextStr = commandText.toDatastream();
+            //RESERVED (seems to duplicate length)
+        bb.putInt( commandTextData.length );
 
-        buf.append( Convert.toLittleEndian( commandTextStr.length(), 4 ) );
+        bb.put( commandTextData );
 
-            //RESERVED
-        //for ( int i = 0; i < 4; i++ )
-        //    buf.append( (char)0x00 );
-        buf.append( Convert.toLittleEndian( commandTextStr.length(), 4 ) );
-
-        buf.append( commandTextStr );
-
-        return buf.toString();
+        return bb.array();
     }
 
 }

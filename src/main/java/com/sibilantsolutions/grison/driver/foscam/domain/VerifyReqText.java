@@ -1,5 +1,7 @@
 package com.sibilantsolutions.grison.driver.foscam.domain;
 
+import java.nio.ByteBuffer;
+
 import com.sibilantsolutions.grison.util.Convert;
 
 public class VerifyReqText implements DatastreamI
@@ -29,17 +31,17 @@ public class VerifyReqText implements DatastreamI
     }
 
     @Override
-    public String toDatastream()
+    public byte[] toDatastream()
     {
-        StringBuilder buf = new StringBuilder( 13 + 13 );
+        ByteBuffer bb = ByteBuffer.allocate( 13 + 13 );
 
-        buf.append( Convert.padRear( username, 12, (char)0 ) );     //TODO: Truncate.
-        buf.append( (char)0 );    //Null terminator.
+        Convert.put( Convert.padRear( username, 12, (char)0 ), bb );     //TODO: Truncate.
+        bb.put( (byte)0 );    //Null terminator.
 
-        buf.append( Convert.padRear( password, 12, (char)0 ) );     //TODO: Truncate.
-        buf.append( (char)0 );    //Null terminator.
+        Convert.put( Convert.padRear( password, 12, (char)0 ), bb );     //TODO: Truncate.
+        bb.put( (byte)0 );    //Null terminator.
 
-        return buf.toString();
+        return bb.array();
     }
 
 }

@@ -8,7 +8,6 @@ import javax.swing.SwingUtilities;
 
 import com.sibilantsolutions.grison.driver.foscam.domain.VideoDataText;
 import com.sibilantsolutions.grison.evt.ImageHandlerI;
-import com.sibilantsolutions.grison.util.Convert;
 
 public class DemoImageHandler implements ImageHandlerI
 {
@@ -18,7 +17,7 @@ public class DemoImageHandler implements ImageHandlerI
     @Override
     public void onReceive( VideoDataText videoData )
     {
-        byte[] imageData = videoData.getDataContent().getBytes( Convert.cs );
+        byte[] imageData = videoData.getDataContent();
 
         final ImageIcon ii = new ImageIcon( imageData );
 

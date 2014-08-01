@@ -20,24 +20,17 @@ public class AlarmNotifyText implements DatastreamI
         this.alarmType = alarmType;
     }
 
-    public static AlarmNotifyText parse( String data )
+    public static AlarmNotifyText parse( byte[] data, int offset, int length )
     {
         AlarmNotifyText text = new AlarmNotifyText();
 
-        int i = 0;
-
-        text.alarmType = AlarmTypeE.fromValue( data.charAt( i++ ) );
-
-        i += 2;
-        i += 2;
-        i += 2;
-        i += 2;
+        text.alarmType = AlarmTypeE.fromValue( data[offset] );
 
         return text;
     }
 
     @Override
-    public String toDatastream()
+    public byte[] toDatastream()
     {
         // TODO Auto-generated method stub
         throw new UnsupportedOperationException( "OGTE TODO!" );

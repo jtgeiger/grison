@@ -2,6 +2,7 @@ package com.sibilantsolutions.grison.driver.foscam.domain;
 
 import java.net.InetAddress;
 import java.net.UnknownHostException;
+import java.nio.ByteBuffer;
 
 import com.sibilantsolutions.grison.util.Convert;
 
@@ -17,7 +18,7 @@ public class SearchRespText implements DatastreamI
     //private String RESERVE            //BINARY_STREAM[4]
     private String sysSoftwareVersion;  //BINARY_STREAM[4]
     private String appSoftwareVersion;  //BINARY_STREAM[4]
-    private int cameraPort;             //INT16_R (2 bytes; big endian)
+    private short cameraPort;           //INT16_R (2 bytes; big endian)
     private boolean dhcpEnabled;        //INT8
 
     public String getCameraId()
@@ -100,12 +101,12 @@ public class SearchRespText implements DatastreamI
         this.appSoftwareVersion = appSoftwareVersion;
     }
 
-    public int getCameraPort()
+    public short getCameraPort()
     {
         return cameraPort;
     }
 
-    public void setCameraPort( int cameraPort )
+    public void setCameraPort( short cameraPort )
     {
         this.cameraPort = cameraPort;
     }
@@ -120,64 +121,69 @@ public class SearchRespText implements DatastreamI
         this.dhcpEnabled = dhcpEnabled;
     }
 
-    static public SearchRespText parse( String data )
+    static public SearchRespText parse( byte[] data, int offset, int length )
     {
         SearchRespText text = new SearchRespText();
 
-        int i = 0;
+        ByteBuffer bb = ByteBuffer.wrap( data, offset, length );
 
-        String cameraId = data.substring( i, i += 13 );
+        String cameraId = Convert.get( 13, bb );
         cameraId = cameraId.trim();
         text.cameraId = cameraId;
 
-        String cameraName = data.substring( i, i += 21 );
+        String cameraName = Convert.get( 21, bb );
         cameraName = cameraName.trim();
         text.cameraName = cameraName;
 
-        text.cameraIP = getByAddress( data.substring( i, i += 4 ) );
-        text.netmask = getByAddress( data.substring( i, i += 4 ) );
-        text.gatewayIP = getByAddress( data.substring( i, i += 4 ) );
-        text.dnsIP = getByAddress( data.substring( i, i += 4 ) );
+        byte[] addrBuf = new byte[4];
+        bb.get( addrBuf );
+        text.cameraIP = getByAddress( addrBuf );
+        bb.get( addrBuf );
+        text.netmask = getByAddress( addrBuf );
+        bb.get( addrBuf );
+        text.gatewayIP = getByAddress( addrBuf );
+        bb.get( addrBuf );
+        text.dnsIP = getByAddress( addrBuf );
 
-        i += 4;
+        bb.position( bb.position() + 4 );
 
-        text.sysSoftwareVersion = data.substring( i, i += 4 );
-        text.appSoftwareVersion = data.substring( i, i += 4 );
+        text.sysSoftwareVersion = Convert.get( 4, bb );
+        text.appSoftwareVersion = Convert.get( 4, bb );
 
-        text.cameraPort = (int)Convert.toNum( data.substring( i, i += 2 ) );
+        text.cameraPort = bb.getShort();
 
-        text.dhcpEnabled = ( data.charAt( i ) == 1 );
+        text.dhcpEnabled = ( bb.get() == 1 );
 
         return text;
     }
 
     @Override
-    public String toDatastream()
+    public byte[] toDatastream()
     {
         final int LEN = 13 + 21 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 2 + 1;
-        StringBuilder buf = new StringBuilder( LEN );
+        ByteBuffer bb = ByteBuffer.allocate( LEN );
 
-        buf.append( Convert.padRearOrTruncate( cameraId, 12, (char)0 ) );
-        buf.append( (char)0 );
-        buf.append( Convert.padRearOrTruncate( cameraName, 20, (char)0 ) );
-        buf.append( (char)0 );
+        Convert.put( Convert.padRearOrTruncate( cameraId, 12, (char)0 ), bb );
+        bb.put( (byte)0 );
+        Convert.put( Convert.padRearOrTruncate( cameraName, 20, (char)0 ), bb );
+        bb.put( (byte)0 );
 
-        buf.append( new String( cameraIP.getAddress(), Convert.cs ) );
-        buf.append( new String( netmask.getAddress(), Convert.cs ) );
-        buf.append( new String( gatewayIP.getAddress(), Convert.cs ) );
-        buf.append( new String( dnsIP.getAddress(), Convert.cs ) );
+        bb.put( cameraIP.getAddress() );
+        bb.put( netmask.getAddress() );
+        bb.put( gatewayIP.getAddress() );
+        bb.put( dnsIP.getAddress() );
 
         for ( int i = 0; i < 4; i++ )
-            buf.append( (char)0 );
+            bb.put( (byte)0 );
 
-        buf.append( Convert.padRearOrTruncate( sysSoftwareVersion, 4, (char)0 ) );
-        buf.append( Convert.padRearOrTruncate( appSoftwareVersion, 4, (char)0 ) );
+        Convert.put( Convert.padRearOrTruncate( sysSoftwareVersion, 4, (char)0 ), bb );
+        Convert.put( Convert.padRearOrTruncate( appSoftwareVersion, 4, (char)0 ), bb );
 
-        buf.append( Convert.toBigEndian( cameraPort, 2 ) );
+        bb.putShort( cameraPort );
 
-        buf.append( dhcpEnabled ? (char)1: (char)0 );
+        bb.put( dhcpEnabled ? (byte)1: (byte)0 );
 
-        return buf.toString();
+        return bb.array();
     }
 
     static public InetAddress getByAddress( String str )

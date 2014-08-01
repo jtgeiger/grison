@@ -3,7 +3,7 @@ package com.sibilantsolutions.grison.driver.foscam.domain;
 public class KeepAliveText implements DatastreamI
 {
 
-    public static KeepAliveText parse( String data )
+    public static KeepAliveText parse( byte[] data, int offset, int length )
     {
         KeepAliveText text = new KeepAliveText();
 
@@ -13,9 +13,9 @@ public class KeepAliveText implements DatastreamI
     }
 
     @Override
-    public String toDatastream()
+    public byte[] toDatastream()
     {
-        return "";
+        return new byte[0];
     }
 
 }

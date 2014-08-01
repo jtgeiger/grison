@@ -1,7 +1,5 @@
 package com.sibilantsolutions.grison.driver.foscam.domain;
 
-import com.sibilantsolutions.grison.util.Convert;
-
 public class VideoStartReqText implements DatastreamI
 {
 
@@ -17,19 +15,19 @@ public class VideoStartReqText implements DatastreamI
         this.data = data;
     }
 
-    public static VideoStartReqText parse( String data )
+    public static VideoStartReqText parse( byte[] data, int offset, int length )
     {
         VideoStartReqText text = new VideoStartReqText();
 
-        text.data = (int)Convert.toNumLittleEndian( data );
+        text.data = data[offset];
 
         return text;
     }
 
     @Override
-    public String toDatastream()
+    public byte[] toDatastream()
     {
-        return Convert.toLittleEndian( data, 1 );
+        return new byte[] { (byte)data };
     }
 
 }

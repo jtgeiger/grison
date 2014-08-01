@@ -1,5 +1,8 @@
 package com.sibilantsolutions.grison.driver.foscam.domain;
 
+import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
+
 import com.sibilantsolutions.grison.util.Convert;
 
 abstract public class AbstractStartRespText implements DatastreamI
@@ -28,31 +31,31 @@ abstract public class AbstractStartRespText implements DatastreamI
         this.dataConnectionId = dataConnectionId;
     }
 
-    protected void parseImpl( String data )
+    protected void parseImpl( byte[] data, int offset, int length )
     {
-        int i = 0;
+        ByteBuffer bb = ByteBuffer.wrap( data, offset, length );
+        bb.order( ByteOrder.LITTLE_ENDIAN );
 
-        int resultNum = (int)Convert.toNumLittleEndian( data.substring( i, i += 2 ) );
-        this.resultCode = ResultCodeE.fromValue( resultNum );
+        this.resultCode = ResultCodeE.fromValue( bb.getShort() );
 
             //If an audio/video connection is already open and another start request is sent,
             //the response will have resultCode==0 and no data connection id.
-        if ( i < data.length() )
+        if ( bb.hasRemaining() )
         {
-            String id = data.substring( i, i += 4 );
-            this.dataConnectionId = id;
+            this.dataConnectionId = Convert.get( 4, bb );
         }
     }
 
     @Override
-    public String toDatastream()
+    public byte[] toDatastream()
     {
-        StringBuilder buf = new StringBuilder( 2 + 4 );
+        ByteBuffer bb = ByteBuffer.allocate( 2 + 4 );
+        bb.order( ByteOrder.LITTLE_ENDIAN );
 
-        buf.append( Convert.toLittleEndian( resultCode.getValue(), 2 ) );
-        buf.append( dataConnectionId );
+        bb.putShort( resultCode.getValue() );
+        Convert.put( dataConnectionId, bb );
 
-        return buf.toString();
+        return bb.array();
     }
 
 }

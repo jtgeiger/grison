@@ -4,9 +4,9 @@ public final class EmptyText implements DatastreamI
 {
 
     @Override
-    public String toDatastream()
+    public byte[] toDatastream()
     {
-        return "";
+        return new byte[0];
     }
 
 }

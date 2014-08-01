@@ -9,16 +9,11 @@ public class SearchReqText implements DatastreamI
     //private RESERVE       //INT8=1
 
     @Override
-    public String toDatastream()
+    public byte[] toDatastream()
     {
-        StringBuilder buf = new StringBuilder( 4 );
+        byte[] b = { 0, 0, 0, 1 };
 
-        buf.append( (char)0 );
-        buf.append( (char)0 );
-        buf.append( (char)0 );
-        buf.append( (char)1 );
-
-        return buf.toString();
+        return b;
     }
 
 }

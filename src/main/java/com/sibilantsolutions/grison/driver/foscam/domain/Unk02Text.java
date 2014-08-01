@@ -1,31 +1,34 @@
 package com.sibilantsolutions.grison.driver.foscam.domain;
 
+
 public class Unk02Text implements DatastreamI
 {
 
-    private String data;    //TODO: Parse
+    private byte[] data;    //TODO: Parse
 
-    public String getData()
+    public byte[] getData()
     {
         return data;
     }
 
-    public void setData( String data )
+    public void setData( byte[] data )
     {
         this.data = data;
     }
 
-    public static Unk02Text parse( String data )
+    public static Unk02Text parse( byte[] data, int offset, int length )
     {
         Unk02Text text = new Unk02Text();
 
-        text.data = data;
+        byte[] d = new byte[length];
+        System.arraycopy( data, offset, d, 0, length );
+        text.data = d;
 
         return text;
     }
 
     @Override
-    public String toDatastream()
+    public byte[] toDatastream()
     {
         return data;
     }

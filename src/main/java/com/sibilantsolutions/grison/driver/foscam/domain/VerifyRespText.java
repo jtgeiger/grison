@@ -1,6 +1,7 @@
 package com.sibilantsolutions.grison.driver.foscam.domain;
 
-import com.sibilantsolutions.grison.util.Convert;
+import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
 
 public class VerifyRespText implements DatastreamI
 {
@@ -18,33 +19,35 @@ public class VerifyRespText implements DatastreamI
         this.resultCode = resultCode;
     }
 
-    public static VerifyRespText parse( String data )
+    public static VerifyRespText parse( byte[] data, int offset, int length )
     {
         VerifyRespText text = new VerifyRespText();
 
-        int i = 0;
+        ByteBuffer bb = ByteBuffer.wrap( data, offset, length );
+        bb.order( ByteOrder.LITTLE_ENDIAN );
 
-        int resultCodeNum = (int)Convert.toNumLittleEndian( data.substring( i, i += 2 ) );
+        short resultCodeNum = bb.getShort();
 
         text.resultCode = ResultCodeE.fromValue( resultCodeNum );
 
             //RESERVED
-        i++;
+        bb.position( bb.position() + 1 );
 
         return text;
     }
 
     @Override
-    public String toDatastream()
+    public byte[] toDatastream()
     {
-        StringBuilder buf = new StringBuilder( 2 + 1 );
+        ByteBuffer bb = ByteBuffer.allocate( 2 + 1 );
+        bb.order( ByteOrder.LITTLE_ENDIAN );
 
-        buf.append( Convert.toLittleEndian( resultCode.getValue(), 2 ) );
+        bb.putShort( resultCode.getValue() );
 
             //RESERVED
-        buf.append( (char)0 );
+        bb.put( (byte)0x00 );
 
-        return buf.toString();
+        return bb.array();
     }
 
 }

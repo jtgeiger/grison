@@ -11,20 +11,20 @@ public enum SearchProtocolOpCodeE implements OpCodeI
 
     static private interface Values
     {
-        final static public int Search_Req  = 0;    //user -> broadcast address
-        final static public int Search_Resp = 1;    //camera -> broadcast address
-        final static public int Init_Req    = 2;    //user -> broadcast address
-        final static public int Init_Resp   = 3;    //camera -> broadcast address
+        final static public short Search_Req  = 0;    //user -> broadcast address
+        final static public short Search_Resp = 1;    //camera -> broadcast address
+        final static public short Init_Req    = 2;    //user -> broadcast address
+        final static public short Init_Resp   = 3;    //camera -> broadcast address
     }
 
-    private int value;
+    private short value;
 
-    private SearchProtocolOpCodeE( int value )
+    private SearchProtocolOpCodeE( short value )
     {
         this.value = value;
     }
 
-    public static SearchProtocolOpCodeE fromValue( int value )
+    public static SearchProtocolOpCodeE fromValue( short value )
     {
         switch ( value )
         {
@@ -46,21 +46,21 @@ public enum SearchProtocolOpCodeE implements OpCodeI
     }
 
     @Override
-    public int getValue()
+    public short getValue()
     {
         return value;
     }
 
     @Override
-    public DatastreamI parse( String data )
+    public DatastreamI parse( byte[] data, int offset, int length )
     {
         switch ( this )
         {
             case Search_Resp:
-                return SearchRespText.parse( data );
+                return SearchRespText.parse( data, offset, length );
 
             case Init_Resp:
-                return InitRespText.parse( data );
+                return InitRespText.parse( data, offset, length );
 
             default:
                 throw new IllegalArgumentException( "Unexpected value=" + this );

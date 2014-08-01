@@ -1,6 +1,8 @@
 package com.sibilantsolutions.grison.driver.foscam.domain;
 
 import java.net.InetAddress;
+import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
 
 import com.sibilantsolutions.grison.util.Convert;
 
@@ -18,7 +20,7 @@ public class InitReqText implements DatastreamI
     private InetAddress netmask;        //INT32_R (4 bytes; big endian)
     private InetAddress gatewayIP;      //INT32_R (4 bytes; big endian)
     private InetAddress dnsIP;          //INT32_R (4 bytes; big endian)
-    private int cameraPort;             //INT16_R (2 bytes; big endian)
+    private short cameraPort;           //INT16_R (2 bytes; big endian)
 
     public String getCameraId()
     {
@@ -70,12 +72,12 @@ public class InitReqText implements DatastreamI
         this.dnsIP = dnsIP;
     }
 
-    public int getCameraPort()
+    public short getCameraPort()
     {
         return cameraPort;
     }
 
-    public void setCameraPort( int cameraPort )
+    public void setCameraPort( short cameraPort )
     {
         this.cameraPort = cameraPort;
     }
@@ -124,36 +126,35 @@ public class InitReqText implements DatastreamI
         text.netmask = SearchRespText.getByAddress( data.substring( i, i += 4 ) );
         text.gatewayIP = SearchRespText.getByAddress( data.substring( i, i += 4 ) );
         text.dnsIP = SearchRespText.getByAddress( data.substring( i, i += 4 ) );
-        text.cameraPort = (int)Convert.toNum( data.substring( i, i += 2 ) );
+        text.cameraPort = (short)Convert.toNum( data.substring( i, i += 2 ) );
 
         return text;
     }
 
     @Override
-    public String toDatastream()
+    public byte[] toDatastream()
     {
         final int LEN = 1 + 1 + 1 + 1 + 13 + 13 + 13 + 4 + 4 + 4 + 4 + 2;
-        StringBuilder buf = new StringBuilder( LEN );
+        ByteBuffer bb = ByteBuffer.allocate( LEN );
+        bb.order( ByteOrder.LITTLE_ENDIAN );
 
-        buf.append( (char)0 );
-        buf.append( (char)0 );
-        buf.append( (char)0 );
-        buf.append( (char)1 );
+        bb.put( new byte[]{ 0, 0, 0, 1 } );
 
-        buf.append( Convert.padRearOrTruncate( cameraId, 12, (char)0 ) );
-        buf.append( (char)0 );
-        buf.append( Convert.padRearOrTruncate( username, 12, (char)0 ) );
-        buf.append( (char)0 );
-        buf.append( Convert.padRearOrTruncate( password, 12, (char)0 ) );
-        buf.append( (char)0 );
+        Convert.put( Convert.padRearOrTruncate( cameraId, 12, (char)0 ), bb );
+        bb.put( (byte)0 );
+        Convert.put( Convert.padRearOrTruncate( username, 12, (char)0 ), bb );
+        bb.put( (byte)0 );
+        Convert.put( Convert.padRearOrTruncate( password, 12, (char)0 ), bb );
+        bb.put( (byte)0 );
 
-        buf.append( new String( cameraIP.getAddress(), Convert.cs ) );
-        buf.append( new String( netmask.getAddress(), Convert.cs ) );
-        buf.append( new String( gatewayIP.getAddress(), Convert.cs ) );
-        buf.append( new String( dnsIP.getAddress(), Convert.cs ) );
-        buf.append( Convert.toBigEndian( cameraPort, 2 ) );
+        bb.order( ByteOrder.BIG_ENDIAN );
+        bb.put( cameraIP.getAddress() );
+        bb.put( netmask.getAddress() );
+        bb.put( gatewayIP.getAddress() );
+        bb.put( dnsIP.getAddress() );
+        bb.putShort( cameraPort );
 
-        return buf.toString();
+        return bb.array();
     }
 
 }

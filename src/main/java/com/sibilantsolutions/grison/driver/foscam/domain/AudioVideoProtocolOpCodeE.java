@@ -11,20 +11,20 @@ public enum AudioVideoProtocolOpCodeE implements OpCodeI
 
     static private interface Values
     {
-        final static public int Login_Req   = 0;    //user -> ipcamera
-        final static public int Video_Data  = 1;    //ipcamera -> user
-        final static public int Audio_Data  = 2;    //ipcamera -> user
-        final static public int Talk_Data   = 3;    //user -> ipcamera
+        final static public short Login_Req   = 0;  //user -> ipcamera
+        final static public short Video_Data  = 1;  //ipcamera -> user
+        final static public short Audio_Data  = 2;  //ipcamera -> user
+        final static public short Talk_Data   = 3;  //user -> ipcamera
     }
 
-    private int value;
+    private short value;
 
-    private AudioVideoProtocolOpCodeE( int value )
+    private AudioVideoProtocolOpCodeE( short value )
     {
         this.value = value;
     }
 
-    public static AudioVideoProtocolOpCodeE fromValue( int value )
+    public static AudioVideoProtocolOpCodeE fromValue( short value )
     {
         switch ( value )
         {
@@ -46,21 +46,21 @@ public enum AudioVideoProtocolOpCodeE implements OpCodeI
     }
 
     @Override
-    public int getValue()
+    public short getValue()
     {
         return value;
     }
 
     @Override
-    public DatastreamI parse( String data )
+    public DatastreamI parse( byte[] data, int offset, int length )
     {
         switch ( this )
         {
             case Video_Data:
-                return VideoDataText.parse( data );
+                return VideoDataText.parse( data, offset, length );
 
             case Audio_Data:
-                return AudioDataText.parse( data );
+                return AudioDataText.parse( data, offset, length );
 
                 //TODO
 
