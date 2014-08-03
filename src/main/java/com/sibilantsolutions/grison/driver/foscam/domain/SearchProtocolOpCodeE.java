@@ -59,6 +59,9 @@ public enum SearchProtocolOpCodeE implements OpCodeI
             case Search_Resp:
                 return SearchRespText.parse( data, offset, length );
 
+            case Init_Req:
+                return InitReqText.parse( data, offset, length );
+
             case Init_Resp:
                 return InitRespText.parse( data, offset, length );
 

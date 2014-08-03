@@ -230,6 +230,54 @@ public class CommandTest
     }
 
     @Test
+    public void testParse15()
+    {
+        byte[] bin = ResourceLoader.loadResourceAsBytes( "/samples/search_resp02.bin" );
+
+//        System.out.println( HexDump.prettyDump( bin ) );
+
+        Command c = Command.parse( bin, 0, bin.length );
+        assertEquals( ProtocolE.SEARCH_PROTOCOL, c.getProtocol() );
+        assertEquals( SearchProtocolOpCodeE.Search_Resp, c.getOpCode() );
+
+        SearchRespText text = (SearchRespText)c.getCommandText();
+
+        assertEquals( "00626E4E72BF", text.getCameraId() );
+        assertEquals( "cam1", text.getCameraName() );
+        assertEquals( SearchRespText.getByAddress( new byte[]{ (byte)192, (byte)168, 69, 21 }  ), text.getCameraIP() );
+        assertEquals( SearchRespText.getByAddress( new byte[]{ (byte)255, (byte)255, (byte)255, 0 }  ), text.getNetmask() );
+        assertEquals( SearchRespText.getByAddress( new byte[]{ (byte)192, (byte)168, 69, 1 }  ), text.getGatewayIP() );
+        assertEquals( SearchRespText.getByAddress( new byte[]{ (byte)192, (byte)168, 69, 1 }  ), text.getDnsIP() );
+        assertEquals( "" + (char)11 + (char)37 + (char)2 + (char)56, text.getSysSoftwareVersion() );
+        assertEquals( "" + (char)2 + (char)4 + (char)10 + (char)10, text.getAppSoftwareVersion() );
+        assertEquals( 61234, text.getCameraPort() );
+        assertTrue( text.isDhcpEnabled() );
+    }
+
+    @Test
+    public void testParse16()
+    {
+        byte[] bin = ResourceLoader.loadResourceAsBytes( "/samples/init_req02.bin" );
+
+//        System.out.println( HexDump.prettyDump( bin ) );
+
+        Command c = Command.parse( bin, 0, bin.length );
+        assertEquals( ProtocolE.SEARCH_PROTOCOL, c.getProtocol() );
+        assertEquals( SearchProtocolOpCodeE.Init_Req, c.getOpCode() );
+
+        InitReqText text = (InitReqText)c.getCommandText();
+
+        assertEquals( "00626E4E72BF", text.getCameraId() );
+        assertEquals( "camvis", text.getUsername() );
+        assertEquals( "vis,FOSbuy1v", text.getPassword() );
+        assertEquals( SearchRespText.getByAddress( new byte[]{ (byte)192, (byte)168, 69, 22 }  ), text.getCameraIP() );
+        assertEquals( SearchRespText.getByAddress( new byte[]{ (byte)255, (byte)255, (byte)255, 0 }  ), text.getNetmask() );
+        assertEquals( SearchRespText.getByAddress( new byte[]{ (byte)192, (byte)168, 69, 1 }  ), text.getGatewayIP() );
+        assertEquals( SearchRespText.getByAddress( new byte[]{ (byte)192, (byte)168, 69, 1 }  ), text.getDnsIP() );
+        assertEquals( 61234, text.getCameraPort() );
+    }
+
+    @Test
     public void testToDatastream01()
     {
         Command c = new Command();
@@ -626,7 +674,7 @@ public class CommandTest
         text.setDnsIP( SearchRespText.getByAddress( new byte[]{ (byte)192, (byte)168, 69, 1 }  ) );
         text.setSysSoftwareVersion( "" + (char)11 + (char)37 + (char)2 + (char)56 );
         text.setAppSoftwareVersion( "" + (char)2 + (char)4 + (char)10 + (char)10 );
-        text.setCameraPort( (short)80 );
+        text.setCameraPort( 80 );
         text.setDhcpEnabled( true );
 
         byte[] expected = ResourceLoader.loadResourceAsBytes( "/samples/search_resp.bin" );
@@ -656,9 +704,38 @@ public class CommandTest
         text.setNetmask( SearchRespText.getByAddress( new byte[]{ (byte)255, (byte)255, (byte)255, 0 }  ) );
         text.setGatewayIP( SearchRespText.getByAddress( new byte[]{ (byte)192, (byte)168, 69, 1 }  ) );
         text.setDnsIP( SearchRespText.getByAddress( new byte[]{ (byte)192, (byte)168, 69, 1 }  ) );
-        text.setCameraPort( (short)80 );
+        text.setCameraPort( 80 );
 
         byte[] expected = ResourceLoader.loadResourceAsBytes( "/samples/init_req.bin" );
+
+        byte[] ds = c.toDatastream();
+
+//        System.out.println( HexDump.prettyDump( expected ) );
+//        System.out.println( HexDump.prettyDump( ds ) );
+
+        assertArrayEquals( expected, ds );
+    }
+
+    @Test
+    public void testToDatastream21()
+    {
+        Command c = new Command();
+
+        c.setProtocol( ProtocolE.SEARCH_PROTOCOL );
+        c.setOpCode( SearchProtocolOpCodeE.Init_Req );
+        InitReqText text = new InitReqText();
+        c.setCommandText( text );
+
+        text.setCameraId( "00626E4E72BF" );
+        text.setUsername( "camvis" );
+        text.setPassword( "vis,FOSbuy1v" );
+        text.setCameraIP( SearchRespText.getByAddress( new byte[]{ (byte)192, (byte)168, 69, 22 }  ) );
+        text.setNetmask( SearchRespText.getByAddress( new byte[]{ (byte)255, (byte)255, (byte)255, 0 }  ) );
+        text.setGatewayIP( SearchRespText.getByAddress( new byte[]{ (byte)192, (byte)168, 69, 1 }  ) );
+        text.setDnsIP( SearchRespText.getByAddress( new byte[]{ (byte)192, (byte)168, 69, 1 }  ) );
+        text.setCameraPort( 61234 );
+
+        byte[] expected = ResourceLoader.loadResourceAsBytes( "/samples/init_req02.bin" );
 
         byte[] ds = c.toDatastream();
 

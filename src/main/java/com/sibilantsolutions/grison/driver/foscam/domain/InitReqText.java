@@ -20,7 +20,7 @@ public class InitReqText implements DatastreamI
     private InetAddress netmask;        //INT32_R (4 bytes; big endian)
     private InetAddress gatewayIP;      //INT32_R (4 bytes; big endian)
     private InetAddress dnsIP;          //INT32_R (4 bytes; big endian)
-    private short cameraPort;           //INT16_R (2 bytes; big endian)
+    private int cameraPort;             //INT16_R (2 bytes; big endian)
 
     public String getCameraId()
     {
@@ -72,12 +72,12 @@ public class InitReqText implements DatastreamI
         this.dnsIP = dnsIP;
     }
 
-    public short getCameraPort()
+    public int getCameraPort()
     {
         return cameraPort;
     }
 
-    public void setCameraPort( short cameraPort )
+    public void setCameraPort( int cameraPort )
     {
         this.cameraPort = cameraPort;
     }
@@ -102,31 +102,37 @@ public class InitReqText implements DatastreamI
         this.password = password;
     }
 
-    static public InitReqText parse( String data )
+    static public InitReqText parse( byte[] data, int offset, int length )
     {
         InitReqText text = new InitReqText();
 
-        int i = 0;
+        ByteBuffer bb = ByteBuffer.wrap( data, offset, length );
 
-        i += 4;
+        bb.position( bb.position() + 4 );
 
-        String cameraId = data.substring( i, i += 13 );
+        String cameraId = Convert.get( 13, bb );
         cameraId = cameraId.trim();
         text.cameraId = cameraId;
 
-        String username = data.substring( i, i += 13 );
+        String username = Convert.get( 13, bb );
         username = username.trim();
         text.username = username;
 
-        String password = data.substring( i, i += 13 );
+        String password = Convert.get( 13, bb );
         password = password.trim();
         text.password = password;
 
-        text.cameraIP = SearchRespText.getByAddress( data.substring( i, i += 4 ) );
-        text.netmask = SearchRespText.getByAddress( data.substring( i, i += 4 ) );
-        text.gatewayIP = SearchRespText.getByAddress( data.substring( i, i += 4 ) );
-        text.dnsIP = SearchRespText.getByAddress( data.substring( i, i += 4 ) );
-        text.cameraPort = (short)Convert.toNum( data.substring( i, i += 2 ) );
+        byte[] addrBuf = new byte[4];
+        bb.get( addrBuf );
+        text.cameraIP = SearchRespText.getByAddress( addrBuf );
+        bb.get( addrBuf );
+        text.netmask = SearchRespText.getByAddress( addrBuf );
+        bb.get( addrBuf );
+        text.gatewayIP = SearchRespText.getByAddress( addrBuf );
+        bb.get( addrBuf );
+        text.dnsIP = SearchRespText.getByAddress( addrBuf );
+
+        text.cameraPort = bb.getChar();
 
         return text;
     }
@@ -152,7 +158,7 @@ public class InitReqText implements DatastreamI
         bb.put( netmask.getAddress() );
         bb.put( gatewayIP.getAddress() );
         bb.put( dnsIP.getAddress() );
-        bb.putShort( cameraPort );
+        bb.putShort( (short)cameraPort );
 
         return bb.array();
     }

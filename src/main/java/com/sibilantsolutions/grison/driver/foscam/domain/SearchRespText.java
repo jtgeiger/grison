@@ -18,7 +18,7 @@ public class SearchRespText implements DatastreamI
     //private String RESERVE            //BINARY_STREAM[4]
     private String sysSoftwareVersion;  //BINARY_STREAM[4]
     private String appSoftwareVersion;  //BINARY_STREAM[4]
-    private short cameraPort;           //INT16_R (2 bytes; big endian)
+    private int cameraPort;             //INT16_R (2 bytes; big endian)
     private boolean dhcpEnabled;        //INT8
 
     public String getCameraId()
@@ -101,12 +101,12 @@ public class SearchRespText implements DatastreamI
         this.appSoftwareVersion = appSoftwareVersion;
     }
 
-    public short getCameraPort()
+    public int getCameraPort()
     {
         return cameraPort;
     }
 
-    public void setCameraPort( short cameraPort )
+    public void setCameraPort( int cameraPort )
     {
         this.cameraPort = cameraPort;
     }
@@ -150,7 +150,7 @@ public class SearchRespText implements DatastreamI
         text.sysSoftwareVersion = Convert.get( 4, bb );
         text.appSoftwareVersion = Convert.get( 4, bb );
 
-        text.cameraPort = bb.getShort();
+        text.cameraPort = bb.getChar();
 
         text.dhcpEnabled = ( bb.get() == 1 );
 
@@ -179,16 +179,11 @@ public class SearchRespText implements DatastreamI
         Convert.put( Convert.padRearOrTruncate( sysSoftwareVersion, 4, (char)0 ), bb );
         Convert.put( Convert.padRearOrTruncate( appSoftwareVersion, 4, (char)0 ), bb );
 
-        bb.putShort( cameraPort );
+        bb.putShort( (short)cameraPort );
 
         bb.put( dhcpEnabled ? (byte)1: (byte)0 );
 
         return bb.array();
-    }
-
-    static public InetAddress getByAddress( String str )
-    {
-        return getByAddress( str.getBytes( Convert.cs ) );
     }
 
     static public InetAddress getByAddress( byte[] bytes )
