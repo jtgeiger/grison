@@ -32,11 +32,11 @@ import com.sibilantsolutions.grison.evt.ImageHandlerI;
 import com.sibilantsolutions.iptools.event.LostConnectionEvt;
 import com.sibilantsolutions.iptools.event.ReceiveEvt;
 import com.sibilantsolutions.iptools.event.SocketListenerI;
+import com.sibilantsolutions.iptools.net.LengthByteBuffer;
+import com.sibilantsolutions.iptools.net.LengthByteBuffer.LengthByteType;
+import com.sibilantsolutions.iptools.net.SocketUtils;
 import com.sibilantsolutions.iptools.util.DurationLoggingCallable;
 import com.sibilantsolutions.iptools.util.DurationLoggingRunnable;
-import com.sibilantsolutions.iptools.util.LengthByteBuffer;
-import com.sibilantsolutions.iptools.util.LengthByteBuffer.LengthByteType;
-import com.sibilantsolutions.iptools.util.Socker;
 
 public class FoscamConnection
 {
@@ -78,12 +78,12 @@ public class FoscamConnection
         LengthByteBuffer buffer = new LengthByteBuffer( 0x0F, 4, LengthByteType.LENGTH_OF_PAYLOAD,
                 ByteOrder.LITTLE_ENDIAN, 4, 0xFFFF, dest );
 
-        Socker.readLoopThread( socket, buffer );
+        SocketUtils.readLoopThread( socket, buffer );
     }
 
     static public FoscamConnection connect( InetSocketAddress address )
     {
-        Socket socket = Socker.connect( address );
+        Socket socket = SocketUtils.connect( address );
 
         FoscamConnection connection = new FoscamConnection( socket );
 
@@ -138,7 +138,7 @@ public class FoscamConnection
             {
                 log.info( "Send request: p={}, o={}.", request.getProtocol(), request.getOpCode() );
 
-                Socker.send( request.toDatastream(), socket );
+                SocketUtils.send( request.toDatastream(), socket );
             }
         };
 
@@ -157,7 +157,7 @@ public class FoscamConnection
             {
                 log.info( "Send request: p={}, o={}.", request.getProtocol(), request.getOpCode() );
 
-                Socker.send( request.toDatastream(), socket );
+                SocketUtils.send( request.toDatastream(), socket );
 
                 Command response = q.take();
 
@@ -187,7 +187,7 @@ public class FoscamConnection
             c.setOpCode( OperationProtocolOpCodeE.Keep_Alive );
 
             byte[] datastream = c.toDatastream();
-            Socker.send( datastream, evt.getSource() );
+            SocketUtils.send( datastream, evt.getSource() );
         }
 
         @Override
