@@ -1,6 +1,14 @@
 <configuration debug="true" scan="true">
 
   <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+
+      <!-- The STDERR appender will handle ERRORs so don't duplicate them here. -->
+    <filter class="ch.qos.logback.classic.filter.LevelFilter">
+      <level>ERROR</level>
+      <onMatch>DENY</onMatch>
+      <onMismatch>ACCEPT</onMismatch>
+    </filter>
+
     <!-- encoders are  by default assigned the type
          ch.qos.logback.classic.encoder.PatternLayoutEncoder -->
     <encoder>
