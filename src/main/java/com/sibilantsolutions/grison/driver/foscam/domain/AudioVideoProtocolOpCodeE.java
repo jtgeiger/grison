@@ -7,14 +7,16 @@ public enum AudioVideoProtocolOpCodeE implements OpCodeI
     Video_Data( Values.Video_Data ),
     Audio_Data( Values.Audio_Data ),
     Talk_Data( Values.Talk_Data ),
+    Keep_Alive( Values.Keep_Alive ),
     ;
 
     static private interface Values
     {
-        final static public short Login_Req   = 0;  //user -> ipcamera
-        final static public short Video_Data  = 1;  //ipcamera -> user
-        final static public short Audio_Data  = 2;  //ipcamera -> user
-        final static public short Talk_Data   = 3;  //user -> ipcamera
+        final static public short Login_Req     = 0;    //user -> ipcamera
+        final static public short Video_Data    = 1;    //ipcamera -> user
+        final static public short Audio_Data    = 2;    //ipcamera -> user
+        final static public short Talk_Data     = 3;    //user -> ipcamera
+        final static public short Keep_Alive    = 255;  //user <-> ipcamera
     }
 
     private short value;
@@ -40,6 +42,9 @@ public enum AudioVideoProtocolOpCodeE implements OpCodeI
             case Values.Talk_Data:
                 return Talk_Data;
 
+            case Values.Keep_Alive:
+                return Keep_Alive;
+
             default:
                 throw new IllegalArgumentException( "Unexpected value=" + value );
         }
@@ -61,6 +66,9 @@ public enum AudioVideoProtocolOpCodeE implements OpCodeI
 
             case Audio_Data:
                 return AudioDataText.parse( data, offset, length );
+
+            case Keep_Alive:
+                return KeepAliveText.parse( data, offset, length );
 
                 //TODO
 

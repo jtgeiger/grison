@@ -65,7 +65,7 @@ public class FoscamService
         c.setCommandText( login );
         login.setDataConnectionId( dataConnectionId );
 
-        connection.sendNoReceive( c );
+        connection.sendAsync( c );
     }
 
     static public List<SearchRespText> deviceSearch( int searchDurationMs )

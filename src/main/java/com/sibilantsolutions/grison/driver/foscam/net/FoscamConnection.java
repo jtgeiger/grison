@@ -12,6 +12,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
@@ -22,6 +23,7 @@ import org.slf4j.LoggerFactory;
 import com.sibilantsolutions.grison.driver.foscam.domain.AudioDataText;
 import com.sibilantsolutions.grison.driver.foscam.domain.AudioVideoProtocolOpCodeE;
 import com.sibilantsolutions.grison.driver.foscam.domain.Command;
+import com.sibilantsolutions.grison.driver.foscam.domain.KeepAliveText;
 import com.sibilantsolutions.grison.driver.foscam.domain.OpCodeI;
 import com.sibilantsolutions.grison.driver.foscam.domain.OperationProtocolOpCodeE;
 import com.sibilantsolutions.grison.driver.foscam.domain.ProtocolE;
@@ -37,11 +39,13 @@ import com.sibilantsolutions.iptools.net.LengthByteBuffer.LengthByteType;
 import com.sibilantsolutions.iptools.net.SocketUtils;
 import com.sibilantsolutions.iptools.util.DurationLoggingCallable;
 import com.sibilantsolutions.iptools.util.DurationLoggingRunnable;
+import com.sibilantsolutions.iptools.util.HexUtils;
 
 public class FoscamConnection
 {
 
     final static private Logger log = LoggerFactory.getLogger( FoscamConnection.class );
+    final static private Logger keepAliveLog = LoggerFactory.getLogger( log.getName() + ".keepalive" );
 
         //These will only come in response to a corresponding request.
         //All other opcodes are unsolicited.
@@ -51,54 +55,82 @@ public class FoscamConnection
         OperationProtocolOpCodeE.Video_Start_Resp,
         SearchProtocolOpCodeE.Init_Resp, SearchProtocolOpCodeE.Search_Resp );
 
-    private Socket socket;
+    final private Socket socket;
+    final private ExecutorService executorService;
+    final private ScheduledExecutorService keepAliveService;
 
-    private ExecutorService executorService = Executors.newSingleThreadExecutor( new ThreadFactory() {
-
-        @Override
-        public Thread newThread( Runnable r )
-        {
-            Thread thread = new Thread( r, "my executor" );
-            thread.setDaemon( true );
-            return thread;
-        }
-    });
-
-    private BlockingQueue<Command> q = new LinkedBlockingQueue<Command>();
+    final private BlockingQueue<Command> q = new LinkedBlockingQueue<Command>();
 
     private AudioHandlerI audioHandler = new NoOpAudioHandler();    //Default no-op impl.
     private ImageHandlerI imageHandler = new NoOpImageHandler();    //Default no-op impl.
 
-    private FoscamConnection( Socket socket )
+    private FoscamConnection( Socket socket, ProtocolE protocol )
     {
         this.socket = socket;
+
+        this.executorService = createExecutorService( "executor " + this.socket );
+
+        this.keepAliveService = createScheduledExecutorService( "keepAlive " + this.socket );
+        scheduleKeepAlive( protocol, this.keepAliveService );
 
         SocketListenerI dest = new ReceiverProducer( q );
 
         LengthByteBuffer buffer = new LengthByteBuffer( 0x0F, 4, LengthByteType.LENGTH_OF_PAYLOAD,
                 ByteOrder.LITTLE_ENDIAN, 4, 0xFFFF, dest );
 
-        SocketUtils.readLoopThread( socket, buffer );
+        SocketUtils.readLoopThread( this.socket, buffer );
     }
 
-    static public FoscamConnection connect( InetSocketAddress address )
+    static public FoscamConnection connect( InetSocketAddress address, ProtocolE protocol )
     {
         Socket socket = SocketUtils.connect( address );
 
-        FoscamConnection connection = new FoscamConnection( socket );
+        FoscamConnection connection = new FoscamConnection( socket, protocol );
 
         return connection;
+    }
+
+    static private ExecutorService createExecutorService( final String threadName )
+    {
+        ExecutorService es = Executors.newSingleThreadExecutor( new ThreadFactory() {
+
+            @Override
+            public Thread newThread( Runnable r )
+            {
+                Thread thread = new Thread( r, threadName );
+                thread.setDaemon( true );
+                return thread;
+            }
+        } );
+
+        return es;
+    }
+
+    static private ScheduledExecutorService createScheduledExecutorService( final String threadName )
+    {
+        ScheduledExecutorService ses = Executors.newSingleThreadScheduledExecutor( new ThreadFactory() {
+
+            @Override
+            public Thread newThread( Runnable r )
+            {
+                Thread thread = new Thread( r, threadName );
+                thread.setDaemon( true );
+                return thread;
+            }
+        } );
+
+        return ses;
     }
 
     private <T> T execute( Callable<T> task )
     {
         Future<T> future = executorService.submit( task );
 
-        T text;
+        T result;
 
         try
         {
-            text = future.get( 15, TimeUnit.SECONDS );
+            result = future.get( 15, TimeUnit.SECONDS );
         }
         catch ( InterruptedException | ExecutionException | TimeoutException e )
         {
@@ -106,7 +138,7 @@ public class FoscamConnection
             throw new UnsupportedOperationException( "OGTE TODO!", e );
         }
 
-        return text;
+        return result;
     }
 
     public AudioHandlerI getAudioHandler()
@@ -129,21 +161,21 @@ public class FoscamConnection
         this.imageHandler = imageHandler;
     }
 
-    protected void sendNoReceive( final Command request )
+    protected void sendAsync( final Command request )
     {
         Runnable task = new Runnable() {
 
             @Override
             public void run()
             {
-                log.info( "Send request: p={}, o={}.", request.getProtocol(), request.getOpCode() );
+                log.info( "Send async: p={}, o={}.", request.getProtocol(), request.getOpCode() );
 
                 SocketUtils.send( request.toDatastream(), socket );
             }
         };
 
         task = new DurationLoggingRunnable( task,
-                "sendNoReceive p=" + request.getProtocol() + ", o=" + request.getOpCode() );
+                "sendAsync p=" + request.getProtocol() + ", o=" + request.getOpCode() );
 
         execute( Executors.callable( task ) );
     }
@@ -161,6 +193,8 @@ public class FoscamConnection
 
                 Command response = q.take();
 
+                log.info( "Got response: p={}, o={}.", response.getProtocol(), response.getOpCode() );
+
                 return response;
             }
         };
@@ -169,6 +203,43 @@ public class FoscamConnection
                 "sendReceive p=" + request.getProtocol() + ", o=" + request.getOpCode() );
 
         return execute( task );
+    }
+
+    private void scheduleKeepAlive( final ProtocolE keepAliveProtocol, ScheduledExecutorService service )
+    {
+        final OpCodeI keepAliveOpCode;
+        switch ( keepAliveProtocol )
+        {
+            case OPERATION_PROTOCOL:
+                keepAliveOpCode = OperationProtocolOpCodeE.Keep_Alive;
+                break;
+
+            case AUDIO_VIDEO_PROTOCOL:
+                keepAliveOpCode = AudioVideoProtocolOpCodeE.Keep_Alive;
+                break;
+
+            default:
+                throw new IllegalArgumentException( "Unexpected protocol=" + keepAliveProtocol );
+        }
+
+        Runnable r = new Runnable() {
+
+            @Override
+            public void run()
+            {
+                keepAliveLog.info( "Sending scheduled keep alive for socket={}.", socket );
+
+                Command c = new Command();
+                c.setProtocol( keepAliveProtocol );
+                c.setOpCode( keepAliveOpCode );
+                KeepAliveText text = new KeepAliveText();
+                c.setCommandText( text );
+
+                sendAsync( c );
+            }
+        };
+
+        service.scheduleAtFixedRate( r, 60, 60, TimeUnit.SECONDS );
     }
 
     private class ReceiverProducer implements SocketListenerI
@@ -180,21 +251,16 @@ public class FoscamConnection
             this.queue = queue;
         }
 
-        private void keepAlive( ReceiveEvt evt )
-        {
-            Command c = new Command();
-            c.setProtocol( ProtocolE.OPERATION_PROTOCOL );
-            c.setOpCode( OperationProtocolOpCodeE.Keep_Alive );
-
-            byte[] datastream = c.toDatastream();
-            SocketUtils.send( datastream, evt.getSource() );
-        }
-
         @Override
         public void onLostConnection( LostConnectionEvt evt )
         {
+            log.info( "Lost connection on socket={}.", socket );
+
+            keepAliveService.shutdownNow();
+            executorService.shutdownNow();
+
             // TODO Auto-generated method stub
-            throw new UnsupportedOperationException( "MY TODO!" );
+            throw new UnsupportedOperationException( "MY TODO!", evt.getCause() );
         }
 
         @Override
@@ -211,18 +277,16 @@ public class FoscamConnection
             ProtocolE protocol = command.getProtocol();
             OpCodeI opCode = command.getOpCode();
 
-            log.info( "Receive command: p={}, o={}.", protocol, opCode );
+            log.info( "Receive command (len=0x{}/{}): p={}, o={}.",
+                    HexUtils.numToHex( nbytes ), nbytes, protocol, opCode );
 
-            if ( protocol == ProtocolE.OPERATION_PROTOCOL )
+            if ( ( protocol == ProtocolE.OPERATION_PROTOCOL &&
+                    opCode == OperationProtocolOpCodeE.Keep_Alive ) ||
+                 ( protocol == ProtocolE.AUDIO_VIDEO_PROTOCOL &&
+                    opCode == AudioVideoProtocolOpCodeE.Keep_Alive ) )
             {
-                OperationProtocolOpCodeE o = (OperationProtocolOpCodeE)opCode;
-
-                if ( o == OperationProtocolOpCodeE.Keep_Alive )
-                {
-                    log.info( "Auto-responding to keep alive request." );
-                    keepAlive( evt );
-                    return;
-                }
+                keepAliveLog.info( "Incoming keep alive p={}, o={}.", protocol, opCode );
+                return;
             }
 
             if ( synchronousResponseOpcodes.contains( opCode ) )

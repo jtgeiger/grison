@@ -9,6 +9,7 @@ import org.slf4j.LoggerFactory;
 
 import com.sibilantsolutions.grison.driver.foscam.domain.AudioStartRespText;
 import com.sibilantsolutions.grison.driver.foscam.domain.LoginRespText;
+import com.sibilantsolutions.grison.driver.foscam.domain.ProtocolE;
 import com.sibilantsolutions.grison.driver.foscam.domain.ResultCodeE;
 import com.sibilantsolutions.grison.driver.foscam.domain.TalkStartRespText;
 import com.sibilantsolutions.grison.driver.foscam.domain.VerifyRespText;
@@ -35,7 +36,8 @@ public class Demo
     {
         Ui.buildUi( label );
 
-        FoscamConnection connection = FoscamConnection.connect( new InetSocketAddress( hostname, port ) );
+        FoscamConnection connection = FoscamConnection.connect(
+                new InetSocketAddress( hostname, port ), ProtocolE.OPERATION_PROTOCOL );
 
         FoscamService service = new FoscamService( connection );
 
@@ -48,7 +50,7 @@ public class Demo
         log.info( "Login result={}.", vr.getResultCode() );
 
         audioStart( hostname, port, service );
-        //talkStart( service );
+//        talkStart( hostname, port, service );
         videoStart( hostname, port, service );
 
     }
@@ -76,7 +78,8 @@ public class Demo
 
     private static void connectAudioVideo( String hostname, int port, String dataConnectionId )
     {
-        FoscamConnection audioConnection = FoscamConnection.connect( new InetSocketAddress( hostname, port ) );
+        FoscamConnection audioConnection = FoscamConnection.connect(
+                new InetSocketAddress( hostname, port ), ProtocolE.AUDIO_VIDEO_PROTOCOL );
 
         audioConnection.setAudioHandler( audioHandler );
         audioConnection.setImageHandler( imageHandler );
@@ -86,7 +89,7 @@ public class Demo
         audioService.audioVideoLogin( dataConnectionId );
     }
 
-    private static void talkStart( FoscamService service )
+    private static void talkStart( String hostname, int port, FoscamService service )
     {
         TalkStartRespText talkStartResp = service.talkStart();
 
@@ -94,9 +97,16 @@ public class Demo
         {
             String dataConnectionId = talkStartResp.getDataConnectionId();
 
-            log.info( "Talk start connection id={}.", HexDumpDeferred.simpleDump( dataConnectionId ) );
+            if ( dataConnectionId != null )
+            {
+                log.info( "Talk start connection id={}.", HexDumpDeferred.simpleDump( dataConnectionId ) );
 
-            //TODO
+                connectAudioVideo( hostname, port, dataConnectionId );
+            }
+            else
+            {
+                log.info( "Talk start success.  Talk can be sent on existing A/V connection." );
+            }
         }
     }
 
