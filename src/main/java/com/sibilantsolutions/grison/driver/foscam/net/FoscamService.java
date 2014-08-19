@@ -41,6 +41,15 @@ public class FoscamService
         this.connection = connection;
     }
 
+    public void audioEnd()
+    {
+        Command c = new Command();
+        c.setProtocol( ProtocolE.OPERATION_PROTOCOL );
+        c.setOpCode( OperationProtocolOpCodeE.Audio_End );
+
+        connection.sendAsync( c );
+    }
+
     public AudioStartRespText audioStart()
     {
         Command c = new Command();
@@ -194,6 +203,16 @@ public class FoscamService
         return connection.sendReceive( request );
     }
 
+
+    public void talkEnd()
+    {
+        Command c = new Command();
+        c.setProtocol( ProtocolE.OPERATION_PROTOCOL );
+        c.setOpCode( OperationProtocolOpCodeE.Talk_End );
+
+        connection.sendAsync( c );
+    }
+
     public TalkStartRespText talkStart()
     {
         Command c = new Command();
@@ -223,6 +242,15 @@ public class FoscamService
 
             //Blind cast; what can we do about it if the wrong thing was received?
         return (VerifyRespText)response.getCommandText();
+    }
+
+    public void videoEnd()
+    {
+        Command c = new Command();
+        c.setProtocol( ProtocolE.OPERATION_PROTOCOL );
+        c.setOpCode( OperationProtocolOpCodeE.Video_End );
+
+        connection.sendAsync( c );
     }
 
     public VideoStartRespText videoStart()
