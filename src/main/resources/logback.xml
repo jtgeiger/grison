@@ -46,6 +46,7 @@
   <logger name="com.sibilantsolutions.iptools.util.DurationLoggingRunnable" level="INFO" />
   <logger name="com.sibilantsolutions.iptools.util.DurationLoggingCallable" level="INFO" />
   <logger name="com.sibilantsolutions.grison.driver.foscam.net.FoscamConnection" level="INFO" />
+  <logger name="com.sibilantsolutions.grison.driver.foscam.net.FoscamSession" level="INFO" />
 
   <root level="WARN">
 <!--     <appender-ref ref="STDOUT" /> -->

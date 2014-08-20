@@ -7,18 +7,9 @@ import javax.swing.JLabel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.sibilantsolutions.grison.driver.foscam.domain.AudioStartRespText;
-import com.sibilantsolutions.grison.driver.foscam.domain.LoginRespText;
-import com.sibilantsolutions.grison.driver.foscam.domain.ProtocolE;
-import com.sibilantsolutions.grison.driver.foscam.domain.ResultCodeE;
-import com.sibilantsolutions.grison.driver.foscam.domain.TalkStartRespText;
-import com.sibilantsolutions.grison.driver.foscam.domain.VerifyRespText;
-import com.sibilantsolutions.grison.driver.foscam.domain.VideoStartRespText;
-import com.sibilantsolutions.grison.driver.foscam.net.FoscamConnection;
-import com.sibilantsolutions.grison.driver.foscam.net.FoscamService;
+import com.sibilantsolutions.grison.driver.foscam.net.FoscamSession;
 import com.sibilantsolutions.grison.evt.AudioHandlerI;
 import com.sibilantsolutions.grison.ui.Ui;
-import com.sibilantsolutions.iptools.util.HexDumpDeferred;
 
 public class Demo
 {
@@ -36,99 +27,13 @@ public class Demo
     {
         Ui.buildUi( label );
 
-        FoscamConnection connection = FoscamConnection.connect(
-                new InetSocketAddress( hostname, port ), ProtocolE.OPERATION_PROTOCOL );
+        FoscamSession session = FoscamSession.connect( new InetSocketAddress( hostname, port ),
+                username, password, audioHandler, imageHandler );
 
-        FoscamService service = new FoscamService( connection );
+        session.audioStart();
+//        session.talkStart();
+        session.videoStart();
 
-        LoginRespText lr = service.login();
-
-        log.info( "Connected to cam={}.", lr.getCameraId() );
-
-        VerifyRespText vr = service.verify( username, password );
-
-        log.info( "Login result={}.", vr.getResultCode() );
-
-        audioStart( hostname, port, service );
-//        talkStart( hostname, port, service );
-        videoStart( hostname, port, service );
-
-    }
-
-    private static void audioStart( String hostname, int port, FoscamService service )
-    {
-        AudioStartRespText audioStartResp = service.audioStart();
-
-        if ( audioStartResp.getResultCode() == ResultCodeE.CORRECT )
-        {
-            String dataConnectionId = audioStartResp.getDataConnectionId();
-
-            if ( dataConnectionId != null )
-            {
-                log.info( "Audio start connection id={}.", HexDumpDeferred.simpleDump( dataConnectionId ) );
-
-                connectAudioVideo( hostname, port, dataConnectionId );
-            }
-            else
-            {
-                log.info( "Audio start success.  Audio should start coming on existing A/V connection." );
-            }
-        }
-    }
-
-    private static void connectAudioVideo( String hostname, int port, String dataConnectionId )
-    {
-        FoscamConnection audioConnection = FoscamConnection.connect(
-                new InetSocketAddress( hostname, port ), ProtocolE.AUDIO_VIDEO_PROTOCOL );
-
-        audioConnection.setAudioHandler( audioHandler );
-        audioConnection.setImageHandler( imageHandler );
-
-        FoscamService audioService = new FoscamService( audioConnection );
-
-        audioService.audioVideoLogin( dataConnectionId );
-    }
-
-    private static void talkStart( String hostname, int port, FoscamService service )
-    {
-        TalkStartRespText talkStartResp = service.talkStart();
-
-        if ( talkStartResp.getResultCode() == ResultCodeE.CORRECT )
-        {
-            String dataConnectionId = talkStartResp.getDataConnectionId();
-
-            if ( dataConnectionId != null )
-            {
-                log.info( "Talk start connection id={}.", HexDumpDeferred.simpleDump( dataConnectionId ) );
-
-                connectAudioVideo( hostname, port, dataConnectionId );
-            }
-            else
-            {
-                log.info( "Talk start success.  Talk can be sent on existing A/V connection." );
-            }
-        }
-    }
-
-    private static void videoStart( String hostname, int port, FoscamService service )
-    {
-        VideoStartRespText videoStartResp = service.videoStart();
-
-        if ( videoStartResp.getResultCode() == ResultCodeE.CORRECT )
-        {
-            String dataConnectionId = videoStartResp.getDataConnectionId();
-
-            if ( dataConnectionId != null )
-            {
-                log.info( "Video start connection id={}.", HexDumpDeferred.simpleDump( dataConnectionId ) );
-
-                connectAudioVideo( hostname, port, dataConnectionId );
-            }
-            else
-            {
-                log.info( "Video start success.  Video should start coming on existing A/V connection." );
-            }
-        }
     }
 
 }
