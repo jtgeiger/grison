@@ -59,5 +59,12 @@
     	<artifactId>iptools</artifactId>
     	<version>0.0.2-SNAPSHOT</version>
     </dependency>
+    <dependency>
+      <groupId>de.huxhorn.lilith</groupId>
+      <artifactId>de.huxhorn.lilith.logback.appender.multiplex-classic</artifactId>
+      <version>0.9.44</version>
+      <scope>runtime</scope>
+      <optional>true</optional>
+    </dependency>
   </dependencies>
 </project>
