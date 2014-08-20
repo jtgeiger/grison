@@ -4,16 +4,13 @@ import java.net.InetSocketAddress;
 
 import javax.swing.JLabel;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import com.sibilantsolutions.grison.driver.foscam.net.FoscamSession;
 import com.sibilantsolutions.grison.evt.AudioHandlerI;
 import com.sibilantsolutions.grison.ui.Ui;
 
 public class Demo
 {
-    final static private Logger log = LoggerFactory.getLogger( Demo.class );
+//    final static private Logger log = LoggerFactory.getLogger( Demo.class );
 
     static private AudioHandlerI audioHandler = new DemoAudioHandler();
     static private JLabel label = new JLabel();
