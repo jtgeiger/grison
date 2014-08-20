@@ -4,7 +4,7 @@ import static org.junit.Assert.assertArrayEquals;
 
 import org.junit.Test;
 
-import com.sibilantsolutions.grison.util.ResourceLoader;
+import com.sibilantsolutions.grison.util.ResourceReader;
 
 public class AdpcmDecoderTest
 {
@@ -20,14 +20,14 @@ public class AdpcmDecoderTest
         byte[] actual;
         byte[] expected;
 
-        raw = ResourceLoader.loadResourceAsBytes( "/samples/sound/audio000.adpcm" );
+        raw = ResourceReader.readResourceAsBytes( "/samples/sound/audio000.adpcm" );
         actual = decoder.decode( raw );
-        expected = ResourceLoader.loadResourceAsBytes( "/samples/sound/audio000.pcm" );
+        expected = ResourceReader.readResourceAsBytes( "/samples/sound/audio000.pcm" );
         assertArrayEquals( expected, actual );
 
-        raw = ResourceLoader.loadResourceAsBytes( "/samples/sound/audio001.adpcm" );
+        raw = ResourceReader.readResourceAsBytes( "/samples/sound/audio001.adpcm" );
         actual = decoder.decode( raw );
-        expected = ResourceLoader.loadResourceAsBytes( "/samples/sound/audio001.pcm" );
+        expected = ResourceReader.readResourceAsBytes( "/samples/sound/audio001.pcm" );
         assertArrayEquals( expected, actual );
     }
 
@@ -51,9 +51,9 @@ public class AdpcmDecoderTest
 
             base += i;
 
-            byte[] raw = ResourceLoader.loadResourceAsBytes( base + ".adpcm" );
+            byte[] raw = ResourceReader.readResourceAsBytes( base + ".adpcm" );
             byte[] actual = decoder.decode( raw );
-            byte[] expected = ResourceLoader.loadResourceAsBytes( base + ".pcm" );
+            byte[] expected = ResourceReader.readResourceAsBytes( base + ".pcm" );
 
             assertArrayEquals( expected, actual );
         }

@@ -5,62 +5,17 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 
-abstract public class ResourceLoader
+abstract public class ResourceReader
 {
 
-    static private enum LoadMode
+    static private enum ReadMode
     {
         STRING,
         BYTES,
         ;
     }
 
-    private ResourceLoader() {} //Prevent instantiation.
-
-    static public byte[] loadResourceAsBytes( String path )
-    {
-        return (byte[])loadResourceImpl( path, LoadMode.BYTES );
-    }
-
-    static public String loadResourceAsString( String path )
-    {
-        return (String)loadResourceImpl( path, LoadMode.STRING );
-    }
-
-    static private Object loadResourceImpl( String path, LoadMode loadMode )
-    {
-        InputStream ins = ResourceLoader.class.getResourceAsStream( path );
-
-        if ( ins == null )
-            throw new IllegalArgumentException( "Resource not found: " + path );
-
-        Object data;
-
-        switch ( loadMode )
-        {
-            case STRING:
-                data = readFullyAsString( ins );
-                break;
-
-            case BYTES:
-                data = readFullyAsBytes( ins );
-                break;
-
-            default:
-                throw new IllegalArgumentException( "Unexpected mode=" + loadMode );
-        }
-
-        try
-        {
-            ins.close();
-        }
-        catch ( IOException e )
-        {
-            throw new RuntimeException( e );
-        }
-
-        return data;
-    }
+    private ResourceReader() {} //Prevent instantiation.
 
     public static ByteArrayOutputStream readFullyAsByteArrayOutputStream( InputStream ins )
     {
@@ -102,6 +57,51 @@ abstract public class ResourceLoader
         {
             throw new RuntimeException( e );
         }
+    }
+
+    static public byte[] readResourceAsBytes( String path )
+    {
+        return (byte[])readResourceImpl( path, ReadMode.BYTES );
+    }
+
+    static public String readResourceAsString( String path )
+    {
+        return (String)readResourceImpl( path, ReadMode.STRING );
+    }
+
+    static private Object readResourceImpl( String path, ReadMode loadMode )
+    {
+        InputStream ins = ResourceReader.class.getResourceAsStream( path );
+
+        if ( ins == null )
+            throw new IllegalArgumentException( "Resource not found: " + path );
+
+        Object data;
+
+        switch ( loadMode )
+        {
+            case STRING:
+                data = readFullyAsString( ins );
+                break;
+
+            case BYTES:
+                data = readFullyAsBytes( ins );
+                break;
+
+            default:
+                throw new IllegalArgumentException( "Unexpected mode=" + loadMode );
+        }
+
+        try
+        {
+            ins.close();
+        }
+        catch ( IOException e )
+        {
+            throw new RuntimeException( e );
+        }
+
+        return data;
     }
 
 }
