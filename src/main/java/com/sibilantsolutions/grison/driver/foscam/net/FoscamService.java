@@ -1,12 +1,15 @@
 package com.sibilantsolutions.grison.driver.foscam.net;
 
+import com.sibilantsolutions.grison.driver.foscam.domain.AudioFormatE;
 import com.sibilantsolutions.grison.driver.foscam.domain.AudioStartReqText;
 import com.sibilantsolutions.grison.driver.foscam.domain.AudioStartRespText;
+import com.sibilantsolutions.grison.driver.foscam.domain.AudioVideoProtocolOpCodeE;
 import com.sibilantsolutions.grison.driver.foscam.domain.Command;
 import com.sibilantsolutions.grison.driver.foscam.domain.LoginReqText;
 import com.sibilantsolutions.grison.driver.foscam.domain.LoginRespText;
 import com.sibilantsolutions.grison.driver.foscam.domain.OperationProtocolOpCodeE;
 import com.sibilantsolutions.grison.driver.foscam.domain.ProtocolE;
+import com.sibilantsolutions.grison.driver.foscam.domain.TalkDataText;
 import com.sibilantsolutions.grison.driver.foscam.domain.TalkStartReqText;
 import com.sibilantsolutions.grison.driver.foscam.domain.TalkStartRespText;
 import com.sibilantsolutions.grison.driver.foscam.domain.VerifyReqText;
@@ -19,6 +22,9 @@ public class FoscamService
     //final static private Logger log = LoggerFactory.getLogger( FoscamService.class );
 
     private FoscamConnection connection;
+
+    final private long startMs = System.currentTimeMillis();
+    private long serialNumber = 1;
 
     public FoscamService( FoscamConnection connection )
     {
@@ -87,6 +93,24 @@ public class FoscamService
         Command c = new Command();
         c.setProtocol( ProtocolE.OPERATION_PROTOCOL );
         c.setOpCode( OperationProtocolOpCodeE.Talk_End );
+
+        connection.sendAsync( c );
+    }
+
+    public void talkSend( byte[] adpcm )
+    {
+        Command c = new Command();
+        c.setProtocol( ProtocolE.AUDIO_VIDEO_PROTOCOL );
+        c.setOpCode( AudioVideoProtocolOpCodeE.Talk_Data );
+        TalkDataText text = new TalkDataText();
+        c.setCommandText( text );
+        long now = System.currentTimeMillis();
+        long uptimeMs = now - startMs;
+        text.setUptimeMs( uptimeMs );
+        text.setSerialNumber( serialNumber++ );
+        text.setTimestampMs( now );
+        text.setAudioFormat( AudioFormatE.ADPCM );
+        text.setDataContent( adpcm );
 
         connection.sendAsync( c );
     }

@@ -6,12 +6,19 @@ import java.nio.ByteOrder;
 abstract public class AbstractAudioDataText implements DatastreamI
 {
 
-    private long uptimeHundredths;      //INT32 (4 bytes; little endian); 10ms (Foscam docs call this field=timestamp)
+    private long uptimeMs;              //INT32 (4 bytes; little endian); 10ms for Audio Data (we scale to 1ms), 1ms for Talk Data (Foscam docs call this field=timestamp)
     private long serialNumber;          //INT32 (4 bytes; little endian); increase from zero
-    private long timestampSeconds;      //INT32 (4 bytes; little endian); From 1970.1.1 to current time (Foscam docs call this field=gatherTime)
+    private long timestampMs;           //INT32 (4 bytes; little endian); 1s (we scale to ms) From 1970.1.1 to current time (Foscam docs call this field=gatherTime)
     private AudioFormatE audioFormat;   //INT8; =0: adpcm
     //private long dataLength;          //INT32 (4 bytes; little endian); =160
     private byte[] dataContent;         //BINARY_STREAM[n]
+
+    private int uptimeScale;
+
+    protected AbstractAudioDataText( int uptimeScale )
+    {
+        this.uptimeScale = uptimeScale;
+    }
 
     public AudioFormatE getAudioFormat()
     {
@@ -43,24 +50,24 @@ abstract public class AbstractAudioDataText implements DatastreamI
         this.serialNumber = serialNumber;
     }
 
-    public long getTimestampSeconds()
+    public long getTimestampMs()
     {
-        return timestampSeconds;
+        return timestampMs;
     }
 
-    public void setTimestampSeconds( long timestampSeconds )
+    public void setTimestampMs( long timestampMs )
     {
-        this.timestampSeconds = timestampSeconds;
+        this.timestampMs = timestampMs;
     }
 
-    public long getUptimeHundredths()
+    public long getUptimeMs()
     {
-        return uptimeHundredths;
+        return uptimeMs;
     }
 
-    public void setUptimeHundredths( long uptimeHundredths )
+    public void setUptimeMs( long uptimeMs )
     {
-        this.uptimeHundredths = uptimeHundredths;
+        this.uptimeMs = uptimeMs;
     }
 
     protected void parseImpl( byte[] data, int offset, int length )
@@ -68,9 +75,9 @@ abstract public class AbstractAudioDataText implements DatastreamI
         ByteBuffer bb = ByteBuffer.wrap( data, offset, length );
         bb.order( ByteOrder.LITTLE_ENDIAN );
 
-        this.uptimeHundredths = bb.getInt();
+        this.uptimeMs = ( (long)bb.getInt() ) * uptimeScale;
         this.serialNumber = bb.getInt();
-        this.timestampSeconds = bb.getInt();
+        this.timestampMs = ( (long)bb.getInt() ) * 1000;
 
         this.audioFormat = AudioFormatE.fromValue( (char)bb.get() );
 
@@ -87,9 +94,9 @@ abstract public class AbstractAudioDataText implements DatastreamI
         ByteBuffer bb = ByteBuffer.allocate( 4 + 4 + 4 + 1 + 4 + dataContent.length );  //177
         bb.order( ByteOrder.LITTLE_ENDIAN );
 
-        bb.putInt( (int)uptimeHundredths );
+        bb.putInt( (int)( uptimeMs / uptimeScale ) );
         bb.putInt( (int)serialNumber );
-        bb.putInt( (int)timestampSeconds );
+        bb.putInt( (int)( timestampMs / 1000 ) );
         bb.put( (byte)audioFormat.getValue() );
         bb.putInt( dataContent.length );
         bb.put( dataContent );

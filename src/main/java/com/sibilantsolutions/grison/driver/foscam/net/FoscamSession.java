@@ -145,6 +145,11 @@ public class FoscamSession
         operationService.talkEnd();
     }
 
+    public void talkSend( byte[] adpcm )
+    {
+        audioVideoService.talkSend( adpcm );
+    }
+
     public void talkStart()
     {
         log.info( "Talk start." );
