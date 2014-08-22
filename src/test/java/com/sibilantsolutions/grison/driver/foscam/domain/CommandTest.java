@@ -144,8 +144,8 @@ public class CommandTest
 
         VideoDataText text = (VideoDataText)c.getCommandText();
 
-        assertEquals( 0x0000E6E4, text.getTimestamp() );
-        assertEquals( 0x537CCE75, text.getFramesPerSec() );
+        assertEquals( 0x0000E6E4, text.getUptimeHundredths() );
+        assertEquals( 0x537CCE75, text.getTimestampSeconds() );
         assertEquals( 0x0000AE38, text.getDataContent().length ); //44600
     }
 
@@ -492,9 +492,9 @@ public class CommandTest
         c.setOpCode( AudioVideoProtocolOpCodeE.Audio_Data );
         AudioDataText text = new AudioDataText();
         c.setCommandText( text );
-        text.setTimestamp( Convert.toNumLittleEndian( "" + (char)0x18 + (char)0xD9 + (char)0x03 + (char)0x00 ) );
+        text.setUptimeHundredths( Convert.toNumLittleEndian( "" + (char)0x18 + (char)0xD9 + (char)0x03 + (char)0x00 ) );
         text.setSerialNumber( Convert.toNumLittleEndian( "" + (char)0xDC + (char)0xF5 + (char)0x00 + (char)0x00 ) );
-        text.setGatherTime( Convert.toNumLittleEndian( "" + (char)0x6A + (char)0x75 + (char)0x5A + (char)0x53 ) );
+        text.setTimestampSeconds( Convert.toNumLittleEndian( "" + (char)0x6A + (char)0x75 + (char)0x5A + (char)0x53 ) );
         text.setAudioFormat( AudioFormatE.ADPCM );
         final int SIZE = 160;   //0xA0
         byte[] data = new byte[SIZE];
@@ -619,8 +619,8 @@ public class CommandTest
         c.setOpCode( AudioVideoProtocolOpCodeE.Video_Data );
         VideoDataText text = new VideoDataText();
         c.setCommandText( text );
-        text.setTimestamp( 0x0000E6E4 );
-        text.setFramesPerSec( 0x537CCE75 );
+        text.setUptimeHundredths( 0x0000E6E4 );
+        text.setTimestampSeconds( 0x537CCE75 );
 
         byte[] expected = ResourceReader.readResourceAsBytes( "/samples/video_data.bin" );
 
