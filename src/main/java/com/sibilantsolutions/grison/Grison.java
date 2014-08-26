@@ -1,19 +1,10 @@
 package com.sibilantsolutions.grison;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
-import java.net.URL;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.sibilantsolutions.grison.demo.Demo;
-import com.sibilantsolutions.grison.util.Convert;
-import com.sibilantsolutions.grison.util.ResourceReader;
 import com.sibilantsolutions.iptools.util.DurationLoggingRunnable;
-import com.sibilantsolutions.iptools.util.HexDumpDeferred;
 
 /**
  * Grisons, also known as South American wolverines, are mustelids native to Central and South America.
@@ -48,89 +39,11 @@ public class Grison
 //                init( "http://" + args[0] + ":" + Integer.parseInt( args[1] ) + "/decoder_control.cgi?command=2&onestep=0&degree=500&user=" + args[2] + "&pwd=" + args[3] );
 //                init( "http://" + args[0] + ":" + Integer.parseInt( args[1] ) + "/decoder_control.cgi?command=4&onestep=1&degree=5&user=" + args[2] + "&pwd=" + args[3] );
 //                init( "http://" + args[0] + ":" + Integer.parseInt( args[1] ) + "/decoder_control.cgi?command=6&onestep=1&degree=50&user=" + args[2] + "&pwd=" + args[3] );
+//                CgiService svc = new CgiService( new InetSocketAddress( args[0], Integer.parseInt( args[1] ) ), args[2], args[3] );
+//                CgiService.exec( svc.getStatus() );
+
             }
         }, "main" ).run();
-    }
-
-    static public void init( String url )
-    {
-        URL u;
-
-        try
-        {
-            u = new URL( url );
-        }
-        catch ( MalformedURLException e )
-        {
-            // TODO Auto-generated catch block
-            throw new UnsupportedOperationException( "MY TODO!", e );
-        }
-
-        log.info( "Opening connection to url=( {} ).", url );
-
-        HttpURLConnection yukon;
-
-        try
-        {
-            yukon = (HttpURLConnection)u.openConnection();
-        }
-        catch ( IOException e )
-        {
-            // TODO Auto-generated catch block
-            throw new UnsupportedOperationException( "MY TODO!", e );
-        }
-
-        int responseCode;
-
-        try
-        {
-            responseCode = yukon.getResponseCode();
-        }
-        catch ( IOException e )
-        {
-            // TODO Auto-generated catch block
-            throw new UnsupportedOperationException( "MY TODO!", e );
-        }
-
-        if ( responseCode == HttpURLConnection.HTTP_OK )
-        {
-            Object content;
-
-            try
-            {
-                content = yukon.getContent();
-            }
-            catch ( IOException e )
-            {
-                // TODO Auto-generated catch block
-                throw new UnsupportedOperationException( "MY TODO!", e );
-            }
-
-            log.info( "Headers={}.", yukon.getHeaderFields() );
-            log.info( "Content type={}, content={}.", yukon.getContentType(), content );
-
-            InputStream ins;
-
-            try
-            {
-                ins = yukon.getInputStream();
-            }
-            catch ( IOException e )
-            {
-                // TODO Auto-generated catch block
-                throw new UnsupportedOperationException( "MY TODO!", e );
-            }
-
-            byte[] data = ResourceReader.readFullyAsBytes( ins );
-            log.info( "Data: \n{}", HexDumpDeferred.prettyDump( data ) );
-            String str = new String( data, 0, data.length, Convert.cs );
-            log.info( "Data: \n{}", str );
-        }
-        else
-        {
-            log.error( "Unexepected response code={}.", responseCode );
-        }
-
     }
 
 }
