@@ -78,7 +78,7 @@ public class FoscamConnection
         LengthByteBuffer buffer = new LengthByteBuffer( 0x0F, 4, LengthByteType.LENGTH_OF_PAYLOAD,
                 ByteOrder.LITTLE_ENDIAN, 4, 0xFFFF, dest );
 
-        SocketUtils.readLoopThread( this.socket, buffer );
+        SocketUtils.readLoopThread( 0xFFFF, this.socket, buffer );
     }
 
     static public FoscamConnection connect( InetSocketAddress address, ProtocolE protocol )
