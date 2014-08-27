@@ -1,12 +1,15 @@
 package com.sibilantsolutions.grison.driver.foscam.net;
 
 import java.net.InetSocketAddress;
+import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.sibilantsolutions.grison.driver.foscam.domain.AudioStartRespText;
+import com.sibilantsolutions.grison.driver.foscam.domain.DecoderControlE;
 import com.sibilantsolutions.grison.driver.foscam.domain.LoginRespText;
+import com.sibilantsolutions.grison.driver.foscam.domain.PresetAndDelay;
 import com.sibilantsolutions.grison.driver.foscam.domain.ProtocolE;
 import com.sibilantsolutions.grison.driver.foscam.domain.ResultCodeE;
 import com.sibilantsolutions.grison.driver.foscam.domain.TalkStartRespText;
@@ -27,15 +30,18 @@ public class FoscamSession
 
     private FoscamService audioVideoService;
 
+    private CgiService cgiService;
+
     private AudioHandlerI audioHandler;
     private ImageHandlerI imageHandler;
 
-    private FoscamSession( FoscamService operationService, InetSocketAddress address, String cameraId, String firmwareVersion, AudioHandlerI audioHandler, ImageHandlerI imageHandler )
+    private FoscamSession( FoscamService operationService, InetSocketAddress address, String cameraId, String firmwareVersion, CgiService cgiService, AudioHandlerI audioHandler, ImageHandlerI imageHandler )
     {
         this.operationService = operationService;
         this.address = address;
         this.cameraId = cameraId;
         this.firmwareVersion = firmwareVersion;
+        this.cgiService = cgiService;
         this.audioHandler = audioHandler;
         this.imageHandler = imageHandler;
     }
@@ -90,8 +96,10 @@ public class FoscamSession
 
             if ( vr.getResultCode() == ResultCodeE.CORRECT )
             {
+                CgiService cgiService = new CgiService( address, username, password );
+
                 return new FoscamSession( service, address, lr.getCameraId(),
-                        lr.getFirmwareVersion(), audioHandler, imageHandler );
+                        lr.getFirmwareVersion(), cgiService, audioHandler, imageHandler );
             }
             else
             {
@@ -136,6 +144,104 @@ public class FoscamSession
     public String getFirmwareVersion()
     {
         return firmwareVersion;
+    }
+
+    public void presetPatrol( List<PresetAndDelay> presetAndDelayMilliseconds )
+    {
+        boolean isRunning = true;
+
+        for ( int i = 0; isRunning; i++ )
+        {
+            int index = i % presetAndDelayMilliseconds.size();
+            PresetAndDelay pad = presetAndDelayMilliseconds.get( index );
+
+            int preset = pad.getPreset();
+            long durationMs = pad.getDurationMs();
+
+            String url;
+
+            switch ( preset )
+            {
+                case 1:
+                    url = cgiService.decoderControl( DecoderControlE.GO_TO_PRESET_1, 0, 0 );
+                    break;
+
+                case 2:
+                    url = cgiService.decoderControl( DecoderControlE.GO_TO_PRESET_2, 0, 0 );
+                    break;
+
+                case 3:
+                    url = cgiService.decoderControl( DecoderControlE.GO_TO_PRESET_3, 0, 0 );
+                    break;
+
+                case 4:
+                    url = cgiService.decoderControl( DecoderControlE.GO_TO_PRESET_4, 0, 0 );
+                    break;
+
+                case 5:
+                    url = cgiService.decoderControl( DecoderControlE.GO_TO_PRESET_5, 0, 0 );
+                    break;
+
+                case 6:
+                    url = cgiService.decoderControl( DecoderControlE.GO_TO_PRESET_6, 0, 0 );
+                    break;
+
+                case 7:
+                    url = cgiService.decoderControl( DecoderControlE.GO_TO_PRESET_7, 0, 0 );
+                    break;
+
+                case 8:
+                    url = cgiService.decoderControl( DecoderControlE.GO_TO_PRESET_8, 0, 0 );
+                    break;
+
+                case 9:
+                    url = cgiService.decoderControl( DecoderControlE.GO_TO_PRESET_9, 0, 0 );
+                    break;
+
+                case 10:
+                    url = cgiService.decoderControl( DecoderControlE.GO_TO_PRESET_10, 0, 0 );
+                    break;
+
+                case 11:
+                    url = cgiService.decoderControl( DecoderControlE.GO_TO_PRESET_11, 0, 0 );
+                    break;
+
+                case 12:
+                    url = cgiService.decoderControl( DecoderControlE.GO_TO_PRESET_12, 0, 0 );
+                    break;
+
+                case 13:
+                    url = cgiService.decoderControl( DecoderControlE.GO_TO_PRESET_13, 0, 0 );
+                    break;
+
+                case 14:
+                    url = cgiService.decoderControl( DecoderControlE.GO_TO_PRESET_14, 0, 0 );
+                    break;
+
+                case 15:
+                    url = cgiService.decoderControl( DecoderControlE.GO_TO_PRESET_15, 0, 0 );
+                    break;
+
+                case 16:
+                    url = cgiService.decoderControl( DecoderControlE.GO_TO_PRESET_16, 0, 0 );
+                    break;
+
+                default:
+                    throw new IllegalArgumentException( "Unexpected preset=" + preset );
+            }
+
+            CgiService.exec( url );
+
+            try
+            {
+                Thread.sleep( durationMs );
+            }
+            catch ( InterruptedException e )
+            {
+                // TODO Auto-generated catch block
+                throw new UnsupportedOperationException( "MY TODO!", e );
+            }
+        }
     }
 
     public void talkEnd()
