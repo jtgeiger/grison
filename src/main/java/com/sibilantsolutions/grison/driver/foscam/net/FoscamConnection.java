@@ -36,6 +36,7 @@ import com.sibilantsolutions.iptools.event.ReceiveEvt;
 import com.sibilantsolutions.iptools.event.SocketListenerI;
 import com.sibilantsolutions.iptools.net.LengthByteBuffer;
 import com.sibilantsolutions.iptools.net.LengthByteBuffer.LengthByteType;
+import com.sibilantsolutions.iptools.net.ReceiveQueue;
 import com.sibilantsolutions.iptools.net.SocketUtils;
 import com.sibilantsolutions.iptools.util.DurationLoggingCallable;
 import com.sibilantsolutions.iptools.util.DurationLoggingRunnable;
@@ -75,10 +76,12 @@ public class FoscamConnection
 
         SocketListenerI dest = new ReceiverProducer( q );
 
-        LengthByteBuffer buffer = new LengthByteBuffer( 0x0F, 4, LengthByteType.LENGTH_OF_PAYLOAD,
+        dest = new LengthByteBuffer( 0x0F, 4, LengthByteType.LENGTH_OF_PAYLOAD,
                 ByteOrder.LITTLE_ENDIAN, 4, 0xFFFF, dest );
 
-        SocketUtils.readLoopThread( 0xFFFF, this.socket, buffer );
+        dest = new ReceiveQueue( dest );
+
+        SocketUtils.readLoopThread( 0xFFFF, this.socket, dest );
     }
 
     static public FoscamConnection connect( InetSocketAddress address, ProtocolE protocol )
