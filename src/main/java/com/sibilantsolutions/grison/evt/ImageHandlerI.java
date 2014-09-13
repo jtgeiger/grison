@@ -6,5 +6,6 @@ public interface ImageHandlerI
 {
 
     public void onReceive( VideoDataText videoData );
+    public void onVideoStopped( VideoStoppedEvt videoStoppedEvt );
 
 }

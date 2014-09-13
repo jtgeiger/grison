@@ -5,6 +5,7 @@ import org.slf4j.LoggerFactory;
 
 import com.sibilantsolutions.grison.driver.foscam.domain.VideoDataText;
 import com.sibilantsolutions.grison.evt.ImageHandlerI;
+import com.sibilantsolutions.grison.evt.VideoStoppedEvt;
 
 /*package*/ class NoOpImageHandler implements ImageHandlerI
 {
@@ -15,6 +16,12 @@ import com.sibilantsolutions.grison.evt.ImageHandlerI;
     public void onReceive( VideoDataText videoData )
     {
         log.info( "Ignoring video data." );
+    }
+
+    @Override
+    public void onVideoStopped( VideoStoppedEvt videoStoppedEvt )
+    {
+        log.info( "Ignoring video stopped." );
     }
 
 }

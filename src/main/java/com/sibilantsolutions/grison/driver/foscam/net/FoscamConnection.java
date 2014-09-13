@@ -31,6 +31,7 @@ import com.sibilantsolutions.grison.driver.foscam.domain.SearchProtocolOpCodeE;
 import com.sibilantsolutions.grison.driver.foscam.domain.VideoDataText;
 import com.sibilantsolutions.grison.evt.AudioHandlerI;
 import com.sibilantsolutions.grison.evt.ImageHandlerI;
+import com.sibilantsolutions.grison.evt.LostConnectionHandlerI;
 import com.sibilantsolutions.iptools.event.LostConnectionEvt;
 import com.sibilantsolutions.iptools.event.ReceiveEvt;
 import com.sibilantsolutions.iptools.event.SocketListenerI;
@@ -64,6 +65,7 @@ public class FoscamConnection
 
     private AudioHandlerI audioHandler = new NoOpAudioHandler();    //Default no-op impl.
     private ImageHandlerI imageHandler = new NoOpImageHandler();    //Default no-op impl.
+    private LostConnectionHandlerI lostConnectionHandler;
 
     private FoscamConnection( Socket socket, ProtocolE protocol )
     {
@@ -164,6 +166,16 @@ public class FoscamConnection
         this.imageHandler = imageHandler;
     }
 
+    public LostConnectionHandlerI getLostConnectionHandler()
+    {
+        return lostConnectionHandler;
+    }
+
+    public void setLostConnectionHandler( LostConnectionHandlerI lostConnectionHandler )
+    {
+        this.lostConnectionHandler = lostConnectionHandler;
+    }
+
     protected void sendAsync( final Command request )
     {
         Runnable task = new Runnable() {
@@ -247,7 +259,7 @@ public class FoscamConnection
 
     private class ReceiverProducer implements SocketListenerI
     {
-        private BlockingQueue<Command> queue;
+        private final BlockingQueue<Command> queue;
 
         public ReceiverProducer( BlockingQueue<Command> queue )
         {
@@ -262,8 +274,8 @@ public class FoscamConnection
             keepAliveService.shutdownNow();
             executorService.shutdownNow();
 
-            // TODO Auto-generated method stub
-            throw new UnsupportedOperationException( "MY TODO!", evt.getCause() );
+            lostConnectionHandler.onLostConnection(
+                    new com.sibilantsolutions.grison.evt.LostConnectionEvt() );
         }
 
         @Override

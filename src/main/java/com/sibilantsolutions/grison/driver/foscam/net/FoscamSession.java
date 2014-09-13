@@ -16,7 +16,11 @@ import com.sibilantsolutions.grison.driver.foscam.domain.TalkStartRespText;
 import com.sibilantsolutions.grison.driver.foscam.domain.VerifyRespText;
 import com.sibilantsolutions.grison.driver.foscam.domain.VideoStartRespText;
 import com.sibilantsolutions.grison.evt.AudioHandlerI;
+import com.sibilantsolutions.grison.evt.AudioStoppedEvt;
 import com.sibilantsolutions.grison.evt.ImageHandlerI;
+import com.sibilantsolutions.grison.evt.LostConnectionEvt;
+import com.sibilantsolutions.grison.evt.LostConnectionHandlerI;
+import com.sibilantsolutions.grison.evt.VideoStoppedEvt;
 import com.sibilantsolutions.iptools.util.HexDumpDeferred;
 
 public class FoscamSession
@@ -30,10 +34,10 @@ public class FoscamSession
 
     private FoscamService audioVideoService;
 
-    private CgiService cgiService;
+    final private CgiService cgiService;
 
-    private AudioHandlerI audioHandler;
-    private ImageHandlerI imageHandler;
+    final private AudioHandlerI audioHandler;
+    final private ImageHandlerI imageHandler;
 
     private FoscamSession( FoscamService operationService, InetSocketAddress address, String cameraId, String firmwareVersion, CgiService cgiService, AudioHandlerI audioHandler, ImageHandlerI imageHandler )
     {
@@ -53,11 +57,13 @@ public class FoscamSession
         operationService.audioEnd();
     }
 
-    public void audioStart()
+    public boolean audioStart()
     {
         log.info( "Audio start." );
 
         AudioStartRespText audioStartResp = operationService.audioStart();
+
+        boolean success = false;
 
         if ( audioStartResp.getResultCode() == ResultCodeE.CORRECT )
         {
@@ -74,31 +80,37 @@ public class FoscamSession
             {
                 log.info( "Audio start success.  Audio should start coming on existing A/V connection." );
             }
+
+            success = true;
         }
+
+        return success;
     }
 
-    static public FoscamSession connect( InetSocketAddress address, String username, String password, AudioHandlerI audioHandler, ImageHandlerI imageHandler )
+    static public FoscamSession connect( InetSocketAddress address, String username, String password, AudioHandlerI audioHandler, ImageHandlerI imageHandler, final LostConnectionHandlerI lostConnectionHandler )
     {
         log.info( "Making session connection to={}, user={}.", address, username );
 
-        FoscamConnection connection = FoscamConnection.connect( address,
+        FoscamConnection operationConnection = FoscamConnection.connect( address,
                 ProtocolE.OPERATION_PROTOCOL );
 
-        FoscamService service = new FoscamService( connection );
+        operationConnection.setLostConnectionHandler( lostConnectionHandler );
+
+        FoscamService operationService = new FoscamService( operationConnection );
 
             //"Login" is a misnomer: it's really a request for a session to which we will
             //authenticate next with Verify.
-        LoginRespText lr = service.login();
+        LoginRespText lr = operationService.login();
 
         if ( lr.getResultCode() == ResultCodeE.CORRECT )
         {
-            VerifyRespText vr = service.verify( username, password );
+            VerifyRespText vr = operationService.verify( username, password );
 
             if ( vr.getResultCode() == ResultCodeE.CORRECT )
             {
                 CgiService cgiService = new CgiService( address, username, password );
 
-                return new FoscamSession( service, address, lr.getCameraId(),
+                return new FoscamSession( operationService, address, lr.getCameraId(),
                         lr.getFirmwareVersion(), cgiService, audioHandler, imageHandler );
             }
             else
@@ -125,6 +137,17 @@ public class FoscamSession
 
             avConnection.setAudioHandler( audioHandler );
             avConnection.setImageHandler( imageHandler );
+
+            avConnection.setLostConnectionHandler( new LostConnectionHandlerI()
+            {
+
+                @Override
+                public void onLostConnection( LostConnectionEvt evt )
+                {
+                    audioHandler.onAudioStopped( new AudioStoppedEvt() );
+                    imageHandler.onVideoStopped( new VideoStoppedEvt() );
+                }
+            } );
 
             audioVideoService = new FoscamService( avConnection );
 
@@ -256,11 +279,13 @@ public class FoscamSession
         audioVideoService.talkSend( adpcm );
     }
 
-    public void talkStart()
+    public boolean talkStart()
     {
         log.info( "Talk start." );
 
         TalkStartRespText talkStartResp = operationService.talkStart();
+
+        boolean success = false;
 
         if ( talkStartResp.getResultCode() == ResultCodeE.CORRECT )
         {
@@ -277,7 +302,11 @@ public class FoscamSession
             {
                 log.info( "Talk start success.  Talk can be sent on existing A/V connection." );
             }
+
+            success = true;
         }
+
+        return success;
     }
 
     public void videoEnd()
@@ -287,11 +316,13 @@ public class FoscamSession
         operationService.videoEnd();
     }
 
-    public void videoStart()
+    public boolean videoStart()
     {
         log.info( "Video start." );
 
         VideoStartRespText videoStartResp = operationService.videoStart();
+
+        boolean success = false;
 
         if ( videoStartResp.getResultCode() == ResultCodeE.CORRECT )
         {
@@ -308,7 +339,11 @@ public class FoscamSession
             {
                 log.info( "Video start success.  Video should start coming on existing A/V connection." );
             }
+
+            success = true;
         }
+
+        return success;
     }
 
 }

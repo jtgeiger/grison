@@ -1,5 +1,8 @@
 package com.sibilantsolutions.grison.demo;
 
+import java.awt.Color;
+import java.awt.Graphics2D;
+import java.awt.image.BufferedImage;
 import java.lang.reflect.InvocationTargetException;
 
 import javax.swing.ImageIcon;
@@ -8,25 +11,50 @@ import javax.swing.SwingUtilities;
 
 import com.sibilantsolutions.grison.driver.foscam.domain.VideoDataText;
 import com.sibilantsolutions.grison.evt.ImageHandlerI;
+import com.sibilantsolutions.grison.evt.VideoStoppedEvt;
 
 public class DemoImageHandler implements ImageHandlerI
 {
 
     private JLabel label;
 
+    private BufferedImage createLostConnectionImage()
+    {
+        BufferedImage bi = new BufferedImage( 640, 480, BufferedImage.TYPE_INT_RGB );
+        Graphics2D g = bi.createGraphics();
+        g.setColor( Color.YELLOW );
+        g.fillRect( 0, 0, bi.getWidth(), bi.getHeight() );
+        g.setColor( Color.BLACK );
+        g.drawString( "LOST CONNECTION", 25, 25 );
+        return bi;
+    }
+
+    public JLabel getLabel()
+    {
+        return label;
+    }
+
+    public void setLabel( JLabel label )
+    {
+        this.label = label;
+    }
+
     @Override
     public void onReceive( VideoDataText videoData )
     {
         byte[] imageData = videoData.getDataContent();
 
-        final ImageIcon ii = new ImageIcon( imageData );
+        setImage( new ImageIcon( imageData ) );
+    }
 
+    private void setImage( final ImageIcon imageIcon )
+    {
         Runnable r = new Runnable() {
 
             @Override
             public void run()
             {
-                label.setIcon( ii );
+                label.setIcon( imageIcon );
             }
         };
 
@@ -41,14 +69,12 @@ public class DemoImageHandler implements ImageHandlerI
         }
     }
 
-    public JLabel getLabel()
+    @Override
+    public void onVideoStopped( VideoStoppedEvt videoStoppedEvt )
     {
-        return label;
-    }
+        BufferedImage lostConnectionImage = createLostConnectionImage();
 
-    public void setLabel( JLabel label )
-    {
-        this.label = label;
+        setImage( new ImageIcon( lostConnectionImage ) );
     }
 
 }
