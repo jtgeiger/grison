@@ -6,6 +6,30 @@
     <packaging>jar</packaging>
 
   <name>Project Grison</name>
+  <description>IP Camera API</description>
+  
+  <url>https://github.com/jtgeiger</url>
+ 
+  <developers>
+    <developer>
+      <name>Joel Geiger</name>
+      <email>joel@sibilantsolutions.com</email>
+    </developer>
+  </developers>
+  
+  <licenses>
+    <license>
+      <name>Apache License, Version 2.0</name>
+      <url>http://www.apache.org/licenses/LICENSE-2.0.html</url>
+    </license>
+  </licenses>
+  
+   <scm>
+    <url>scm:git:git@github.com:jtgeiger/grison.git</url>
+    <connection>scm:git:git@github.com:jtgeiger/grison.git</connection>
+    <developerConnection>scm:git:git@github.com:jtgeiger/grison.git</developerConnection>
+  </scm>
+  
 
   <properties>
   	<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
