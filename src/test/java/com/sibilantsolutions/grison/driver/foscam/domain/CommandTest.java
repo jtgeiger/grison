@@ -39,7 +39,7 @@ public class CommandTest
 
         AlarmNotifyText text = (AlarmNotifyText)c.getCommandText();
 
-        assertEquals( AlarmTypeE.UNK_01, text.getAlarmType() );
+        assertEquals( AlarmTypeE.SOUND_DETECTION, text.getAlarmType() );
     }
 
     @Test

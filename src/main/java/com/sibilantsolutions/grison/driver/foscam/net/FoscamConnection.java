@@ -20,6 +20,7 @@ import java.util.concurrent.TimeoutException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.sibilantsolutions.grison.driver.foscam.domain.AlarmNotifyText;
 import com.sibilantsolutions.grison.driver.foscam.domain.AudioDataText;
 import com.sibilantsolutions.grison.driver.foscam.domain.AudioVideoProtocolOpCodeE;
 import com.sibilantsolutions.grison.driver.foscam.domain.Command;
@@ -28,7 +29,9 @@ import com.sibilantsolutions.grison.driver.foscam.domain.OpCodeI;
 import com.sibilantsolutions.grison.driver.foscam.domain.OperationProtocolOpCodeE;
 import com.sibilantsolutions.grison.driver.foscam.domain.ProtocolE;
 import com.sibilantsolutions.grison.driver.foscam.domain.SearchProtocolOpCodeE;
+import com.sibilantsolutions.grison.driver.foscam.domain.Unk02Text;
 import com.sibilantsolutions.grison.driver.foscam.domain.VideoDataText;
+import com.sibilantsolutions.grison.evt.AlarmHandlerI;
 import com.sibilantsolutions.grison.evt.AudioHandlerI;
 import com.sibilantsolutions.grison.evt.ImageHandlerI;
 import com.sibilantsolutions.grison.evt.LostConnectionHandlerI;
@@ -65,6 +68,7 @@ public class FoscamConnection
 
     private AudioHandlerI audioHandler = new NoOpAudioHandler();    //Default no-op impl.
     private ImageHandlerI imageHandler = new NoOpImageHandler();    //Default no-op impl.
+    private AlarmHandlerI alarmHandler = new NoOpAlarmHandler();    //Default no-op impl.
     private LostConnectionHandlerI lostConnectionHandler;
 
     private FoscamConnection( Socket socket, ProtocolE protocol )
@@ -164,6 +168,16 @@ public class FoscamConnection
     public void setImageHandler( ImageHandlerI imageHandler )
     {
         this.imageHandler = imageHandler;
+    }
+
+    public AlarmHandlerI getAlarmHandler()
+    {
+        return alarmHandler;
+    }
+
+    public void setAlarmHandler( AlarmHandlerI alarmHandler )
+    {
+        this.alarmHandler = alarmHandler;
     }
 
     public LostConnectionHandlerI getLostConnectionHandler()
@@ -329,6 +343,33 @@ public class FoscamConnection
 
                         default:
                             throw new RuntimeException( "Unexpected opcode=" + avOpCode );
+                    }
+                }
+                else if ( protocol == ProtocolE.OPERATION_PROTOCOL )
+                {
+                    OperationProtocolOpCodeE opOpCode = (OperationProtocolOpCodeE)opCode;
+
+                    switch ( opOpCode )
+                    {
+                        case Alarm_Notify:
+                            AlarmNotifyText ant = (AlarmNotifyText)command.getCommandText();
+                            alarmHandler.onReceive( ant );
+                            break;
+
+                        case UNK02:
+                            Unk02Text unk02 = (Unk02Text)command.getCommandText();
+                            byte[] unk02data = unk02.getData();
+                            boolean isOnlyNull = true;
+                            for ( int i = 0; i < unk02data.length && isOnlyNull; i++ )
+                            {
+                                isOnlyNull = ( unk02data[i] == 0x00 );
+                            }
+                            log.info( "Received {}, data length={}, is only nulls={}.",
+                                    opOpCode, unk02data.length, isOnlyNull );
+                            break;
+
+                        default:
+                            throw new RuntimeException( "Unexpected opcode=" + opOpCode );
                     }
                 }
             }

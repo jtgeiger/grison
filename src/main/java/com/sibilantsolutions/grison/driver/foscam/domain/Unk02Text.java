@@ -4,7 +4,7 @@ package com.sibilantsolutions.grison.driver.foscam.domain;
 public class Unk02Text implements DatastreamI
 {
 
-    private byte[] data;    //TODO: Parse
+    private byte[] data;    //TODO: Parse (this seems to always be 1152 null 0x00 bytes)
 
     public byte[] getData()
     {

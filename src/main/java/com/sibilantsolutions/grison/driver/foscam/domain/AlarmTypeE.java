@@ -6,7 +6,7 @@ public enum AlarmTypeE
     ALARM_STOP( Values.ALARM_STOP ),
     MOTION_DETECTION( Values.MOTION_DETECTION ),
     OUTSIDE_ALARM( Values.OUTSIDE_ALARM ),
-    UNK_01( Values.UNK_01 ),
+    SOUND_DETECTION( Values.SOUND_DETECTION ),
     ;
 
     static private interface Values
@@ -14,7 +14,7 @@ public enum AlarmTypeE
         final static public int ALARM_STOP          = 0;
         final static public int MOTION_DETECTION    = 1;
         final static public int OUTSIDE_ALARM       = 2;
-        final static public int UNK_01              = 3;
+        final static public int SOUND_DETECTION     = 3;
     }
 
     final private int value;
@@ -42,8 +42,8 @@ public enum AlarmTypeE
             case Values.OUTSIDE_ALARM:
                 return OUTSIDE_ALARM;
 
-            case Values.UNK_01:
-                return UNK_01;
+            case Values.SOUND_DETECTION:
+                return SOUND_DETECTION;
 
             default:
                 throw new IllegalArgumentException( "Unexpected value=" + value );
