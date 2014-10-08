@@ -31,6 +31,7 @@ import com.sibilantsolutions.grison.driver.foscam.domain.ProtocolE;
 import com.sibilantsolutions.grison.driver.foscam.domain.SearchProtocolOpCodeE;
 import com.sibilantsolutions.grison.driver.foscam.domain.Unk02Text;
 import com.sibilantsolutions.grison.driver.foscam.domain.VideoDataText;
+import com.sibilantsolutions.grison.evt.AlarmEvt;
 import com.sibilantsolutions.grison.evt.AlarmHandlerI;
 import com.sibilantsolutions.grison.evt.AudioHandlerI;
 import com.sibilantsolutions.grison.evt.ImageHandlerI;
@@ -353,7 +354,7 @@ public class FoscamConnection
                     {
                         case Alarm_Notify:
                             AlarmNotifyText ant = (AlarmNotifyText)command.getCommandText();
-                            alarmHandler.onReceive( ant );
+                            alarmHandler.onAlarm( new AlarmEvt( ant, null ) );  //TODO: Set session.
                             break;
 
                         case UNK02:

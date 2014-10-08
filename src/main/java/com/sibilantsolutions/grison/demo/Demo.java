@@ -5,6 +5,8 @@ import java.net.InetSocketAddress;
 import javax.swing.JLabel;
 
 import com.sibilantsolutions.grison.driver.foscam.net.FoscamSession;
+import com.sibilantsolutions.grison.evt.AlarmEvt;
+import com.sibilantsolutions.grison.evt.AlarmHandlerI;
 import com.sibilantsolutions.grison.evt.AudioHandlerI;
 import com.sibilantsolutions.grison.evt.LostConnectionEvt;
 import com.sibilantsolutions.grison.evt.LostConnectionHandlerI;
@@ -18,6 +20,14 @@ public class Demo
     static private AudioHandlerI audioHandler = new DemoAudioHandler();
     static private JLabel label = new JLabel();
     static private DemoImageHandler imageHandler = new DemoImageHandler();
+    static private AlarmHandlerI alarmHandler = new AlarmHandlerI()
+    {
+        @Override
+        public void onAlarm( AlarmEvt evt )
+        {
+            //No-op.  TODO.
+        }
+    };
     static
     {
         imageHandler.setLabel( label );
@@ -46,7 +56,7 @@ public class Demo
     {
 
         FoscamSession session = FoscamSession.connect( new InetSocketAddress( hostname, port ),
-                username, password, audioHandler, imageHandler, lostConnectionHandler );
+                username, password, audioHandler, imageHandler, alarmHandler, lostConnectionHandler );
 
         session.audioStart();
 //        session.talkStart();

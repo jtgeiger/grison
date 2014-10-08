@@ -15,6 +15,8 @@ import com.sibilantsolutions.grison.driver.foscam.domain.ResultCodeE;
 import com.sibilantsolutions.grison.driver.foscam.domain.TalkStartRespText;
 import com.sibilantsolutions.grison.driver.foscam.domain.VerifyRespText;
 import com.sibilantsolutions.grison.driver.foscam.domain.VideoStartRespText;
+import com.sibilantsolutions.grison.evt.AlarmEvt;
+import com.sibilantsolutions.grison.evt.AlarmHandlerI;
 import com.sibilantsolutions.grison.evt.AudioHandlerI;
 import com.sibilantsolutions.grison.evt.AudioStoppedEvt;
 import com.sibilantsolutions.grison.evt.ImageHandlerI;
@@ -87,7 +89,7 @@ public class FoscamSession
         return success;
     }
 
-    static public FoscamSession connect( InetSocketAddress address, String username, String password, AudioHandlerI audioHandler, ImageHandlerI imageHandler, final LostConnectionHandlerI lostConnectionHandler )
+    static public FoscamSession connect( InetSocketAddress address, String username, String password, AudioHandlerI audioHandler, ImageHandlerI imageHandler, final AlarmHandlerI alarmHandler, final LostConnectionHandlerI lostConnectionHandler )
     {
         log.info( "Making session connection to={}, user={}.", address, username );
 
@@ -110,8 +112,26 @@ public class FoscamSession
             {
                 CgiService cgiService = new CgiService( address, username, password );
 
-                return new FoscamSession( operationService, address, lr.getCameraId(),
+                final FoscamSession session = new FoscamSession( operationService, address, lr.getCameraId(),
                         lr.getFirmwareVersion(), cgiService, audioHandler, imageHandler );
+
+                    //TODO: Should move connection logic into instance doConnect method so we can
+                    //pass the session directly to the connection as the alarm handler (and for
+                    //all the other events too; the session should be included in all Evt objects).
+                operationConnection.setAlarmHandler( new AlarmHandlerI()
+                {
+
+                    @Override
+                    public void onAlarm( AlarmEvt evt )
+                    {
+                        if ( evt.getSession() == null )
+                            evt = new AlarmEvt( evt.getAlarmNotify(), session );    //HACK shouldn't have to do this.
+
+                        alarmHandler.onAlarm( evt );
+                    }
+                } );
+
+                return session;
             }
             else
             {
