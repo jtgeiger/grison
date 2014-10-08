@@ -31,11 +31,6 @@ import com.sibilantsolutions.grison.driver.foscam.domain.ProtocolE;
 import com.sibilantsolutions.grison.driver.foscam.domain.SearchProtocolOpCodeE;
 import com.sibilantsolutions.grison.driver.foscam.domain.Unk02Text;
 import com.sibilantsolutions.grison.driver.foscam.domain.VideoDataText;
-import com.sibilantsolutions.grison.evt.AlarmEvt;
-import com.sibilantsolutions.grison.evt.AlarmHandlerI;
-import com.sibilantsolutions.grison.evt.AudioHandlerI;
-import com.sibilantsolutions.grison.evt.ImageHandlerI;
-import com.sibilantsolutions.grison.evt.LostConnectionHandlerI;
 import com.sibilantsolutions.iptools.event.LostConnectionEvt;
 import com.sibilantsolutions.iptools.event.ReceiveEvt;
 import com.sibilantsolutions.iptools.event.SocketListenerI;
@@ -67,14 +62,12 @@ public class FoscamConnection
 
     final private BlockingQueue<Command> q = new LinkedBlockingQueue<Command>();
 
-    private AudioHandlerI audioHandler = new NoOpAudioHandler();    //Default no-op impl.
-    private ImageHandlerI imageHandler = new NoOpImageHandler();    //Default no-op impl.
-    private AlarmHandlerI alarmHandler = new NoOpAlarmHandler();    //Default no-op impl.
-    private LostConnectionHandlerI lostConnectionHandler;
+    final private FoscamSessionI owner;
 
-    private FoscamConnection( Socket socket, ProtocolE protocol )
+    private FoscamConnection( Socket socket, ProtocolE protocol, FoscamSessionI owner )
     {
         this.socket = socket;
+        this.owner = owner;
 
         this.executorService = createExecutorService( "executor " + this.socket );
 
@@ -91,11 +84,11 @@ public class FoscamConnection
         SocketUtils.readLoopThread( 0xFFFF, this.socket, dest );
     }
 
-    static public FoscamConnection connect( InetSocketAddress address, ProtocolE protocol )
+    static public FoscamConnection connect( InetSocketAddress address, ProtocolE protocol, FoscamSessionI owner )
     {
         Socket socket = SocketUtils.connect( address );
 
-        FoscamConnection connection = new FoscamConnection( socket, protocol );
+        FoscamConnection connection = new FoscamConnection( socket, protocol, owner );
 
         return connection;
     }
@@ -149,46 +142,6 @@ public class FoscamConnection
         }
 
         return result;
-    }
-
-    public AudioHandlerI getAudioHandler()
-    {
-        return audioHandler;
-    }
-
-    public void setAudioHandler( AudioHandlerI audioHandler )
-    {
-        this.audioHandler = audioHandler;
-    }
-
-    public ImageHandlerI getImageHandler()
-    {
-        return imageHandler;
-    }
-
-    public void setImageHandler( ImageHandlerI imageHandler )
-    {
-        this.imageHandler = imageHandler;
-    }
-
-    public AlarmHandlerI getAlarmHandler()
-    {
-        return alarmHandler;
-    }
-
-    public void setAlarmHandler( AlarmHandlerI alarmHandler )
-    {
-        this.alarmHandler = alarmHandler;
-    }
-
-    public LostConnectionHandlerI getLostConnectionHandler()
-    {
-        return lostConnectionHandler;
-    }
-
-    public void setLostConnectionHandler( LostConnectionHandlerI lostConnectionHandler )
-    {
-        this.lostConnectionHandler = lostConnectionHandler;
     }
 
     protected void sendAsync( final Command request )
@@ -289,8 +242,7 @@ public class FoscamConnection
             keepAliveService.shutdownNow();
             executorService.shutdownNow();
 
-            lostConnectionHandler.onLostConnection(
-                    new com.sibilantsolutions.grison.evt.LostConnectionEvt() );
+            owner.onLostConnection( FoscamConnection.this );
         }
 
         @Override
@@ -335,11 +287,11 @@ public class FoscamConnection
                     switch ( avOpCode )
                     {
                         case Audio_Data:
-                            audioHandler.onReceive( (AudioDataText)command.getCommandText() );
+                            owner.onReceiveAudio( (AudioDataText)command.getCommandText() );
                             break;
 
                         case Video_Data:
-                            imageHandler.onReceive( (VideoDataText)command.getCommandText() );
+                            owner.onReceiveVideo( (VideoDataText)command.getCommandText() );
                             break;
 
                         default:
@@ -354,7 +306,7 @@ public class FoscamConnection
                     {
                         case Alarm_Notify:
                             AlarmNotifyText ant = (AlarmNotifyText)command.getCommandText();
-                            alarmHandler.onAlarm( new AlarmEvt( ant, null ) );  //TODO: Set session.
+                            owner.onAlarm( ant );
                             break;
 
                         case UNK02:

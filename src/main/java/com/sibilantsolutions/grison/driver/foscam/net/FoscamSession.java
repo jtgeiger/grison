@@ -6,6 +6,8 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.sibilantsolutions.grison.driver.foscam.domain.AlarmNotifyText;
+import com.sibilantsolutions.grison.driver.foscam.domain.AudioDataText;
 import com.sibilantsolutions.grison.driver.foscam.domain.AudioStartRespText;
 import com.sibilantsolutions.grison.driver.foscam.domain.DecoderControlE;
 import com.sibilantsolutions.grison.driver.foscam.domain.LoginRespText;
@@ -14,6 +16,7 @@ import com.sibilantsolutions.grison.driver.foscam.domain.ProtocolE;
 import com.sibilantsolutions.grison.driver.foscam.domain.ResultCodeE;
 import com.sibilantsolutions.grison.driver.foscam.domain.TalkStartRespText;
 import com.sibilantsolutions.grison.driver.foscam.domain.VerifyRespText;
+import com.sibilantsolutions.grison.driver.foscam.domain.VideoDataText;
 import com.sibilantsolutions.grison.driver.foscam.domain.VideoStartRespText;
 import com.sibilantsolutions.grison.evt.AlarmEvt;
 import com.sibilantsolutions.grison.evt.AlarmHandlerI;
@@ -29,10 +32,10 @@ public class FoscamSession
 {
     final static private Logger log = LoggerFactory.getLogger( FoscamSession.class );
 
-    final private FoscamService operationService;
+    private FoscamService operationService;
     final private InetSocketAddress address;
-    final private String cameraId;
-    final private String firmwareVersion;
+    private String cameraId;
+    private String firmwareVersion;
 
     private FoscamService audioVideoService;
 
@@ -41,12 +44,9 @@ public class FoscamSession
     final private AudioHandlerI audioHandler;
     final private ImageHandlerI imageHandler;
 
-    private FoscamSession( FoscamService operationService, InetSocketAddress address, String cameraId, String firmwareVersion, CgiService cgiService, AudioHandlerI audioHandler, ImageHandlerI imageHandler )
+    private FoscamSession( InetSocketAddress address, CgiService cgiService, AudioHandlerI audioHandler, ImageHandlerI imageHandler )
     {
-        this.operationService = operationService;
         this.address = address;
-        this.cameraId = cameraId;
-        this.firmwareVersion = firmwareVersion;
         this.cgiService = cgiService;
         this.audioHandler = audioHandler;
         this.imageHandler = imageHandler;
@@ -93,10 +93,98 @@ public class FoscamSession
     {
         log.info( "Making session connection to={}, user={}.", address, username );
 
-        FoscamConnection operationConnection = FoscamConnection.connect( address,
-                ProtocolE.OPERATION_PROTOCOL );
+        CgiService cgiService = new CgiService( address, username, password );
 
-        operationConnection.setLostConnectionHandler( lostConnectionHandler );
+        final FoscamSession session = new FoscamSession( address, cgiService, audioHandler, imageHandler );
+
+        FoscamSessionI owner = new FoscamSessionI()
+        {
+
+            @Override
+            public void onReceiveVideo( VideoDataText videoDataText )
+            {
+                throw new UnsupportedOperationException( "Video not expected on operation connection" );
+            }
+
+            @Override
+            public void onReceiveAudio( AudioDataText audioDataText )
+            {
+                throw new UnsupportedOperationException( "Audio not expected on operation connection" );
+            }
+
+            @Override
+            public void onLostConnection( FoscamConnection connection )
+            {
+                lostConnectionHandler.onLostConnection( new LostConnectionEvt() );
+            }
+
+            @Override
+            public void onAlarm( AlarmNotifyText alarmNotifyText )
+            {
+                alarmHandler.onAlarm( new AlarmEvt( alarmNotifyText, session ) );
+            }
+        };
+
+            //Throws exception if failure.
+        session.doConnect( username, password, owner );
+
+        return session;
+    }
+
+    private void connectAudioVideo( String dataConnectionId )
+    {
+        if ( audioVideoService == null )
+        {
+            log.info( "Making Audio/Video connection to={} with data connection id={}.",
+                    address, HexDumpDeferred.simpleDump( dataConnectionId ) );
+
+            FoscamSessionI owner = new FoscamSessionI()
+            {
+
+                @Override
+                public void onReceiveVideo( VideoDataText videoDataText )
+                {
+                    imageHandler.onReceive( videoDataText );
+                }
+
+                @Override
+                public void onReceiveAudio( AudioDataText audioDataText )
+                {
+                    audioHandler.onReceive( audioDataText );
+                }
+
+                @Override
+                public void onLostConnection( FoscamConnection connection )
+                {
+                    audioHandler.onAudioStopped( new AudioStoppedEvt() );
+                    imageHandler.onVideoStopped( new VideoStoppedEvt() );
+                }
+
+                @Override
+                public void onAlarm( AlarmNotifyText alarmNotifyText )
+                {
+                    throw new UnsupportedOperationException( "Alarm not expected on A/V connection" );
+                }
+            };
+
+            FoscamConnection avConnection = FoscamConnection.connect( address,
+                    ProtocolE.AUDIO_VIDEO_PROTOCOL, owner );
+
+            audioVideoService = new FoscamService( avConnection );
+
+            audioVideoService.audioVideoLogin( dataConnectionId );
+        }
+        else
+        {
+            log.info( "Audio/Video connection already established." );
+        }
+    }
+
+    private void doConnect( String username, String password, FoscamSessionI owner )
+    {
+
+        FoscamConnection operationConnection = FoscamConnection.connect( address,
+                ProtocolE.OPERATION_PROTOCOL, owner );
 
         FoscamService operationService = new FoscamService( operationConnection );
 
@@ -110,28 +198,11 @@ public class FoscamSession
 
             if ( vr.getResultCode() == ResultCodeE.CORRECT )
             {
-                CgiService cgiService = new CgiService( address, username, password );
+                log.info( "Operation connection connected." );
 
-                final FoscamSession session = new FoscamSession( operationService, address, lr.getCameraId(),
-                        lr.getFirmwareVersion(), cgiService, audioHandler, imageHandler );
-
-                    //TODO: Should move connection logic into instance doConnect method so we can
-                    //pass the session directly to the connection as the alarm handler (and for
-                    //all the other events too; the session should be included in all Evt objects).
-                operationConnection.setAlarmHandler( new AlarmHandlerI()
-                {
-
-                    @Override
-                    public void onAlarm( AlarmEvt evt )
-                    {
-                        if ( evt.getSession() == null )
-                            evt = new AlarmEvt( evt.getAlarmNotify(), session );    //HACK shouldn't have to do this.
-
-                        alarmHandler.onAlarm( evt );
-                    }
-                } );
-
-                return session;
+                this.operationService = operationService;
+                this.firmwareVersion = lr.getFirmwareVersion();
+                this.cameraId = lr.getCameraId();
             }
             else
             {
@@ -143,40 +214,6 @@ public class FoscamSession
             throw new RuntimeException( "Camera denied session request: " + lr.getResultCode() );
         }
 
-    }
-
-    private void connectAudioVideo( String dataConnectionId )
-    {
-        if ( audioVideoService == null )
-        {
-            log.info( "Making Audio/Video connection to={} with data connection id={}.",
-                    address, HexDumpDeferred.simpleDump( dataConnectionId ) );
-
-            FoscamConnection avConnection = FoscamConnection.connect( address,
-                    ProtocolE.AUDIO_VIDEO_PROTOCOL );
-
-            avConnection.setAudioHandler( audioHandler );
-            avConnection.setImageHandler( imageHandler );
-
-            avConnection.setLostConnectionHandler( new LostConnectionHandlerI()
-            {
-
-                @Override
-                public void onLostConnection( LostConnectionEvt evt )
-                {
-                    audioHandler.onAudioStopped( new AudioStoppedEvt() );
-                    imageHandler.onVideoStopped( new VideoStoppedEvt() );
-                }
-            } );
-
-            audioVideoService = new FoscamService( avConnection );
-
-            audioVideoService.audioVideoLogin( dataConnectionId );
-        }
-        else
-        {
-            log.info( "Audio/Video connection already established." );
-        }
     }
 
     public String getCameraId()
