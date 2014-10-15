@@ -278,6 +278,27 @@ public class CommandTest
     }
 
     @Test
+    public void testParse17()
+    {
+        byte[] bin = ResourceReader.readResourceAsBytes( "/samples/login_resp.bin" );
+
+//        System.out.println( HexDump.prettyDump( bin ) );
+
+        Command c = Command.parse( bin, 0, bin.length );
+        assertEquals( ProtocolE.OPERATION_PROTOCOL, c.getProtocol() );
+        assertEquals( OperationProtocolOpCodeE.Login_Resp, c.getOpCode() );
+
+        LoginRespText text = (LoginRespText)c.getCommandText();
+
+        assertEquals( ResultCodeE.CORRECT, text.getResultCode() );
+        assertEquals( "00626E4E72BF", text.getCameraId() );
+        assertEquals( 11, text.getFirmwareVersion().getMajor() );
+        assertEquals( 37, text.getFirmwareVersion().getMinor() );
+        assertEquals( 2, text.getFirmwareVersion().getPatch() );
+        assertEquals( 56, text.getFirmwareVersion().getBuild() );
+    }
+
+    @Test
     public void testToDatastream01()
     {
         Command c = new Command();
@@ -305,7 +326,7 @@ public class CommandTest
         c.setCommandText( lrt  );
         lrt.setResultCode( ResultCodeE.CORRECT );
         lrt.setCameraId( "00626E4E72BF" );
-        lrt.setFirmwareVersion( "" + (char)11 + (char)37 + (char)2 + (char)56 );
+        lrt.setFirmwareVersion( new Version( 11, 37, 2, 56 ) );
 
         byte[] expected = ResourceReader.readResourceAsBytes( "/samples/login_resp.bin" );
         byte[] ds = c.toDatastream();

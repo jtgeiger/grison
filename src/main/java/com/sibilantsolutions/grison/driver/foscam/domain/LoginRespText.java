@@ -12,7 +12,7 @@ public class LoginRespText implements DatastreamI
     private String cameraId;            //BINARY_STREAM[13]
     //private String RESERVE            //BINARY_STREAM[4]
     //private String RESERVE            //BINARY_STREAM[4]
-    private String firmwareVersion;     //BINARY_STREAM[4]
+    private Version firmwareVersion;    //BINARY_STREAM[4]
 
     public ResultCodeE getResultCode()
     {
@@ -34,12 +34,12 @@ public class LoginRespText implements DatastreamI
         this.cameraId = cameraId;
     }
 
-    public String getFirmwareVersion()
+    public Version getFirmwareVersion()
     {
         return firmwareVersion;
     }
 
-    public void setFirmwareVersion( String firmwareVersion )
+    public void setFirmwareVersion( Version firmwareVersion )
     {
         this.firmwareVersion = firmwareVersion;
     }
@@ -62,8 +62,12 @@ public class LoginRespText implements DatastreamI
         bb.position( bb.position() + 4 );
         bb.position( bb.position() + 4 );
 
-        String firmwareVersion = Convert.get( 4, bb );
-        text.firmwareVersion = firmwareVersion;
+        byte major = bb.get();
+        byte minor = bb.get();
+        byte patch = bb.get();
+        byte build = bb.get();
+
+        text.firmwareVersion = new Version( major, minor, patch, build );
 
         return text;
     }
@@ -86,7 +90,10 @@ public class LoginRespText implements DatastreamI
         for ( int i = 0; i < 4; i++ )
             bb.put( (byte)0x00 );
 
-        Convert.put( firmwareVersion, bb );
+        bb.put( (byte)firmwareVersion.getMajor() );
+        bb.put( (byte)firmwareVersion.getMinor() );
+        bb.put( (byte)firmwareVersion.getPatch() );
+        bb.put( (byte)firmwareVersion.getBuild() );
 
         return bb.array();
     }

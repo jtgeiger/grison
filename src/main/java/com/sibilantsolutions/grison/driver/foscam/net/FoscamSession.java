@@ -16,6 +16,7 @@ import com.sibilantsolutions.grison.driver.foscam.domain.ProtocolE;
 import com.sibilantsolutions.grison.driver.foscam.domain.ResultCodeE;
 import com.sibilantsolutions.grison.driver.foscam.domain.TalkStartRespText;
 import com.sibilantsolutions.grison.driver.foscam.domain.VerifyRespText;
+import com.sibilantsolutions.grison.driver.foscam.domain.Version;
 import com.sibilantsolutions.grison.driver.foscam.domain.VideoDataText;
 import com.sibilantsolutions.grison.driver.foscam.domain.VideoStartRespText;
 import com.sibilantsolutions.grison.evt.AlarmEvt;
@@ -35,7 +36,7 @@ public class FoscamSession
     private FoscamService operationService;
     final private InetSocketAddress address;
     private String cameraId;
-    private String firmwareVersion;
+    private Version firmwareVersion;
 
     private FoscamService audioVideoService;
 
@@ -221,7 +222,7 @@ public class FoscamSession
         return cameraId;
     }
 
-    public String getFirmwareVersion()
+    public Version getFirmwareVersion()
     {
         return firmwareVersion;
     }
