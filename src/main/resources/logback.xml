@@ -34,13 +34,13 @@
 <!--       <IncludeCallerData>true</IncludeCallerData> -->
 <!--   </appender> -->
 
-  <appender name="socket" class="de.huxhorn.lilith.logback.appender.ClassicMultiplexSocketAppender">
-      <Compressing>true</Compressing> <!-- will automatically use correct default port --> <!-- Default port for compressed is 10000 and uncompressed 10001 -->
-      <ReconnectionDelay>10000</ReconnectionDelay>
-      <IncludeCallerData>true</IncludeCallerData>
-      <RemoteHosts>localhost</RemoteHosts> <!-- Alternatively: <RemoteHost>localhost</RemoteHost> <RemoteHost>10.200.55.13</RemoteHost> --> 
-      <!-- Optional: <CreatingUUID>false</CreatingUUID> -->
-  </appender>
+<!--   <appender name="socket" class="de.huxhorn.lilith.logback.appender.ClassicMultiplexSocketAppender"> -->
+<!--       <Compressing>true</Compressing> will automatically use correct default port Default port for compressed is 10000 and uncompressed 10001 -->
+<!--       <ReconnectionDelay>10000</ReconnectionDelay> -->
+<!--       <IncludeCallerData>true</IncludeCallerData> -->
+<!--       <RemoteHosts>localhost</RemoteHosts> Alternatively: <RemoteHost>localhost</RemoteHost> <RemoteHost>10.200.55.13</RemoteHost>  -->
+<!--       Optional: <CreatingUUID>false</CreatingUUID> -->
+<!--   </appender> -->
   
   <logger name="com.sibilantsolutions.iptools.net.SocketUtils" level="INFO" />
   <logger name="com.sibilantsolutions.iptools.util.DurationLoggingRunnable" level="INFO" />
@@ -51,9 +51,9 @@
   <logger name="com.sibilantsolutions.grison.driver.foscam.net.FoscamSession" level="INFO" />
 
   <root level="WARN">
-<!--     <appender-ref ref="STDOUT" /> -->
+    <appender-ref ref="STDOUT" />
     <appender-ref ref="STDERR" />
-    <appender-ref ref="socket" />
+<!--     <appender-ref ref="socket" /> -->
   </root>
 
 </configuration>
