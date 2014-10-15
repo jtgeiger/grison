@@ -16,17 +16,17 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.sibilantsolutions.grison.driver.foscam.domain.DecoderControlE;
-import com.sibilantsolutions.grison.util.Convert;
-import com.sibilantsolutions.grison.util.ResourceReader;
-import com.sibilantsolutions.iptools.util.HexDumpDeferred;
+import com.sibilantsolutions.utils.util.Convert;
+import com.sibilantsolutions.utils.util.HexDumpDeferred;
+import com.sibilantsolutions.utils.util.ResourceReader;
 
 public class CgiService
 {
     final static private Logger log = LoggerFactory.getLogger( CgiService.class );
 
-    private InetSocketAddress address;
-    private String username;
-    private String password;
+    private final InetSocketAddress address;
+    private final String username;
+    private final String password;
 
     public CgiService( InetSocketAddress address, String username, String password )
     {

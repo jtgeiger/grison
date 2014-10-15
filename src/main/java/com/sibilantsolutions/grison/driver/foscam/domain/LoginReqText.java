@@ -1,6 +1,6 @@
 package com.sibilantsolutions.grison.driver.foscam.domain;
 
-import com.sibilantsolutions.grison.util.Convert;
+import com.sibilantsolutions.utils.util.Convert;
 
 public class LoginReqText implements DatastreamI
 {

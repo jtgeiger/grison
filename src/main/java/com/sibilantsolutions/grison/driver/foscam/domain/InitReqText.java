@@ -4,7 +4,7 @@ import java.net.InetAddress;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 
-import com.sibilantsolutions.grison.util.Convert;
+import com.sibilantsolutions.utils.util.Convert;
 
 public class InitReqText implements DatastreamI
 {

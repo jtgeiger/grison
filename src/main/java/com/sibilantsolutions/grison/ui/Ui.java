@@ -6,7 +6,7 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.SwingUtilities;
 
-import com.sibilantsolutions.iptools.util.DurationLoggingRunnable;
+import com.sibilantsolutions.utils.util.DurationLoggingRunnable;
 
 public class Ui
 {

@@ -11,7 +11,7 @@ import com.sibilantsolutions.grison.evt.AudioHandlerI;
 import com.sibilantsolutions.grison.evt.LostConnectionEvt;
 import com.sibilantsolutions.grison.evt.LostConnectionHandlerI;
 import com.sibilantsolutions.grison.ui.Ui;
-import com.sibilantsolutions.iptools.util.DurationLoggingRunnable;
+import com.sibilantsolutions.utils.util.DurationLoggingRunnable;
 
 public class Demo
 {

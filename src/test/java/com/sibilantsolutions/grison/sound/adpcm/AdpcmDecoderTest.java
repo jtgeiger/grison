@@ -4,7 +4,7 @@ import static org.junit.Assert.assertArrayEquals;
 
 import org.junit.Test;
 
-import com.sibilantsolutions.grison.util.ResourceReader;
+import com.sibilantsolutions.utils.util.ResourceReader;
 
 public class AdpcmDecoderTest
 {

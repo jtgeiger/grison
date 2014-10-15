@@ -38,9 +38,9 @@ import com.sibilantsolutions.iptools.net.LengthByteBuffer;
 import com.sibilantsolutions.iptools.net.LengthByteBuffer.LengthByteType;
 import com.sibilantsolutions.iptools.net.ReceiveQueue;
 import com.sibilantsolutions.iptools.net.SocketUtils;
-import com.sibilantsolutions.iptools.util.DurationLoggingCallable;
-import com.sibilantsolutions.iptools.util.DurationLoggingRunnable;
-import com.sibilantsolutions.iptools.util.HexUtils;
+import com.sibilantsolutions.utils.util.DurationLoggingCallable;
+import com.sibilantsolutions.utils.util.DurationLoggingRunnable;
+import com.sibilantsolutions.utils.util.HexUtils;
 
 public class FoscamConnection
 {

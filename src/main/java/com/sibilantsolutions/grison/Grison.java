@@ -4,7 +4,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.sibilantsolutions.grison.demo.Demo;
-import com.sibilantsolutions.iptools.util.DurationLoggingRunnable;
+import com.sibilantsolutions.utils.util.DurationLoggingRunnable;
 
 /**
  * Grisons, also known as South American wolverines, are mustelids native to Central and South America.

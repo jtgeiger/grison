@@ -27,7 +27,7 @@ import com.sibilantsolutions.grison.evt.ImageHandlerI;
 import com.sibilantsolutions.grison.evt.LostConnectionEvt;
 import com.sibilantsolutions.grison.evt.LostConnectionHandlerI;
 import com.sibilantsolutions.grison.evt.VideoStoppedEvt;
-import com.sibilantsolutions.iptools.util.HexDumpDeferred;
+import com.sibilantsolutions.utils.util.HexDumpDeferred;
 
 public class FoscamSession
 {

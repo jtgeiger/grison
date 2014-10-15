@@ -3,7 +3,7 @@ package com.sibilantsolutions.grison.driver.foscam.domain;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 
-import com.sibilantsolutions.grison.util.Convert;
+import com.sibilantsolutions.utils.util.Convert;
 
 public class Command implements DatastreamI
 {

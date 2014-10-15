@@ -4,7 +4,7 @@ import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.nio.ByteBuffer;
 
-import com.sibilantsolutions.grison.util.Convert;
+import com.sibilantsolutions.utils.util.Convert;
 
 public class SearchRespText implements DatastreamI
 {
