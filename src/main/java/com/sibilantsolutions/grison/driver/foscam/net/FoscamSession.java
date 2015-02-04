@@ -116,7 +116,7 @@ public class FoscamSession
             @Override
             public void onLostConnection( FoscamConnection connection )
             {
-                lostConnectionHandler.onLostConnection( new LostConnectionEvt() );
+                lostConnectionHandler.onLostConnection( new LostConnectionEvt( session ) );
             }
 
             @Override
