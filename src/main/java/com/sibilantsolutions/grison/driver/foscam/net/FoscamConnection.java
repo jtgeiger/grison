@@ -277,7 +277,7 @@ public class FoscamConnection
             }
             else
             {
-                log.info( "UNSOLICITED!" );
+//                log.info( "UNSOLICITED!" );
                 //TODO fire to an UnsolicitedHandlerI.
 
                 if ( protocol == ProtocolE.AUDIO_VIDEO_PROTOCOL )
