@@ -306,6 +306,7 @@ public class FoscamConnection
                     {
                         case Alarm_Notify:
                             AlarmNotifyText ant = (AlarmNotifyText)command.getCommandText();
+                            log.info( "Alarm type={}.", ant.getAlarmType() );
                             owner.onAlarm( ant );
                             break;
 
