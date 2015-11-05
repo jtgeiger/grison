@@ -81,7 +81,7 @@
     <dependency>
     	<groupId>com.sibilantsolutions.iptools</groupId>
     	<artifactId>iptools</artifactId>
-    	<version>0.0.3-SNAPSHOT</version>
+    	<version>0.0.3</version>
     </dependency>
   </dependencies>
 </project>
