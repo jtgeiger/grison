@@ -1,15 +1,10 @@
 package com.sibilantsolutions.grison.driver.foscam.domain;
 
-import static org.junit.Assert.assertArrayEquals;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
-
-import org.junit.Test;
-
 import com.sibilantsolutions.utils.util.Convert;
 import com.sibilantsolutions.utils.util.ResourceReader;
+import org.junit.Test;
+
+import static org.junit.Assert.*;
 
 public class CommandTest
 {
@@ -101,7 +96,7 @@ public class CommandTest
         VideoStartRespText text = (VideoStartRespText)c.getCommandText();
 
         assertEquals( ResultCodeE.CORRECT, text.getResultCode() );
-        assertEquals( "" + (char)0x40 + (char)0x1B + (char)0x25 + (char)0x60, text.getDataConnectionId() );
+        assertArrayEquals(new byte[]{0x40, 0x1B, 0x25, 0x60}, text.getDataConnectionId());
     }
 
     @Test
@@ -130,7 +125,7 @@ public class CommandTest
         TalkStartRespText text = (TalkStartRespText)c.getCommandText();
 
         assertEquals( ResultCodeE.CORRECT, text.getResultCode() );
-        assertEquals( "" + (char)0x7D + (char)0x26 + (char)0xF6 + (char)0x38, text.getDataConnectionId() );
+        assertArrayEquals(new byte[]{0x7D, 0x26, (byte) 0xF6, 0x38}, text.getDataConnectionId());
     }
 
     @Test
@@ -307,7 +302,7 @@ public class CommandTest
         c.setOpCode( OperationProtocolOpCodeE.Login_Req );
         LoginReqText text = new LoginReqText();
         c.setCommandText( text );
-        text.setDataConnectionId( "" );
+        text.setDataConnectionId(new byte[0]);
 
         byte[] expected = ResourceReader.readResourceAsBytes( "/samples/login_req.bin" );
         byte[] ds = c.toDatastream();
@@ -473,7 +468,7 @@ public class CommandTest
         AudioStartRespText text = new AudioStartRespText();
         c.setCommandText( text );
         text.setResultCode( ResultCodeE.CORRECT );
-        text.setDataConnectionId( "" + (char)0x00 + (char)0x58 + (char)0xEA + (char)0x58 );
+        text.setDataConnectionId(new byte[]{0x00, 0x58, (byte) 0xEA, 0x58});
 
         byte[] expected = ResourceReader.readResourceAsBytes( "/samples/audio_start_resp.bin" );
         byte[] ds = c.toDatastream();
@@ -493,7 +488,7 @@ public class CommandTest
         c.setOpCode( AudioVideoProtocolOpCodeE.Login_Req );
         LoginReqText text = new LoginReqText();
         c.setCommandText( text );
-        text.setDataConnectionId( "" + (char)0x00 + (char)0x58 + (char)0xEA + (char)0x58 );
+        text.setDataConnectionId(new byte[]{0x00, 0x58, (byte) 0xEA, 0x58});
 
         byte[] expected = ResourceReader.readResourceAsBytes( "/samples/audio_login_req.bin" );
         byte[] ds = c.toDatastream();
@@ -579,7 +574,7 @@ public class CommandTest
         VideoStartRespText text = new VideoStartRespText();
         c.setCommandText( text );
         text.setResultCode( ResultCodeE.CORRECT );
-        text.setDataConnectionId( "" + (char)0x40 + (char)0x1B + (char)0x25 + (char)0x60 );
+        text.setDataConnectionId(new byte[]{0x40, 0x1B, 0x25, 0x60});
 
         byte[] expected = ResourceReader.readResourceAsBytes( "/samples/video_start_resp.bin" );
         byte[] ds = c.toDatastream();
@@ -620,7 +615,7 @@ public class CommandTest
         TalkStartRespText text = new TalkStartRespText();
         c.setCommandText( text );
         text.setResultCode( ResultCodeE.CORRECT );
-        text.setDataConnectionId( "" + (char)0x7D + (char)0x26 + (char)0xF6 + (char)0x38 );
+        text.setDataConnectionId(new byte[]{0x7D, 0x26, (byte) 0xF6, 0x38});
 
         byte[] expected = ResourceReader.readResourceAsBytes( "/samples/talk_start_resp.bin" );
         byte[] ds = c.toDatastream();

@@ -1,21 +1,6 @@
 package com.sibilantsolutions.grison.driver.foscam.net;
 
-import com.sibilantsolutions.grison.driver.foscam.domain.AudioFormatE;
-import com.sibilantsolutions.grison.driver.foscam.domain.AudioStartReqText;
-import com.sibilantsolutions.grison.driver.foscam.domain.AudioStartRespText;
-import com.sibilantsolutions.grison.driver.foscam.domain.AudioVideoProtocolOpCodeE;
-import com.sibilantsolutions.grison.driver.foscam.domain.Command;
-import com.sibilantsolutions.grison.driver.foscam.domain.LoginReqText;
-import com.sibilantsolutions.grison.driver.foscam.domain.LoginRespText;
-import com.sibilantsolutions.grison.driver.foscam.domain.OperationProtocolOpCodeE;
-import com.sibilantsolutions.grison.driver.foscam.domain.ProtocolE;
-import com.sibilantsolutions.grison.driver.foscam.domain.TalkDataText;
-import com.sibilantsolutions.grison.driver.foscam.domain.TalkStartReqText;
-import com.sibilantsolutions.grison.driver.foscam.domain.TalkStartRespText;
-import com.sibilantsolutions.grison.driver.foscam.domain.VerifyReqText;
-import com.sibilantsolutions.grison.driver.foscam.domain.VerifyRespText;
-import com.sibilantsolutions.grison.driver.foscam.domain.VideoStartReqText;
-import com.sibilantsolutions.grison.driver.foscam.domain.VideoStartRespText;
+import com.sibilantsolutions.grison.driver.foscam.domain.*;
 
 public class FoscamService
 {
@@ -55,7 +40,7 @@ public class FoscamService
         return (AudioStartRespText)response.getCommandText();
     }
 
-    public void audioVideoLogin( String dataConnectionId )
+    public void audioVideoLogin(byte[] dataConnectionId)
     {
         Command c = new Command();
         c.setProtocol( ProtocolE.AUDIO_VIDEO_PROTOCOL );
@@ -74,7 +59,7 @@ public class FoscamService
         c.setOpCode( OperationProtocolOpCodeE.Login_Req );
         LoginReqText login = new LoginReqText();
         c.setCommandText( login );
-        login.setDataConnectionId( "" );
+        login.setDataConnectionId(new byte[0]);
 
         Command response = sendReceive( c );
 

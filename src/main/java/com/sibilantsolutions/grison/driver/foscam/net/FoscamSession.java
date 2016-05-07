@@ -51,7 +51,7 @@ public class FoscamSession
         if ( audioStartResp.getResultCode() == ResultCodeE.CORRECT )
         {
                 //May be null if a/v connection is already established.
-            String dataConnectionId = audioStartResp.getDataConnectionId();
+            byte[] dataConnectionId = audioStartResp.getDataConnectionId();
 
             if ( dataConnectionId != null )
             {
@@ -112,7 +112,7 @@ public class FoscamSession
         return session;
     }
 
-    private void connectAudioVideo( String dataConnectionId )
+    private void connectAudioVideo(byte[] dataConnectionId)
     {
         if ( audioVideoService == null )
         {
@@ -329,7 +329,7 @@ public class FoscamSession
         if ( talkStartResp.getResultCode() == ResultCodeE.CORRECT )
         {
                 //May be null if a/v connection is already established.
-            String dataConnectionId = talkStartResp.getDataConnectionId();
+            byte[] dataConnectionId = talkStartResp.getDataConnectionId();
 
             if ( dataConnectionId != null )
             {
@@ -366,7 +366,7 @@ public class FoscamSession
         if ( videoStartResp.getResultCode() == ResultCodeE.CORRECT )
         {
                 //May be null if a/v connection is already established.
-            String dataConnectionId = videoStartResp.getDataConnectionId();
+            byte[] dataConnectionId = videoStartResp.getDataConnectionId();
 
             if ( dataConnectionId != null )
             {

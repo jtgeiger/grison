@@ -1,18 +1,16 @@
 package com.sibilantsolutions.grison.driver.foscam.domain;
 
-import com.sibilantsolutions.utils.util.Convert;
-
 public class LoginReqText implements DatastreamI
 {
 
-    private String dataConnectionId;
+    private byte[] dataConnectionId;
 
-    public String getDataConnectionId()
+    public byte[] getDataConnectionId()
     {
         return dataConnectionId;
     }
 
-    public void setDataConnectionId( String dataConnectionId )
+    public void setDataConnectionId(byte[] dataConnectionId)
     {
         this.dataConnectionId = dataConnectionId;
     }
@@ -20,7 +18,7 @@ public class LoginReqText implements DatastreamI
     @Override
     public byte[] toDatastream()
     {
-        return dataConnectionId.getBytes( Convert.cs );
+        return dataConnectionId;
     }
 
 }

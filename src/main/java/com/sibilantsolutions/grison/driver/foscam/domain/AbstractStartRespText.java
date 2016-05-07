@@ -3,13 +3,11 @@ package com.sibilantsolutions.grison.driver.foscam.domain;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 
-import com.sibilantsolutions.utils.util.Convert;
-
 abstract public class AbstractStartRespText implements DatastreamI
 {
 
     private ResultCodeE resultCode;     //INT16 (2 bytes; little endian)
-    private String dataConnectionId;    //INT32 (4 bytes; little endian)
+    private byte[] dataConnectionId;    //INT32 (4 bytes; little endian)
 
     public ResultCodeE getResultCode()
     {
@@ -21,12 +19,12 @@ abstract public class AbstractStartRespText implements DatastreamI
         this.resultCode = resultCode;
     }
 
-    public String getDataConnectionId()
+    public byte[] getDataConnectionId()
     {
         return dataConnectionId;
     }
 
-    public void setDataConnectionId( String dataConnectionId )
+    public void setDataConnectionId(byte[] dataConnectionId)
     {
         this.dataConnectionId = dataConnectionId;
     }
@@ -42,7 +40,9 @@ abstract public class AbstractStartRespText implements DatastreamI
             //the response will have resultCode==0 and no data connection id.
         if ( bb.hasRemaining() )
         {
-            this.dataConnectionId = Convert.get( 4, bb );
+            this.dataConnectionId = new byte[4];
+
+            bb.get(this.dataConnectionId);
         }
     }
 
@@ -53,7 +53,7 @@ abstract public class AbstractStartRespText implements DatastreamI
         bb.order( ByteOrder.LITTLE_ENDIAN );
 
         bb.putShort( resultCode.getValue() );
-        Convert.put( dataConnectionId, bb );
+        bb.put(dataConnectionId);
 
         return bb.array();
     }
