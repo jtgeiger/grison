@@ -1,33 +1,13 @@
 package com.sibilantsolutions.grison.driver.foscam.net;
 
-import java.net.InetSocketAddress;
-import java.util.List;
-
+import com.sibilantsolutions.grison.driver.foscam.domain.*;
+import com.sibilantsolutions.grison.evt.*;
+import com.sibilantsolutions.utils.util.HexDumpDeferred;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.sibilantsolutions.grison.driver.foscam.domain.AlarmNotifyText;
-import com.sibilantsolutions.grison.driver.foscam.domain.AudioDataText;
-import com.sibilantsolutions.grison.driver.foscam.domain.AudioStartRespText;
-import com.sibilantsolutions.grison.driver.foscam.domain.DecoderControlE;
-import com.sibilantsolutions.grison.driver.foscam.domain.LoginRespText;
-import com.sibilantsolutions.grison.driver.foscam.domain.PresetAndDelay;
-import com.sibilantsolutions.grison.driver.foscam.domain.ProtocolE;
-import com.sibilantsolutions.grison.driver.foscam.domain.ResultCodeE;
-import com.sibilantsolutions.grison.driver.foscam.domain.TalkStartRespText;
-import com.sibilantsolutions.grison.driver.foscam.domain.VerifyRespText;
-import com.sibilantsolutions.grison.driver.foscam.domain.Version;
-import com.sibilantsolutions.grison.driver.foscam.domain.VideoDataText;
-import com.sibilantsolutions.grison.driver.foscam.domain.VideoStartRespText;
-import com.sibilantsolutions.grison.evt.AlarmEvt;
-import com.sibilantsolutions.grison.evt.AlarmHandlerI;
-import com.sibilantsolutions.grison.evt.AudioHandlerI;
-import com.sibilantsolutions.grison.evt.AudioStoppedEvt;
-import com.sibilantsolutions.grison.evt.ImageHandlerI;
-import com.sibilantsolutions.grison.evt.LostConnectionEvt;
-import com.sibilantsolutions.grison.evt.LostConnectionHandlerI;
-import com.sibilantsolutions.grison.evt.VideoStoppedEvt;
-import com.sibilantsolutions.utils.util.HexDumpDeferred;
+import java.net.InetSocketAddress;
+import java.util.List;
 
 public class FoscamSession
 {
@@ -159,6 +139,7 @@ public class FoscamSession
                 {
                     audioHandler.onAudioStopped( new AudioStoppedEvt() );
                     imageHandler.onVideoStopped( new VideoStoppedEvt() );
+                    audioVideoService = null;
                 }
 
                 @Override
