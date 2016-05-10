@@ -100,7 +100,7 @@ abstract public class FoscamSearch
 
                     default:
                         throw new IllegalArgumentException( "Unexpected protocol=" + cReceive.getProtocol() );
-                };
+                }
             }
         };
 
