@@ -88,6 +88,7 @@ abstract public class FoscamSearch
                         {
                             case Search_Resp:
                                 SearchRespText srt = (SearchRespText)cReceive.getCommandText();
+                                log.info("Received search response: {}.", srt);
                                 searchResponses.add( srt );
                                 break;
 

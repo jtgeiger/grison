@@ -1,10 +1,10 @@
 package com.sibilantsolutions.grison.driver.foscam.domain;
 
+import com.sibilantsolutions.utils.util.Convert;
+
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.nio.ByteBuffer;
-
-import com.sibilantsolutions.utils.util.Convert;
 
 public class SearchRespText implements DatastreamI
 {
@@ -197,6 +197,22 @@ public class SearchRespText implements DatastreamI
             // TODO Auto-generated catch block
             throw new UnsupportedOperationException( "OGTE TODO!", e );
         }
+    }
+
+    @Override
+    public String toString() {
+        return "SearchRespText{" +
+                "cameraId='" + cameraId + '\'' +
+                ", cameraName='" + cameraName + '\'' +
+                ", cameraIP=" + cameraIP +
+                ", netmask=" + netmask +
+                ", gatewayIP=" + gatewayIP +
+                ", dnsIP=" + dnsIP +
+                ", sysSoftwareVersion='" + sysSoftwareVersion + '\'' +
+                ", appSoftwareVersion='" + appSoftwareVersion + '\'' +
+                ", cameraPort=" + cameraPort +
+                ", dhcpEnabled=" + dhcpEnabled +
+                '}';
     }
 
 }
