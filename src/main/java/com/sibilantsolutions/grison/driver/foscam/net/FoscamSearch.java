@@ -1,15 +1,5 @@
 package com.sibilantsolutions.grison.driver.foscam.net;
 
-import java.net.DatagramPacket;
-import java.net.DatagramSocket;
-import java.net.InetSocketAddress;
-import java.net.SocketException;
-import java.util.ArrayList;
-import java.util.List;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import com.sibilantsolutions.grison.driver.foscam.domain.Command;
 import com.sibilantsolutions.grison.driver.foscam.domain.ProtocolE;
 import com.sibilantsolutions.grison.driver.foscam.domain.SearchProtocolOpCodeE;
@@ -18,6 +8,15 @@ import com.sibilantsolutions.grison.driver.foscam.domain.SearchRespText;
 import com.sibilantsolutions.iptools.event.DatagramReceiveEvt;
 import com.sibilantsolutions.iptools.event.DatagramReceiverI;
 import com.sibilantsolutions.iptools.net.SocketUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.net.DatagramPacket;
+import java.net.DatagramSocket;
+import java.net.InetSocketAddress;
+import java.net.SocketException;
+import java.util.ArrayList;
+import java.util.List;
 
 abstract public class FoscamSearch
 {
@@ -47,10 +46,10 @@ abstract public class FoscamSearch
         try
         {
             packet = new DatagramPacket( buf, buf.length, destinationAddress );
-        }
-        catch ( SocketException e )
+        } catch (Exception e)   // In JDK <= 1.7, this constructor threw SocketException. In JDK >= 1.8, it doesn't.
         {
             // TODO Auto-generated catch block
+            // Do not need explicit catch here in JDK >= 1.8.
             throw new UnsupportedOperationException( "MY TODO!", e );
         }
 
