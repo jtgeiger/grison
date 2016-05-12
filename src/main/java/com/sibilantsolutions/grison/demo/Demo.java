@@ -1,9 +1,5 @@
 package com.sibilantsolutions.grison.demo;
 
-import java.net.InetSocketAddress;
-
-import javax.swing.JLabel;
-
 import com.sibilantsolutions.grison.driver.foscam.net.FoscamSession;
 import com.sibilantsolutions.grison.evt.AlarmEvt;
 import com.sibilantsolutions.grison.evt.AlarmHandlerI;
@@ -13,12 +9,17 @@ import com.sibilantsolutions.grison.evt.LostConnectionHandlerI;
 import com.sibilantsolutions.grison.ui.Ui;
 import com.sibilantsolutions.utils.util.DurationLoggingRunnable;
 
+import javax.swing.JLabel;
+import java.net.InetSocketAddress;
+
 public class Demo
 {
 //    final static private Logger log = LoggerFactory.getLogger( Demo.class );
 
     static private AudioHandlerI audioHandler = new DemoAudioHandler();
-    static private JLabel label = new JLabel();
+    static private JLabel imageLabel = new JLabel();
+    static private JLabel uptimeLabel = new JLabel();
+    static private JLabel timestampLabel = new JLabel();
     static private DemoImageHandler imageHandler = new DemoImageHandler();
     static private AlarmHandlerI alarmHandler = new AlarmHandlerI()
     {
@@ -30,12 +31,14 @@ public class Demo
     };
     static
     {
-        imageHandler.setLabel( label );
+        imageHandler.setImageLabel(imageLabel);
+        imageHandler.setUptimeLabel(uptimeLabel);
+        imageHandler.setTimestampLabel(timestampLabel);
     }
 
     static public void demo( final String hostname, final int port, final String username, final String password )
     {
-        Ui.buildUi( label );
+        Ui.buildUi(imageLabel, uptimeLabel, timestampLabel);
 
         final LostConnectionHandlerI lostConnectionHandler = new LostConnectionHandlerI()
         {

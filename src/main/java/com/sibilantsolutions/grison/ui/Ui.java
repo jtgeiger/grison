@@ -1,19 +1,20 @@
 package com.sibilantsolutions.grison.ui;
 
-import java.lang.reflect.InvocationTargetException;
+import com.sibilantsolutions.utils.util.DurationLoggingRunnable;
 
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.SwingUtilities;
-
-import com.sibilantsolutions.utils.util.DurationLoggingRunnable;
+import javax.swing.WindowConstants;
+import java.awt.FlowLayout;
+import java.lang.reflect.InvocationTargetException;
 
 public class Ui
 {
 
     private Ui() {}    //Prevent instantiation.
 
-    static public Ui buildUi( final JLabel label )
+    static public Ui buildUi(final JLabel imageLabel, final JLabel uptimeLabel, final JLabel timestampLabel)
     {
         final Ui ui = new Ui();
 
@@ -22,7 +23,7 @@ public class Ui
             @Override
             public void run()
             {
-                ui.buildUiImpl( label );
+                ui.buildUiImpl(imageLabel, uptimeLabel, timestampLabel);
             }
 
         };
@@ -43,13 +44,18 @@ public class Ui
     }
 
 
-    private void buildUiImpl( JLabel label )
+    private void buildUiImpl(JLabel imageLabel, JLabel uptimeLabel, JLabel timestampLabel)
     {
         JFrame f = new JFrame( "Grison" );
-        f.setDefaultCloseOperation( JFrame.EXIT_ON_CLOSE );
+        f.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         f.setSize( 800, 600 );
 
-        f.getContentPane().add( label );
+        f.getContentPane().setLayout(new FlowLayout());
+        f.getContentPane().add(imageLabel);
+        f.getContentPane().add(new JLabel("Uptime:"));
+        f.getContentPane().add(uptimeLabel);
+        f.getContentPane().add(new JLabel("Timestamp:"));
+        f.getContentPane().add(timestampLabel);
 
         //f.pack();
         f.setVisible( true );

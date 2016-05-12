@@ -1,22 +1,23 @@
 package com.sibilantsolutions.grison.demo;
 
+import com.sibilantsolutions.grison.driver.foscam.domain.VideoDataText;
+import com.sibilantsolutions.grison.evt.ImageHandlerI;
+import com.sibilantsolutions.grison.evt.VideoStoppedEvt;
+
+import javax.swing.ImageIcon;
+import javax.swing.JLabel;
+import javax.swing.SwingUtilities;
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import java.lang.reflect.InvocationTargetException;
 
-import javax.swing.ImageIcon;
-import javax.swing.JLabel;
-import javax.swing.SwingUtilities;
-
-import com.sibilantsolutions.grison.driver.foscam.domain.VideoDataText;
-import com.sibilantsolutions.grison.evt.ImageHandlerI;
-import com.sibilantsolutions.grison.evt.VideoStoppedEvt;
-
 public class DemoImageHandler implements ImageHandlerI
 {
 
-    private JLabel label;
+    private JLabel imageLabel;
+    private JLabel uptimeLabel;
+    private JLabel timestampLabel;
 
     private BufferedImage createLostConnectionImage()
     {
@@ -29,35 +30,36 @@ public class DemoImageHandler implements ImageHandlerI
         return bi;
     }
 
-    public JLabel getLabel()
+    public JLabel getImageLabel()
     {
-        return label;
+        return imageLabel;
     }
 
-    public void setLabel( JLabel label )
+    public void setImageLabel(JLabel imageLabel)
     {
-        this.label = label;
+        this.imageLabel = imageLabel;
     }
 
     @Override
-    public void onReceive( VideoDataText videoData )
-    {
-        byte[] imageData = videoData.getDataContent();
-
-        setImage( new ImageIcon( imageData ) );
-    }
-
-    private void setImage( final ImageIcon imageIcon )
+    public void onReceive(final VideoDataText videoData)
     {
         Runnable r = new Runnable() {
 
             @Override
             public void run()
             {
-                label.setIcon( imageIcon );
+                byte[] imageData = videoData.getDataContent();
+
+                imageLabel.setIcon(new ImageIcon(imageData));
+                uptimeLabel.setText(String.valueOf(videoData.getUptimeMs()));
+                timestampLabel.setText(String.valueOf(videoData.getTimestampMs()));
             }
         };
 
+        swingThreadInvoke(r);
+    }
+
+    private void swingThreadInvoke(Runnable r) {
         try
         {
             SwingUtilities.invokeAndWait( r );
@@ -72,9 +74,35 @@ public class DemoImageHandler implements ImageHandlerI
     @Override
     public void onVideoStopped( VideoStoppedEvt videoStoppedEvt )
     {
-        BufferedImage lostConnectionImage = createLostConnectionImage();
+        final BufferedImage lostConnectionImage = createLostConnectionImage();
 
-        setImage( new ImageIcon( lostConnectionImage ) );
+        Runnable r = new Runnable() {
+
+            @Override
+            public void run() {
+                imageLabel.setIcon(new ImageIcon(lostConnectionImage));
+                uptimeLabel.setText("");
+                timestampLabel.setText("");
+            }
+        };
+
+        swingThreadInvoke(r);
+    }
+
+    public JLabel getUptimeLabel() {
+        return uptimeLabel;
+    }
+
+    public void setUptimeLabel(JLabel uptimeLabel) {
+        this.uptimeLabel = uptimeLabel;
+    }
+
+    public JLabel getTimestampLabel() {
+        return timestampLabel;
+    }
+
+    public void setTimestampLabel(JLabel timestampLabel) {
+        this.timestampLabel = timestampLabel;
     }
 
 }
