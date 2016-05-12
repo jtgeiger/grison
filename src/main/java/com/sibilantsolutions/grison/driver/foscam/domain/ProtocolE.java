@@ -1,5 +1,8 @@
 package com.sibilantsolutions.grison.driver.foscam.domain;
 
+import java.nio.charset.Charset;
+import java.util.Arrays;
+
 public enum ProtocolE
 {
     OPERATION_PROTOCOL( Values.OPERATION_PROTOCOL ),
@@ -7,39 +10,37 @@ public enum ProtocolE
     SEARCH_PROTOCOL( Values.SEARCH_PROTOCOL ),
     ;
 
-    static private interface Values
+    private interface Values
     {
-        final static public String OPERATION_PROTOCOL      = "MO_O";
-        final static public String AUDIO_VIDEO_PROTOCOL    = "MO_V";
-        final static public String SEARCH_PROTOCOL         = "MO_I";
+        Charset cs = Charset.forName("ISO-8859-1");
+
+        byte[] OPERATION_PROTOCOL = "MO_O".getBytes(cs);
+        byte[] AUDIO_VIDEO_PROTOCOL = "MO_V".getBytes(cs);
+        byte[] SEARCH_PROTOCOL = "MO_I".getBytes(cs);
     }
 
-    private String value;
+    private byte[] value;
 
-    private ProtocolE( String value )
+    ProtocolE(byte[] value)
     {
         this.value = value;
     }
 
-    public static ProtocolE fromValue( String value )
+    public static ProtocolE fromValue(byte[] value)
     {
-        switch ( value )
-        {
-            case Values.OPERATION_PROTOCOL:
-                return OPERATION_PROTOCOL;
+        if (Arrays.equals(value, OPERATION_PROTOCOL.value))
+            return OPERATION_PROTOCOL;
 
-            case Values.AUDIO_VIDEO_PROTOCOL:
-                return AUDIO_VIDEO_PROTOCOL;
+        if (Arrays.equals(value, AUDIO_VIDEO_PROTOCOL.value))
+            return AUDIO_VIDEO_PROTOCOL;
 
-            case Values.SEARCH_PROTOCOL:
-                return SEARCH_PROTOCOL;
+        if (Arrays.equals(value, SEARCH_PROTOCOL.value))
+            return SEARCH_PROTOCOL;
 
-            default:
-                throw new IllegalArgumentException( "Unexpected value=" + value );
-        }
+        throw new IllegalArgumentException("Unexpected value=" + Arrays.toString(value));
     }
 
-    public String getValue()
+    public byte[] getValue()
     {
         return value;
     }

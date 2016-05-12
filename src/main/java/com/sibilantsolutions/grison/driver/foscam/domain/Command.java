@@ -3,8 +3,6 @@ package com.sibilantsolutions.grison.driver.foscam.domain;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 
-import com.sibilantsolutions.utils.util.Convert;
-
 public class Command implements DatastreamI
 {
 
@@ -53,7 +51,9 @@ public class Command implements DatastreamI
         ByteBuffer bb = ByteBuffer.wrap( data, offset, length );
         bb.order( ByteOrder.LITTLE_ENDIAN );
 
-        c.protocol = ProtocolE.fromValue( Convert.get( 4, bb ) );
+        byte[] protocol = new byte[4];
+        bb.get(protocol);
+        c.protocol = ProtocolE.fromValue(protocol);
 
         short opCodeNum = bb.getShort();
 
@@ -101,7 +101,7 @@ public class Command implements DatastreamI
         ByteBuffer bb = ByteBuffer.allocate( 4 + 2 + 1 + 8 + 4 + 4 + commandTextData.length );
         bb.order( ByteOrder.LITTLE_ENDIAN );
 
-        Convert.put( protocol.getValue(), bb );
+        bb.put(protocol.getValue());
         bb.putShort( opCode.getValue() );
 
             //RESERVED
