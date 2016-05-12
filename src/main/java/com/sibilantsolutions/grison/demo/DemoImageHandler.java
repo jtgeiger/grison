@@ -11,6 +11,7 @@ import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import java.lang.reflect.InvocationTargetException;
+import java.util.Date;
 
 public class DemoImageHandler implements ImageHandlerI
 {
@@ -52,7 +53,7 @@ public class DemoImageHandler implements ImageHandlerI
 
                 imageLabel.setIcon(new ImageIcon(imageData));
                 uptimeLabel.setText(String.valueOf(videoData.getUptimeMs()));
-                timestampLabel.setText(String.valueOf(videoData.getTimestampMs()));
+                timestampLabel.setText(String.valueOf(videoData.getTimestampMs()) + " (" + new Date(videoData.getTimestampMs()) + ')');
             }
         };
 
