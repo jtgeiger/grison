@@ -1,25 +1,5 @@
 package com.sibilantsolutions.grison.driver.foscam.net;
 
-import java.net.InetSocketAddress;
-import java.net.Socket;
-import java.nio.ByteOrder;
-import java.util.Arrays;
-import java.util.List;
-import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.Callable;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
-import java.util.concurrent.LinkedBlockingQueue;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.ThreadFactory;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import com.sibilantsolutions.grison.driver.foscam.domain.AlarmNotifyText;
 import com.sibilantsolutions.grison.driver.foscam.domain.AudioDataText;
 import com.sibilantsolutions.grison.driver.foscam.domain.AudioVideoProtocolOpCodeE;
@@ -41,6 +21,25 @@ import com.sibilantsolutions.iptools.net.SocketUtils;
 import com.sibilantsolutions.utils.util.DurationLoggingCallable;
 import com.sibilantsolutions.utils.util.DurationLoggingRunnable;
 import com.sibilantsolutions.utils.util.HexUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.net.InetSocketAddress;
+import java.net.Socket;
+import java.nio.ByteOrder;
+import java.util.Arrays;
+import java.util.List;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ThreadFactory;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
 public class FoscamConnection
 {
@@ -79,7 +78,7 @@ public class FoscamConnection
         dest = new LengthByteBuffer( 0x0F, 4, LengthByteType.LENGTH_OF_PAYLOAD,
                 ByteOrder.LITTLE_ENDIAN, 4, 0xFFFF, dest );
 
-        dest = new ReceiveQueue( dest );
+        dest = new ReceiveQueue(dest, "recvQ " + socket);
 
         SocketUtils.readLoopThread( 0xFFFF, this.socket, dest );
     }
