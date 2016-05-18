@@ -258,8 +258,16 @@ public class FoscamConnection
             ProtocolE protocol = command.getProtocol();
             OpCodeI opCode = command.getOpCode();
 
-            log.info( "Receive command (len=0x{}/{}): p={}, o={}.",
-                    HexUtils.numToHex( nbytes ), nbytes, protocol, opCode );
+            if (protocol == ProtocolE.AUDIO_VIDEO_PROTOCOL
+                    && (opCode == AudioVideoProtocolOpCodeE.Video_Data
+                    || opCode == AudioVideoProtocolOpCodeE.Audio_Data)) {
+                // Audio & image data arrives very frequently so log only at trace level.
+                log.trace("Receive command (len=0x{}/{}): p={}, o={}.", HexUtils.numToHex(nbytes),
+                        nbytes, protocol, opCode);
+            } else {
+                log.info("Receive command (len=0x{}/{}): p={}, o={}.", HexUtils.numToHex(nbytes),
+                        nbytes, protocol, opCode);
+            }
 
             if ( ( protocol == ProtocolE.OPERATION_PROTOCOL &&
                     opCode == OperationProtocolOpCodeE.Keep_Alive ) ||
