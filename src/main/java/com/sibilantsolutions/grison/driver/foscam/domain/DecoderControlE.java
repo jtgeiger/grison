@@ -136,8 +136,8 @@ public enum DecoderControlE
         int SET_PRESET_16           = 60;
         int GO_TO_PRESET_16         = 61;
         //.... up to preset 32 (=92/93)??
-        int IO_OUTPUT_HIGH          = 94;
-        int IO_OUTPUT_LOW           = 95;
+        int IO_OUTPUT_HIGH = 94;   //Night vision off
+        int IO_OUTPUT_LOW = 95;   //Night vision auto
         int MOTOR_TEST_MODE         = 255;
     }
 
