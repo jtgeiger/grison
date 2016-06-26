@@ -20,6 +20,7 @@ public class Demo
     static private JLabel imageLabel = new JLabel();
     static private JLabel uptimeLabel = new JLabel();
     static private JLabel timestampLabel = new JLabel();
+    static private JLabel fpsLabel = new JLabel();
     static private DemoImageHandler imageHandler = new DemoImageHandler();
     static private AlarmHandlerI alarmHandler = new AlarmHandlerI()
     {
@@ -34,11 +35,12 @@ public class Demo
         imageHandler.setImageLabel(imageLabel);
         imageHandler.setUptimeLabel(uptimeLabel);
         imageHandler.setTimestampLabel(timestampLabel);
+        imageHandler.setFpsLabel(fpsLabel);
     }
 
     static public void demo( final String hostname, final int port, final String username, final String password )
     {
-        Ui.buildUi(imageLabel, uptimeLabel, timestampLabel);
+        Ui.buildUi(imageLabel, uptimeLabel, timestampLabel, fpsLabel);
 
         final LostConnectionHandlerI lostConnectionHandler = new LostConnectionHandlerI()
         {

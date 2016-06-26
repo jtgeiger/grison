@@ -14,7 +14,8 @@ public class Ui
 
     private Ui() {}    //Prevent instantiation.
 
-    static public Ui buildUi(final JLabel imageLabel, final JLabel uptimeLabel, final JLabel timestampLabel)
+    static public Ui buildUi(final JLabel imageLabel, final JLabel uptimeLabel,
+                             final JLabel timestampLabel, final JLabel fpsLabel)
     {
         final Ui ui = new Ui();
 
@@ -23,7 +24,7 @@ public class Ui
             @Override
             public void run()
             {
-                ui.buildUiImpl(imageLabel, uptimeLabel, timestampLabel);
+                ui.buildUiImpl(imageLabel, uptimeLabel, timestampLabel, fpsLabel);
             }
 
         };
@@ -44,7 +45,8 @@ public class Ui
     }
 
 
-    private void buildUiImpl(JLabel imageLabel, JLabel uptimeLabel, JLabel timestampLabel)
+    private void buildUiImpl(JLabel imageLabel, JLabel uptimeLabel, JLabel timestampLabel,
+                             JLabel fpsLabel)
     {
         JFrame f = new JFrame( "Grison" );
         f.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
@@ -56,6 +58,8 @@ public class Ui
         f.getContentPane().add(uptimeLabel);
         f.getContentPane().add(new JLabel("Timestamp:"));
         f.getContentPane().add(timestampLabel);
+        f.getContentPane().add(new JLabel("FPS:"));
+        f.getContentPane().add(fpsLabel);
 
         //f.pack();
         f.setVisible( true );
