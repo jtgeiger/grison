@@ -1,17 +1,19 @@
 package com.sibilantsolutions.grison.demo;
 
-import java.io.ByteArrayInputStream;
-
 import com.sibilantsolutions.grison.driver.foscam.domain.AudioDataText;
 import com.sibilantsolutions.grison.evt.AudioHandlerI;
 import com.sibilantsolutions.grison.evt.AudioStoppedEvt;
 import com.sibilantsolutions.grison.sound.adpcm.AdpcmDecoder;
 import com.sibilantsolutions.grison.sound.player.MyPlayer;
 
+import java.io.ByteArrayInputStream;
+
+import static com.sibilantsolutions.grison.sound.adpcm.AdpcmDecoderAudioFormat.decodeAudioFormat;
+
 public class DemoAudioHandler implements AudioHandlerI
 {
     private final AdpcmDecoder adpcm = new AdpcmDecoder();
-    private final MyPlayer player = new MyPlayer( AdpcmDecoder.getDecodeAudioFormat() );
+    private final MyPlayer player = new MyPlayer(decodeAudioFormat);
 
 
     @Override

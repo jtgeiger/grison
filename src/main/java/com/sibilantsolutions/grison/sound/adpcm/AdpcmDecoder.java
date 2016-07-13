@@ -1,8 +1,5 @@
 package com.sibilantsolutions.grison.sound.adpcm;
 
-import javax.sound.sampled.AudioFormat;
-import javax.sound.sampled.AudioFormat.Encoding;
-
 //TODO: Check out javax.sound.sampled.spi.FormatConversionProvider
 public class AdpcmDecoder
 {
@@ -18,8 +15,13 @@ public class AdpcmDecoder
         10442,11487,12635,13899,15289,16818,18500,20350,22385,24623,27086,29794,32767
     };
 
-    final static private AudioFormat decodeAudioFormat =
-            new AudioFormat( Encoding.PCM_SIGNED, 8000, 16, 1, 2, 8000, true );
+    public static final String ENCODING = "PCM_SIGNED";
+    public static final float SAMPLE_RATE = 8000;
+    public static final int SAMPLE_SIZE_IN_BITS = 16;
+    public static final int CHANNELS = 1;
+    public static final int FRAME_SIZE = 2;
+    public static final float FRAME_RATE = 8000;
+    public static final boolean BIG_ENDIAN = true;
 
     private int predictedSample = 0;
     private int index = 0;
@@ -167,10 +169,5 @@ public class AdpcmDecoder
         return ret;
     }
 //*/
-
-    static public AudioFormat getDecodeAudioFormat()
-    {
-        return decodeAudioFormat;
-    }
 
 }
