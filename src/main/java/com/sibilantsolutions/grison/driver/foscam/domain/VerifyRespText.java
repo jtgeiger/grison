@@ -30,8 +30,15 @@ public class VerifyRespText implements DatastreamI
 
         text.resultCode = ResultCodeE.fromValue( resultCodeNum );
 
+        /*
+         * When result code is CORRECT, then there is an extra byte.  But when result code is USER_WRONG, there is no
+         * extra byte.
+         */
+        if (bb.position() < length) {
+
             //RESERVED
-        bb.position( bb.position() + 1 );
+            bb.position(bb.position() + 1);
+        }
 
         return text;
     }
@@ -39,13 +46,24 @@ public class VerifyRespText implements DatastreamI
     @Override
     public byte[] toDatastream()
     {
-        ByteBuffer bb = ByteBuffer.allocate( 2 + 1 );
+        int capacity = 2;
+        if (resultCode == ResultCodeE.CORRECT) {
+            capacity++;
+        }
+
+        ByteBuffer bb = ByteBuffer.allocate(capacity);
         bb.order( ByteOrder.LITTLE_ENDIAN );
 
         bb.putShort( resultCode.getValue() );
 
+        /*
+         * When result code is CORRECT, then there is an extra byte.  But when result code is USER_WRONG, there is no
+         * extra byte.
+         */
+        if (resultCode == ResultCodeE.CORRECT) {
             //RESERVED
-        bb.put( (byte)0x00 );
+            bb.put((byte) 0x00);
+        }
 
         return bb.array();
     }

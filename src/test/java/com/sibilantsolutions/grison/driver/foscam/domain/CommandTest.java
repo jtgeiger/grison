@@ -4,7 +4,11 @@ import com.sibilantsolutions.utils.util.Convert;
 import com.sibilantsolutions.utils.util.ResourceReader;
 import org.junit.Test;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertArrayEquals;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 
 public class CommandTest
 {
@@ -291,6 +295,19 @@ public class CommandTest
         assertEquals( 37, text.getFirmwareVersion().getMinor() );
         assertEquals( 2, text.getFirmwareVersion().getPatch() );
         assertEquals( 56, text.getFirmwareVersion().getBuild() );
+    }
+
+    @Test
+    public void testParse18() {
+        byte[] bin = ResourceReader.readResourceAsBytes("/samples/verify_resp_USER_WRONG.bin");
+
+        Command c = Command.parse(bin, 0, bin.length);
+        assertEquals(ProtocolE.OPERATION_PROTOCOL, c.getProtocol());
+        assertEquals(OperationProtocolOpCodeE.Verify_Resp, c.getOpCode());
+
+        VerifyRespText text = (VerifyRespText) c.getCommandText();
+
+        assertEquals(ResultCodeE.USER_WRONG, text.getResultCode());
     }
 
     @Test
@@ -759,6 +776,25 @@ public class CommandTest
 //        System.out.println( HexDump.prettyDump( ds ) );
 
         assertArrayEquals( expected, ds );
+    }
+
+    @Test
+    public void testToDatastream22() {
+        Command c = new Command();
+
+        c.setProtocol(ProtocolE.OPERATION_PROTOCOL);
+        c.setOpCode(OperationProtocolOpCodeE.Verify_Resp);
+        VerifyRespText text = new VerifyRespText();
+        c.setCommandText(text);
+        text.setResultCode(ResultCodeE.USER_WRONG);
+
+        byte[] expected = ResourceReader.readResourceAsBytes("/samples/verify_resp_USER_WRONG.bin");
+        byte[] ds = c.toDatastream();
+
+//        System.out.println( HexDump.prettyDump( expected ) );
+//        System.out.println( HexDump.prettyDump( ds ) );
+
+        assertArrayEquals(expected, ds);
     }
 
 }
