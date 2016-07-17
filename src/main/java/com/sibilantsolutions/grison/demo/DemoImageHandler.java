@@ -137,6 +137,10 @@ public class DemoImageHandler implements ImageHandlerI
     @Override
     public void onVideoStopped( VideoStoppedEvt videoStoppedEvt )
     {
+        showNoSignalImage();
+    }
+
+    public void showNoSignalImage() {
         final BufferedImage lostConnectionImage = createLostConnectionImage();
 
         Runnable r = new Runnable() {

@@ -18,4 +18,8 @@ public abstract class AbstractFoscamService {
         return connection.sendReceive(request);
     }
 
+    public void disconnect() {
+        connection.disconnect();
+    }
+
 }

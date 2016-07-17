@@ -217,6 +217,13 @@ public class FoscamSession
 
     }
 
+    public void disconnect() {
+        if (audioVideoService != null) {
+            audioVideoService.disconnect();
+        }
+        operationService.disconnect();
+    }
+
     public String getCameraId()
     {
         return cameraId;

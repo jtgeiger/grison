@@ -24,6 +24,7 @@ import com.sibilantsolutions.utils.util.HexUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.nio.ByteOrder;
@@ -62,6 +63,7 @@ public class FoscamConnection
     final private BlockingQueue<Command> q = new LinkedBlockingQueue<Command>();
 
     final private FoscamSessionI owner;
+    private final ReceiveQueue receiveQueue;
 
     private FoscamConnection( Socket socket, ProtocolE protocol, FoscamSessionI owner )
     {
@@ -78,9 +80,9 @@ public class FoscamConnection
         dest = new LengthByteBuffer( 0x0F, 4, LengthByteType.LENGTH_OF_PAYLOAD,
                 ByteOrder.LITTLE_ENDIAN, 4, 0xFFFF, dest );
 
-        dest = new ReceiveQueue(dest, "recvQ " + socket);
+        receiveQueue = new ReceiveQueue(dest, "recvQ " + socket);
 
-        SocketUtils.readLoopThread( 0xFFFF, this.socket, dest );
+        SocketUtils.readLoopThread(0xFFFF, this.socket, receiveQueue);
     }
 
     static public FoscamConnection connect( InetSocketAddress address, ProtocolE protocol, FoscamSessionI owner )
@@ -222,6 +224,20 @@ public class FoscamConnection
         };
 
         service.scheduleAtFixedRate( r, 60, 60, TimeUnit.SECONDS );
+    }
+
+    public void disconnect() {
+
+        keepAliveService.shutdownNow();
+        executorService.shutdownNow();
+        q.clear();
+        receiveQueue.shutdownNow();
+
+        try {
+            socket.close();
+        } catch (IOException e) {
+            log.error("Exception in close: ", e);
+        }
     }
 
     private class ReceiverProducer implements SocketListenerI
