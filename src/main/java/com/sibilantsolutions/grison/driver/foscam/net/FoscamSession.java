@@ -1,7 +1,26 @@
 package com.sibilantsolutions.grison.driver.foscam.net;
 
-import com.sibilantsolutions.grison.driver.foscam.domain.*;
-import com.sibilantsolutions.grison.evt.*;
+import com.sibilantsolutions.grison.driver.foscam.domain.AlarmNotifyText;
+import com.sibilantsolutions.grison.driver.foscam.domain.AudioDataText;
+import com.sibilantsolutions.grison.driver.foscam.domain.AudioStartRespText;
+import com.sibilantsolutions.grison.driver.foscam.domain.DecoderControlE;
+import com.sibilantsolutions.grison.driver.foscam.domain.LoginRespText;
+import com.sibilantsolutions.grison.driver.foscam.domain.PresetAndDelay;
+import com.sibilantsolutions.grison.driver.foscam.domain.ProtocolE;
+import com.sibilantsolutions.grison.driver.foscam.domain.ResultCodeE;
+import com.sibilantsolutions.grison.driver.foscam.domain.TalkStartRespText;
+import com.sibilantsolutions.grison.driver.foscam.domain.VerifyRespText;
+import com.sibilantsolutions.grison.driver.foscam.domain.Version;
+import com.sibilantsolutions.grison.driver.foscam.domain.VideoDataText;
+import com.sibilantsolutions.grison.driver.foscam.domain.VideoStartRespText;
+import com.sibilantsolutions.grison.evt.AlarmEvt;
+import com.sibilantsolutions.grison.evt.AlarmHandlerI;
+import com.sibilantsolutions.grison.evt.AudioHandlerI;
+import com.sibilantsolutions.grison.evt.AudioStoppedEvt;
+import com.sibilantsolutions.grison.evt.ImageHandlerI;
+import com.sibilantsolutions.grison.evt.LostConnectionEvt;
+import com.sibilantsolutions.grison.evt.LostConnectionHandlerI;
+import com.sibilantsolutions.grison.evt.VideoStoppedEvt;
 import com.sibilantsolutions.utils.util.HexDumpDeferred;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -13,12 +32,12 @@ public class FoscamSession
 {
     final static private Logger log = LoggerFactory.getLogger( FoscamSession.class );
 
-    private FoscamService operationService;
+    private OperationFoscamService operationService;
     final private InetSocketAddress address;
     private String cameraId;
     private Version firmwareVersion;
 
-    private FoscamService audioVideoService;
+    private AudioVideoFoscamService audioVideoService;
 
     final private CgiService cgiService;
 
@@ -152,7 +171,7 @@ public class FoscamSession
             FoscamConnection avConnection = FoscamConnection.connect( address,
                     ProtocolE.AUDIO_VIDEO_PROTOCOL, owner );
 
-            audioVideoService = new FoscamService( avConnection );
+            audioVideoService = new AudioVideoFoscamService(avConnection);
 
             audioVideoService.audioVideoLogin( dataConnectionId );
         }
@@ -168,7 +187,7 @@ public class FoscamSession
         FoscamConnection operationConnection = FoscamConnection.connect( address,
                 ProtocolE.OPERATION_PROTOCOL, owner );
 
-        FoscamService operationService = new FoscamService( operationConnection );
+        OperationFoscamService operationService = new OperationFoscamService(operationConnection);
 
             //"Login" is a misnomer: it's really a request for a session to which we will
             //authenticate next with Verify.

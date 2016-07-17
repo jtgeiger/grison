@@ -1,19 +1,25 @@
 package com.sibilantsolutions.grison.driver.foscam.net;
 
-import com.sibilantsolutions.grison.driver.foscam.domain.*;
+import com.sibilantsolutions.grison.driver.foscam.domain.AudioStartReqText;
+import com.sibilantsolutions.grison.driver.foscam.domain.AudioStartRespText;
+import com.sibilantsolutions.grison.driver.foscam.domain.Command;
+import com.sibilantsolutions.grison.driver.foscam.domain.LoginReqText;
+import com.sibilantsolutions.grison.driver.foscam.domain.LoginRespText;
+import com.sibilantsolutions.grison.driver.foscam.domain.OperationProtocolOpCodeE;
+import com.sibilantsolutions.grison.driver.foscam.domain.ProtocolE;
+import com.sibilantsolutions.grison.driver.foscam.domain.TalkStartReqText;
+import com.sibilantsolutions.grison.driver.foscam.domain.TalkStartRespText;
+import com.sibilantsolutions.grison.driver.foscam.domain.VerifyReqText;
+import com.sibilantsolutions.grison.driver.foscam.domain.VerifyRespText;
+import com.sibilantsolutions.grison.driver.foscam.domain.VideoStartReqText;
+import com.sibilantsolutions.grison.driver.foscam.domain.VideoStartRespText;
 
-public class FoscamService
+public class OperationFoscamService extends AbstractFoscamService
 {
-    //final static private Logger log = LoggerFactory.getLogger( FoscamService.class );
 
-    private FoscamConnection connection;
-
-    final private long startMs = System.currentTimeMillis();
-    private long serialNumber = 1;
-
-    public FoscamService( FoscamConnection connection )
+    public OperationFoscamService(FoscamConnection connection)
     {
-        this.connection = connection;
+        super(connection);
     }
 
     public void audioEnd()
@@ -22,7 +28,7 @@ public class FoscamService
         c.setProtocol( ProtocolE.OPERATION_PROTOCOL );
         c.setOpCode( OperationProtocolOpCodeE.Audio_End );
 
-        connection.sendAsync( c );
+        sendAsync(c);
     }
 
     public AudioStartRespText audioStart()
@@ -40,18 +46,6 @@ public class FoscamService
         return (AudioStartRespText)response.getCommandText();
     }
 
-    public void audioVideoLogin(byte[] dataConnectionId)
-    {
-        Command c = new Command();
-        c.setProtocol( ProtocolE.AUDIO_VIDEO_PROTOCOL );
-        c.setOpCode( OperationProtocolOpCodeE.Login_Req );
-        LoginReqText login = new LoginReqText();
-        c.setCommandText( login );
-        login.setDataConnectionId( dataConnectionId );
-
-        connection.sendAsync( c );
-    }
-
     public LoginRespText login()
     {
         Command c = new Command();
@@ -67,37 +61,13 @@ public class FoscamService
         return (LoginRespText)response.getCommandText();
     }
 
-    private Command sendReceive( Command request )
-    {
-        return connection.sendReceive( request );
-    }
-
-
     public void talkEnd()
     {
         Command c = new Command();
         c.setProtocol( ProtocolE.OPERATION_PROTOCOL );
         c.setOpCode( OperationProtocolOpCodeE.Talk_End );
 
-        connection.sendAsync( c );
-    }
-
-    public void talkSend( byte[] adpcm )
-    {
-        Command c = new Command();
-        c.setProtocol( ProtocolE.AUDIO_VIDEO_PROTOCOL );
-        c.setOpCode( AudioVideoProtocolOpCodeE.Talk_Data );
-        TalkDataText text = new TalkDataText();
-        c.setCommandText( text );
-        long now = System.currentTimeMillis();
-        long uptimeMs = now - startMs;
-        text.setUptimeMs( uptimeMs );
-        text.setSerialNumber( serialNumber++ );
-        text.setTimestampMs( now );
-        text.setAudioFormat( AudioFormatE.ADPCM );
-        text.setDataContent( adpcm );
-
-        connection.sendAsync( c );
+        sendAsync(c);
     }
 
     public TalkStartRespText talkStart()
@@ -137,7 +107,7 @@ public class FoscamService
         c.setProtocol( ProtocolE.OPERATION_PROTOCOL );
         c.setOpCode( OperationProtocolOpCodeE.Video_End );
 
-        connection.sendAsync( c );
+        sendAsync(c);
     }
 
     public VideoStartRespText videoStart()
