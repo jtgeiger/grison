@@ -35,10 +35,10 @@ public class AdpcmDecoder
     /**
      * Decode 4-bit ADPCM samples into 16-bit linear PCM data (signed, big endian).
      *
-     * @param raw
-     * @param offset
-     * @param len
-     * @return
+     * @param raw Source data
+     * @param offset Offset in raw data to begin processing
+     * @param len Number of bytes to process
+     * @return 16-bit linear PCM data (signed, big endian)
      */
     public byte[] decode( byte[] raw, int offset, int len )
     {
