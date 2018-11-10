@@ -1,10 +1,10 @@
 package com.sibilantsolutions.grison.driver.foscam.domain;
 
-import com.sibilantsolutions.utils.util.Convert;
-
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.nio.ByteBuffer;
+
+import com.sibilantsolutions.utils.util.Convert;
 
 public class SearchRespText implements DatastreamI
 {
@@ -16,8 +16,8 @@ public class SearchRespText implements DatastreamI
     private InetAddress gatewayIP;      //INT32_R (4 bytes; big endian)
     private InetAddress dnsIP;          //INT32_R (4 bytes; big endian)
     //private String RESERVE            //BINARY_STREAM[4]
-    private String sysSoftwareVersion;  //BINARY_STREAM[4]
-    private String appSoftwareVersion;  //BINARY_STREAM[4]
+    private Version sysSoftwareVersion; //BINARY_STREAM[4]
+    private Version appSoftwareVersion; //BINARY_STREAM[4]
     private int cameraPort;             //INT16_R (2 bytes; big endian)
     private boolean dhcpEnabled;        //INT8
 
@@ -81,22 +81,22 @@ public class SearchRespText implements DatastreamI
         this.dnsIP = dnsIP;
     }
 
-    public String getSysSoftwareVersion()
+    public Version getSysSoftwareVersion()
     {
         return sysSoftwareVersion;
     }
 
-    public void setSysSoftwareVersion( String sysSoftwareVersion )
+    public void setSysSoftwareVersion(Version sysSoftwareVersion)
     {
         this.sysSoftwareVersion = sysSoftwareVersion;
     }
 
-    public String getAppSoftwareVersion()
+    public Version getAppSoftwareVersion()
     {
         return appSoftwareVersion;
     }
 
-    public void setAppSoftwareVersion( String appSoftwareVersion )
+    public void setAppSoftwareVersion(Version appSoftwareVersion)
     {
         this.appSoftwareVersion = appSoftwareVersion;
     }
@@ -147,8 +147,8 @@ public class SearchRespText implements DatastreamI
 
         bb.position( bb.position() + 4 );
 
-        text.sysSoftwareVersion = Convert.get( 4, bb );
-        text.appSoftwareVersion = Convert.get( 4, bb );
+        text.sysSoftwareVersion = new Version(bb.get(), bb.get(), bb.get(), bb.get());
+        text.appSoftwareVersion = new Version(bb.get(), bb.get(), bb.get(), bb.get());
 
         text.cameraPort = bb.getChar();
 
@@ -176,8 +176,15 @@ public class SearchRespText implements DatastreamI
         for ( int i = 0; i < 4; i++ )
             bb.put( (byte)0 );
 
-        Convert.put( Convert.padRearOrTruncate( sysSoftwareVersion, 4, (char)0 ), bb );
-        Convert.put( Convert.padRearOrTruncate( appSoftwareVersion, 4, (char)0 ), bb );
+        bb.put((byte) sysSoftwareVersion.getMajor());
+        bb.put((byte) sysSoftwareVersion.getMinor());
+        bb.put((byte) sysSoftwareVersion.getPatch());
+        bb.put((byte) sysSoftwareVersion.getBuild());
+
+        bb.put((byte) appSoftwareVersion.getMajor());
+        bb.put((byte) appSoftwareVersion.getMinor());
+        bb.put((byte) appSoftwareVersion.getPatch());
+        bb.put((byte) appSoftwareVersion.getBuild());
 
         bb.putShort( (short)cameraPort );
 

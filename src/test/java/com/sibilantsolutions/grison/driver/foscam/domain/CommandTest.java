@@ -1,14 +1,15 @@
 package com.sibilantsolutions.grison.driver.foscam.domain;
 
-import com.sibilantsolutions.utils.util.Convert;
-import com.sibilantsolutions.utils.util.ResourceReader;
-import org.junit.Test;
-
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
+
+import org.junit.Test;
+
+import com.sibilantsolutions.utils.util.Convert;
+import com.sibilantsolutions.utils.util.ResourceReader;
 
 public class CommandTest
 {
@@ -165,8 +166,8 @@ public class CommandTest
         assertEquals( SearchRespText.getByAddress( new byte[]{ (byte)255, (byte)255, (byte)255, 0 }  ), text.getNetmask() );
         assertEquals( SearchRespText.getByAddress( new byte[]{ (byte)192, (byte)168, 69, 1 }  ), text.getGatewayIP() );
         assertEquals( SearchRespText.getByAddress( new byte[]{ (byte)192, (byte)168, 69, 1 }  ), text.getDnsIP() );
-        assertEquals( "" + (char)11 + (char)37 + (char)2 + (char)56, text.getSysSoftwareVersion() );
-        assertEquals( "" + (char)2 + (char)4 + (char)10 + (char)10, text.getAppSoftwareVersion() );
+        assertEquals(new Version(11, 37, 2, 56), text.getSysSoftwareVersion());
+        assertEquals(new Version(2, 4, 10, 10), text.getAppSoftwareVersion());
         assertEquals( 80, text.getCameraPort() );
         assertTrue( text.isDhcpEnabled() );
     }
@@ -247,8 +248,8 @@ public class CommandTest
         assertEquals( SearchRespText.getByAddress( new byte[]{ (byte)255, (byte)255, (byte)255, 0 }  ), text.getNetmask() );
         assertEquals( SearchRespText.getByAddress( new byte[]{ (byte)192, (byte)168, 69, 1 }  ), text.getGatewayIP() );
         assertEquals( SearchRespText.getByAddress( new byte[]{ (byte)192, (byte)168, 69, 1 }  ), text.getDnsIP() );
-        assertEquals( "" + (char)11 + (char)37 + (char)2 + (char)56, text.getSysSoftwareVersion() );
-        assertEquals( "" + (char)2 + (char)4 + (char)10 + (char)10, text.getAppSoftwareVersion() );
+        assertEquals(new Version(11, 37, 2, 56), text.getSysSoftwareVersion());
+        assertEquals(new Version(2, 4, 10, 10), text.getAppSoftwareVersion());
         assertEquals( 61234, text.getCameraPort() );
         assertTrue( text.isDhcpEnabled() );
     }
@@ -705,8 +706,8 @@ public class CommandTest
         text.setNetmask( SearchRespText.getByAddress( new byte[]{ (byte)255, (byte)255, (byte)255, 0 }  ) );
         text.setGatewayIP( SearchRespText.getByAddress( new byte[]{ (byte)192, (byte)168, 69, 1 }  ) );
         text.setDnsIP( SearchRespText.getByAddress( new byte[]{ (byte)192, (byte)168, 69, 1 }  ) );
-        text.setSysSoftwareVersion( "" + (char)11 + (char)37 + (char)2 + (char)56 );
-        text.setAppSoftwareVersion( "" + (char)2 + (char)4 + (char)10 + (char)10 );
+        text.setSysSoftwareVersion(new Version(11, 37, 2, 56));
+        text.setAppSoftwareVersion(new Version(2, 4, 10, 10));
         text.setCameraPort( 80 );
         text.setDhcpEnabled( true );
 

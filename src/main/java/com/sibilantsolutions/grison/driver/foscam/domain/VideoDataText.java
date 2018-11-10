@@ -78,4 +78,12 @@ public class VideoDataText implements DatastreamI
         return bb.array();
     }
 
+    @Override
+    public String toString() {
+        return "VideoDataText{" +
+                "uptimeMs=" + uptimeMs +
+                ", timestampMs=" + timestampMs +
+                ", dataContent len=" + dataContent.length +
+                '}';
+    }
 }

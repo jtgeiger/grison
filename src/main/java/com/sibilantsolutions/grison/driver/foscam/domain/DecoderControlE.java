@@ -70,7 +70,7 @@ public enum DecoderControlE
     MOTOR_TEST_MODE( Values.MOTOR_TEST_MODE ),
     ;
 
-    static private interface Values
+    static public interface Values
     {
 
         int UP                      = 0;

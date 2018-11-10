@@ -2,6 +2,7 @@ package com.sibilantsolutions.grison.driver.foscam.domain;
 
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
+import java.util.Optional;
 
 public class Command implements DatastreamI
 {
@@ -121,4 +122,13 @@ public class Command implements DatastreamI
         return bb.array();
     }
 
+    @Override
+    public String toString() {
+        return "Command{" +
+                "protocol=" + protocol +
+                ", opCode=" + opCode +
+                ", commandText=" + Optional.ofNullable(commandText)
+                .map(datastreamI -> datastreamI.getClass().getSimpleName()).orElse("null") +
+                '}';
+    }
 }

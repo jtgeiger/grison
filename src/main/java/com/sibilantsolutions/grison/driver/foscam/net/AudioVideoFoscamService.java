@@ -4,7 +4,6 @@ import com.sibilantsolutions.grison.driver.foscam.domain.AudioFormatE;
 import com.sibilantsolutions.grison.driver.foscam.domain.AudioVideoProtocolOpCodeE;
 import com.sibilantsolutions.grison.driver.foscam.domain.Command;
 import com.sibilantsolutions.grison.driver.foscam.domain.LoginReqText;
-import com.sibilantsolutions.grison.driver.foscam.domain.OperationProtocolOpCodeE;
 import com.sibilantsolutions.grison.driver.foscam.domain.ProtocolE;
 import com.sibilantsolutions.grison.driver.foscam.domain.TalkDataText;
 
@@ -20,7 +19,7 @@ public class AudioVideoFoscamService extends AbstractFoscamService {
     public void audioVideoLogin(byte[] dataConnectionId) {
         Command c = new Command();
         c.setProtocol(ProtocolE.AUDIO_VIDEO_PROTOCOL);
-        c.setOpCode(OperationProtocolOpCodeE.Login_Req);
+        c.setOpCode(AudioVideoProtocolOpCodeE.Login_Req);
         LoginReqText login = new LoginReqText();
         c.setCommandText(login);
         login.setDataConnectionId(dataConnectionId);

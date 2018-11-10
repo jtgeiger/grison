@@ -1,5 +1,7 @@
 package com.sibilantsolutions.grison.driver.foscam.domain;
 
+import java.util.Objects;
+
 public class Version
 {
 
@@ -40,6 +42,23 @@ public class Version
     public String toString()
     {
         return "" + major + '.' + minor + '.' + patch + '.' + build;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Version version = (Version) o;
+        return major == version.major &&
+                minor == version.minor &&
+                patch == version.patch &&
+                build == version.build;
+    }
+
+    @Override
+    public int hashCode() {
+
+        return Objects.hash(major, minor, patch, build);
     }
 
 }
