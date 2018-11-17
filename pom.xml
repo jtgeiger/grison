@@ -41,6 +41,8 @@
       <rxjava2.version>2.2.3</rxjava2.version>
       <retrofit2.version>2.4.0</retrofit2.version>
       <okhttp3.version>3.10.0</okhttp3.version>
+      <autoValue.version>1.6.2</autoValue.version>
+      <guava.version>27.0-jre</guava.version>
   </properties>
   
   <build>
@@ -118,6 +120,22 @@
           <groupId>com.squareup.retrofit2</groupId>
           <artifactId>converter-scalars</artifactId>
           <version>${retrofit2.version}</version>
+      </dependency>
+      <dependency>
+          <groupId>com.google.auto.value</groupId>
+          <artifactId>auto-value-annotations</artifactId>
+          <version>${autoValue.version}</version>
+      </dependency>
+      <dependency>
+          <groupId>com.google.auto.value</groupId>
+          <artifactId>auto-value</artifactId>
+          <version>${autoValue.version}</version>
+          <scope>provided</scope>
+      </dependency>
+      <dependency>
+          <groupId>com.google.guava</groupId>
+          <artifactId>guava</artifactId>
+          <version>${guava.version}</version>
       </dependency>
   </dependencies>
 </project>
