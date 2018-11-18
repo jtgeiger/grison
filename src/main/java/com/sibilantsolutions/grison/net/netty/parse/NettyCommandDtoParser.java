@@ -1,5 +1,6 @@
 package com.sibilantsolutions.grison.net.netty.parse;
 
+import static com.google.common.base.Verify.verify;
 import static com.sibilantsolutions.grison.driver.foscam.dto.CommandDto.PROTOCOL_LEN;
 import static com.sibilantsolutions.grison.driver.foscam.dto.CommandDto.RESERVE2_LEN;
 import static com.sibilantsolutions.grison.net.netty.parse.NettyByteBufHelper.readBytes;
@@ -15,7 +16,7 @@ import io.netty.buffer.ByteBuf;
 
 public class NettyCommandDtoParser {
 
-    CommandDto parse(ByteBuf buf) {
+    public CommandDto parse(ByteBuf buf) {
 
         final byte[] protocolBytes = readBytes(PROTOCOL_LEN, buf);
         final FosInt16 operationCode = NettyFosTypeReader.fosInt16(buf);
@@ -24,13 +25,13 @@ public class NettyCommandDtoParser {
         final FosInt32 textLength = NettyFosTypeReader.fosInt32(buf);
         final FosInt32 reserve3 = NettyFosTypeReader.fosInt32(buf);
 
-        //TODO: Validate that there are textLength bytes remaining in the buf.
+        verify(textLength.value() == buf.readableBytes(), "expected=%s, actual=%s", textLength, buf.readableBytes());
 
         ProtocolE p = ProtocolE.fromValue(protocolBytes);
         final FoscamOpCode foscamOpCode = FoscamOpCode.fromValue(p, operationCode.value());
         FoscamTextDto foscamTextDto = NettyFoscamTextParser.parse(foscamOpCode, buf);
 
-        //TODO: Validate that all bytes are consumed from the buf.
+        verify(0 == buf.readableBytes(), "expected=%s, actual=%s", 0, buf.readableBytes());
 
         return CommandDto.builder()
                 .protocol(p)

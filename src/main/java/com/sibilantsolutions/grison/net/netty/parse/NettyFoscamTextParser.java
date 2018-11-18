@@ -1,14 +1,15 @@
 package com.sibilantsolutions.grison.net.netty.parse;
 
-import static com.sibilantsolutions.grison.driver.foscam.dto.LoginRespTextDto.CAMERA_ID_LEN;
-import static com.sibilantsolutions.grison.driver.foscam.dto.LoginRespTextDto.FIRMWARE_VERSION_LEN;
-import static com.sibilantsolutions.grison.driver.foscam.dto.LoginRespTextDto.RESERVE1_LEN;
-import static com.sibilantsolutions.grison.driver.foscam.dto.LoginRespTextDto.RESERVE2_LEN;
+import static com.sibilantsolutions.grison.driver.foscam.dto.LoginRespDetailsDto.CAMERA_ID_LEN;
+import static com.sibilantsolutions.grison.driver.foscam.dto.LoginRespDetailsDto.FIRMWARE_VERSION_LEN;
+import static com.sibilantsolutions.grison.driver.foscam.dto.LoginRespDetailsDto.RESERVE1_LEN;
+import static com.sibilantsolutions.grison.driver.foscam.dto.LoginRespDetailsDto.RESERVE2_LEN;
 import static com.sibilantsolutions.grison.net.netty.parse.NettyByteBufHelper.readBytes;
 
 import com.sibilantsolutions.grison.driver.foscam.domain.ResultCodeE;
 import com.sibilantsolutions.grison.driver.foscam.dto.FoscamOpCode;
 import com.sibilantsolutions.grison.driver.foscam.dto.FoscamTextDto;
+import com.sibilantsolutions.grison.driver.foscam.dto.LoginRespDetailsDto;
 import com.sibilantsolutions.grison.driver.foscam.dto.LoginRespTextDto;
 import com.sibilantsolutions.grison.driver.foscam.type.FosInt16;
 import io.netty.buffer.ByteBuf;
@@ -41,10 +42,12 @@ public final class NettyFoscamTextParser {
             final byte[] firmwareVersion = readBytes(FIRMWARE_VERSION_LEN, buf);
 
             return builder
-                    .cameraId(cameraId)
-                    .reserve1(reserve1)
-                    .reserve2(reserve2)
-                    .firmwareVersion(firmwareVersion)
+                    .loginRespDetails(LoginRespDetailsDto.builder()
+                            .cameraId(cameraId)
+                            .reserve1(reserve1)
+                            .reserve2(reserve2)
+                            .firmwareVersion(firmwareVersion)
+                            .build())
                     .build();
         } else {
             return builder.build();
