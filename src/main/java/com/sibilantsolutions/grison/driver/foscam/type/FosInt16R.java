@@ -1,11 +1,14 @@
 package com.sibilantsolutions.grison.driver.foscam.type;
 
-public class FosInt16R {
+import com.google.auto.value.AutoValue;
 
-    public final short value;
+@AutoValue
+public abstract class FosInt16R {
 
-    public FosInt16R(int value) {
-        this.value = (short) value;  //Keep bottom 16 bits.
+    public abstract short value();
+
+    public static FosInt16R create(int value) {
+        return new AutoValue_FosInt16R((short) value); //Keep bottom 16 bits.
     }
 
 }

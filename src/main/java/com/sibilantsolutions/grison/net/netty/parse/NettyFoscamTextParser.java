@@ -34,7 +34,7 @@ public final class NettyFoscamTextParser {
         final LoginRespTextDto.Builder builder = LoginRespTextDto.builder()
                 .resultCode(result);
 
-        if (ResultCodeE.fromValue(result.value) == ResultCodeE.CORRECT) {
+        if (ResultCodeE.fromValue(result.value()) == ResultCodeE.CORRECT) {
             final byte[] cameraId = readBytes(CAMERA_ID_LEN, buf);
             final byte[] reserve1 = readBytes(RESERVE1_LEN, buf);
             final byte[] reserve2 = readBytes(RESERVE2_LEN, buf);

@@ -13,23 +13,23 @@ public final class NettyFosTypeReader {
     }
 
     public static FosInt8 fosInt8(ByteBuf buf) {
-        return new FosInt8(buf.readByte());
+        return FosInt8.create(buf.readByte());
     }
 
     public static FosInt16 fosInt16(ByteBuf buf) {
-        return new FosInt16(buf.readShortLE());
+        return FosInt16.create(buf.readShortLE());
     }
 
     public static FosInt16R fosInt16R(ByteBuf buf) {
-        return new FosInt16R(buf.readShort());
+        return FosInt16R.create(buf.readShort());
     }
 
     public static FosInt32 fosInt32(ByteBuf buf) {
-        return new FosInt32(buf.readIntLE());
+        return FosInt32.create(buf.readIntLE());
     }
 
     public static FosInt32R fosInt32R(ByteBuf buf) {
-        return new FosInt32R(buf.readInt());
+        return FosInt32R.create(buf.readInt());
     }
 
 }

@@ -14,7 +14,7 @@ public final class LoginRespTextMapper implements DtoToEntityMapper<LoginRespTex
     public LoginRespTextEntity apply(LoginRespTextDto dto) {
         final LoginRespTextEntity.Builder builder = LoginRespTextEntity.builder();
 
-        builder.resultCode(ResultCodeE.fromValue(dto.resultCode().value));
+        builder.resultCode(ResultCodeE.fromValue(dto.resultCode().value()));
 
         if (dto.cameraId().isPresent()) {
             final String cameraId = new String(dto.cameraId().get(), StandardCharsets.ISO_8859_1);

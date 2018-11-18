@@ -1,11 +1,14 @@
 package com.sibilantsolutions.grison.driver.foscam.type;
 
-public class FosInt32 {
+import com.google.auto.value.AutoValue;
 
-    public final int value;
+@AutoValue
+public abstract class FosInt32 {
 
-    public FosInt32(int value) {
-        this.value = value;
+    public abstract int value();
+
+    public static FosInt32 create(int value) {
+        return new AutoValue_FosInt32(value);
     }
 
 }

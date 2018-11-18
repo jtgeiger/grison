@@ -46,7 +46,7 @@ public abstract class LoginRespTextDto implements FoscamTextDto {
 
         public LoginRespTextDto build() {
             LoginRespTextDto dto = autoBuild();
-            if (ResultCodeE.fromValue(dto.resultCode().value) == ResultCodeE.CORRECT) {
+            if (ResultCodeE.fromValue(dto.resultCode().value()) == ResultCodeE.CORRECT) {
                 checkArgument(dto.cameraId().get().length == CAMERA_ID_LEN, "cameraId len expected=%s actual=%s", CAMERA_ID_LEN, dto.cameraId().get().length);
                 checkArgument(dto.reserve1().get().length == RESERVE1_LEN, "reserve1 len expected=%s actual=%s", RESERVE1_LEN, dto.reserve1().get().length);
                 checkArgument(dto.reserve2().get().length == RESERVE2_LEN, "reserve2 len expected=%s actual=%s", RESERVE2_LEN, dto.reserve2().get().length);

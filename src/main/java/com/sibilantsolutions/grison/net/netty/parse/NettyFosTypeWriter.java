@@ -13,23 +13,23 @@ public final class NettyFosTypeWriter {
     }
 
     public static ByteBuf write(FosInt8 val, ByteBuf buf) {
-        return buf.writeByte(val.value);
+        return buf.writeByte(val.value());
     }
 
     public static ByteBuf write(FosInt16 val, ByteBuf buf) {
-        return buf.writeShortLE(val.value);
+        return buf.writeShortLE(val.value());
     }
 
     public static ByteBuf write(FosInt16R val, ByteBuf buf) {
-        return buf.writeShort(val.value);
+        return buf.writeShort(val.value());
     }
 
     public static ByteBuf write(FosInt32 val, ByteBuf buf) {
-        return buf.writeIntLE(val.value);
+        return buf.writeIntLE(val.value());
     }
 
     public static ByteBuf write(FosInt32R val, ByteBuf buf) {
-        return buf.writeInt(val.value);
+        return buf.writeInt(val.value());
     }
 
 }

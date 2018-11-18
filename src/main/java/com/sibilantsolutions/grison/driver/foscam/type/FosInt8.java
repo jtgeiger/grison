@@ -1,11 +1,14 @@
 package com.sibilantsolutions.grison.driver.foscam.type;
 
-public class FosInt8 {
+import com.google.auto.value.AutoValue;
 
-    public final int value;
+@AutoValue
+public abstract class FosInt8 {
 
-    public FosInt8(int value) {
-        this.value = (value & 0xFF);
+    public abstract int value();
+
+    public static FosInt8 create(int value) {
+        return new AutoValue_FosInt8(value & 0xFF); //Keep bottom 8 bits.
     }
 
 }

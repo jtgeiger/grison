@@ -17,7 +17,7 @@ public class NettyFoscamTextParserTest {
         final ByteBuf byteBuf = new ResourceToByteBuf().apply("/samples/login_resp.bin");
         byteBuf.readerIndex(4 + 2 + 1 + 8 + 4 + 4); //Skip ahead to the text.
         final LoginRespTextDto dto = NettyFoscamTextParser.loginRespDto(byteBuf);
-        assertEquals(0, dto.resultCode().value);
+        assertEquals(0, dto.resultCode().value());
         assertArrayEquals(("00626E4E72BF\0").getBytes(StandardCharsets.ISO_8859_1),
                 dto.cameraId().orElseThrow(RuntimeException::new));
         assertArrayEquals(new byte[]{0, 0, 0, 1}, dto.reserve1().orElseThrow(RuntimeException::new));

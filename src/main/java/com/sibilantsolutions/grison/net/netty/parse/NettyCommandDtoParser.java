@@ -27,7 +27,7 @@ public class NettyCommandDtoParser {
         //TODO: Validate that there are textLength bytes remaining in the buf.
 
         ProtocolE p = ProtocolE.fromValue(protocolBytes);
-        final FoscamOpCode foscamOpCode = FoscamOpCode.fromValue(p, operationCode.value);
+        final FoscamOpCode foscamOpCode = FoscamOpCode.fromValue(p, operationCode.value());
         FoscamTextDto foscamTextDto = NettyFoscamTextParser.parse(foscamOpCode, buf);
 
         //TODO: Validate that all bytes are consumed from the buf.
