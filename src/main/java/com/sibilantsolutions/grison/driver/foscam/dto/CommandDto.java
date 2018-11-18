@@ -1,27 +1,59 @@
 package com.sibilantsolutions.grison.driver.foscam.dto;
 
+import static com.google.common.base.Preconditions.checkArgument;
+
+import com.google.auto.value.AutoValue;
 import com.sibilantsolutions.grison.driver.foscam.domain.ProtocolE;
 import com.sibilantsolutions.grison.driver.foscam.type.FosInt32;
 import com.sibilantsolutions.grison.driver.foscam.type.FosInt8;
 
-//TODO: AutoValue
-public class CommandDto {
+@AutoValue
+public abstract class CommandDto {
 
-    final ProtocolE protocol;
-    final FoscamOpCode operationCode;
-    final FosInt8 reserve1;
-    final byte[] reserve2;  //8
-    final FosInt32 textLength;
-    final FosInt32 reserve3;
-    final FoscamTextDto text;
+    public static final int PROTOCOL_LEN = 4;
+    public static final int RESERVE2_LEN = 8;
 
-    public CommandDto(ProtocolE protocol, FoscamOpCode operationCode, FosInt8 reserve1, byte[] reserve2, FosInt32 textLength, FosInt32 reserve3, FoscamTextDto text) {
-        this.protocol = protocol;
-        this.operationCode = operationCode;
-        this.reserve1 = reserve1;
-        this.reserve2 = reserve2;
-        this.textLength = textLength;
-        this.reserve3 = reserve3;
-        this.text = text;
+    public abstract ProtocolE protocol();
+
+    public abstract FoscamOpCode operationCode();
+
+    public abstract FosInt8 reserve1();
+
+    public abstract byte[] reserve2();
+
+    public abstract FosInt32 textLength();
+
+    public abstract FosInt32 reserve3();
+
+    public abstract FoscamTextDto text();
+
+    public static Builder builder() {
+        return new AutoValue_CommandDto.Builder();
+    }
+
+    @AutoValue.Builder
+    public static abstract class Builder {
+
+        public abstract Builder protocol(ProtocolE protocol);
+
+        public abstract Builder operationCode(FoscamOpCode operationCode);
+
+        public abstract Builder reserve1(FosInt8 reserve1);
+
+        public abstract Builder reserve2(byte[] reserve2);
+
+        public abstract Builder textLength(FosInt32 textLength);
+
+        public abstract Builder reserve3(FosInt32 reserve3);
+
+        public abstract Builder text(FoscamTextDto text);
+
+        abstract CommandDto autoBuild();    //Not public.
+
+        public CommandDto build() {
+            CommandDto dto = autoBuild();
+            checkArgument(dto.reserve2().length == RESERVE2_LEN, "reserve2 len expected=%s actual=%s", RESERVE2_LEN, dto.reserve2().length);
+            return dto;
+        }
     }
 }
