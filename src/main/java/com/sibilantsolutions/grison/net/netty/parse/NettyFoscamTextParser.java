@@ -28,7 +28,7 @@ public final class NettyFoscamTextParser {
         }
     }
 
-    static LoginRespTextDto loginRespDto(ByteBuf buf) {
+    public static LoginRespTextDto loginRespDto(ByteBuf buf) {
         final FosInt16 result = NettyFosTypeReader.fosInt16(buf);
 
         final LoginRespTextDto.Builder builder = LoginRespTextDto.builder()
