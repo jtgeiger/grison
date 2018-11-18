@@ -9,7 +9,7 @@ import com.sibilantsolutions.grison.driver.foscam.dto.LoginRespTextDto;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 
-public class NettyFoscamTextDtoParserTest {
+public class NettyFoscamTextParserTest {
 
     @Test
     public void loginRespDto() throws Exception {
