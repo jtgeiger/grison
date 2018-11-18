@@ -6,6 +6,7 @@ import static com.sibilantsolutions.grison.driver.foscam.dto.LoginRespTextDto.RE
 import static com.sibilantsolutions.grison.driver.foscam.dto.LoginRespTextDto.RESERVE2_LEN;
 import static com.sibilantsolutions.grison.net.netty.parse.NettyByteBufHelper.readBytes;
 
+import com.sibilantsolutions.grison.driver.foscam.domain.ResultCodeE;
 import com.sibilantsolutions.grison.driver.foscam.dto.FoscamOpCode;
 import com.sibilantsolutions.grison.driver.foscam.dto.FoscamTextDto;
 import com.sibilantsolutions.grison.driver.foscam.dto.LoginRespTextDto;
@@ -29,17 +30,24 @@ public final class NettyFoscamTextParser {
 
     static LoginRespTextDto loginRespDto(ByteBuf buf) {
         final FosInt16 result = NettyFosTypeReader.fosInt16(buf);
-        final byte[] cameraId = readBytes(CAMERA_ID_LEN, buf);
-        final byte[] reserve1 = readBytes(RESERVE1_LEN, buf);
-        final byte[] reserve2 = readBytes(RESERVE2_LEN, buf);
-        final byte[] firmwareVersion = readBytes(FIRMWARE_VERSION_LEN, buf);
 
-        return LoginRespTextDto.builder()
-                .resultCode(result)
-                .cameraId(cameraId)
-                .reserve1(reserve1)
-                .reserve2(reserve2)
-                .firmwareVersion(firmwareVersion)
-                .build();
+        final LoginRespTextDto.Builder builder = LoginRespTextDto.builder()
+                .resultCode(result);
+
+        if (ResultCodeE.fromValue(result.value) == ResultCodeE.CORRECT) {
+            final byte[] cameraId = readBytes(CAMERA_ID_LEN, buf);
+            final byte[] reserve1 = readBytes(RESERVE1_LEN, buf);
+            final byte[] reserve2 = readBytes(RESERVE2_LEN, buf);
+            final byte[] firmwareVersion = readBytes(FIRMWARE_VERSION_LEN, buf);
+
+            return builder
+                    .cameraId(cameraId)
+                    .reserve1(reserve1)
+                    .reserve2(reserve2)
+                    .firmwareVersion(firmwareVersion)
+                    .build();
+        } else {
+            return builder.build();
+        }
     }
 }
