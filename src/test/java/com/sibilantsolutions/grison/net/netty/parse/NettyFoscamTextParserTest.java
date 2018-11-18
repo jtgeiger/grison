@@ -1,26 +1,27 @@
 package com.sibilantsolutions.grison.net.netty.parse;
 
+import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
+
+import java.nio.charset.StandardCharsets;
 
 import org.junit.Test;
 
-import com.google.common.io.Resources;
 import com.sibilantsolutions.grison.driver.foscam.dto.LoginRespTextDto;
 import io.netty.buffer.ByteBuf;
-import io.netty.buffer.Unpooled;
 
 public class NettyFoscamTextParserTest {
 
     @Test
-    public void loginRespDto() throws Exception {
-        final byte[] bytes = Resources.toByteArray(Resources.getResource("samples/login_resp.bin"));
-        final ByteBuf byteBuf = Unpooled.wrappedBuffer(bytes);
+    public void loginRespDto() {
+        final ByteBuf byteBuf = new ResourceToByteBuf().apply("/samples/login_resp.bin");
         byteBuf.readerIndex(4 + 2 + 1 + 8 + 4 + 4); //Skip ahead to the text.
         final LoginRespTextDto dto = NettyFoscamTextParser.loginRespDto(byteBuf);
         assertEquals(0, dto.resultCode().value);
-        assertEquals(13, dto.cameraId().get().length);
-        assertEquals(4, dto.reserve1().get().length);
-        assertEquals(4, dto.reserve2().get().length);
-        assertEquals(4, dto.firmwareVersion().get().length);
+        assertArrayEquals(("00626E4E72BF\0").getBytes(StandardCharsets.ISO_8859_1),
+                dto.cameraId().orElseThrow(RuntimeException::new));
+        assertArrayEquals(new byte[]{0, 0, 0, 1}, dto.reserve1().orElseThrow(RuntimeException::new));
+        assertArrayEquals(new byte[]{0, 0, 0, 0}, dto.reserve2().orElseThrow(RuntimeException::new));
+        assertArrayEquals(new byte[]{11, 37, 2, 56}, dto.firmwareVersion().orElseThrow(RuntimeException::new));
     }
 }
