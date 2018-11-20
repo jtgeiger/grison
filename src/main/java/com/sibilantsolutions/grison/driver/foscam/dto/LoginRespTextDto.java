@@ -19,6 +19,16 @@ public abstract class LoginRespTextDto implements FoscamTextDto {
         return new AutoValue_LoginRespTextDto.Builder();
     }
 
+    @Override
+    public final FoscamOpCode opCode() {
+        return FoscamOpCode.Login_Resp;
+    }
+
+    @Override
+    public final int encodedLength() {
+        return 2 + loginRespDetails().map(loginRespDetailsDto -> LoginRespDetailsDto.ENCODED_LENGTH).orElse(0);
+    }
+
     @AutoValue.Builder
     public abstract static class Builder {
         public abstract Builder resultCode(FosInt16 resultCode);

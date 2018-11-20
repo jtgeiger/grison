@@ -1,10 +1,10 @@
-package com.sibilantsolutions.grison.net.netty.parse;
+package com.sibilantsolutions.grison.net.netty.codec;
 
 import static com.sibilantsolutions.grison.driver.foscam.dto.LoginRespDetailsDto.CAMERA_ID_LEN;
 import static com.sibilantsolutions.grison.driver.foscam.dto.LoginRespDetailsDto.FIRMWARE_VERSION_LEN;
 import static com.sibilantsolutions.grison.driver.foscam.dto.LoginRespDetailsDto.RESERVE1_LEN;
 import static com.sibilantsolutions.grison.driver.foscam.dto.LoginRespDetailsDto.RESERVE2_LEN;
-import static com.sibilantsolutions.grison.net.netty.parse.NettyByteBufHelper.readBytes;
+import static com.sibilantsolutions.grison.net.netty.codec.parse.NettyByteBufHelper.readBytes;
 
 import com.sibilantsolutions.grison.driver.foscam.domain.ResultCodeE;
 import com.sibilantsolutions.grison.driver.foscam.dto.FoscamOpCode;
@@ -12,6 +12,7 @@ import com.sibilantsolutions.grison.driver.foscam.dto.FoscamTextDto;
 import com.sibilantsolutions.grison.driver.foscam.dto.LoginRespDetailsDto;
 import com.sibilantsolutions.grison.driver.foscam.dto.LoginRespTextDto;
 import com.sibilantsolutions.grison.driver.foscam.type.FosInt16;
+import com.sibilantsolutions.grison.net.netty.codec.parse.NettyFosTypeReader;
 import io.netty.buffer.ByteBuf;
 
 public final class NettyFoscamTextParser {

@@ -13,6 +13,11 @@ public abstract class CommandDto {
     public static final int PROTOCOL_LEN = 4;
     public static final int RESERVE2_LEN = 8;
 
+    public static final int COMMAND_PREFIX_LENGTH = 4 + 2 + 1 + 8 + 4 + 4;
+
+    public static final FosInt8 RESERVE1 = FosInt8.create(0);
+    public static final byte[] RESERVE2 = new byte[]{0, 0, 0, 0, 0, 0, 0, 0};
+
     public abstract ProtocolE protocol();
 
     public abstract FoscamOpCode operationCode();

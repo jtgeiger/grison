@@ -10,8 +10,8 @@ import com.sibilantsolutions.grison.driver.foscam.domain.ResultCodeE;
 import com.sibilantsolutions.grison.driver.foscam.dto.LoginRespTextDto;
 import com.sibilantsolutions.grison.driver.foscam.entity.LoginRespTextEntity;
 import com.sibilantsolutions.grison.driver.foscam.entity.VersionEntity;
-import com.sibilantsolutions.grison.net.netty.parse.NettyFoscamTextParser;
-import com.sibilantsolutions.grison.net.netty.parse.ResourceToByteBuf;
+import com.sibilantsolutions.grison.net.netty.codec.NettyFoscamTextParser;
+import com.sibilantsolutions.grison.net.netty.codec.parse.ResourceToByteBuf;
 import io.netty.buffer.ByteBuf;
 
 public class LoginRespTextMapperTest {

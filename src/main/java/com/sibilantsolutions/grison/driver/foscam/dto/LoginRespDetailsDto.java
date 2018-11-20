@@ -11,6 +11,7 @@ public abstract class LoginRespDetailsDto {
     public static final int RESERVE1_LEN = 4;
     public static final int RESERVE2_LEN = 4;
     public static final int FIRMWARE_VERSION_LEN = 4;
+    static final int ENCODED_LENGTH = CAMERA_ID_LEN + RESERVE1_LEN + RESERVE2_LEN + FIRMWARE_VERSION_LEN;
 
     public abstract byte[] cameraId();
 

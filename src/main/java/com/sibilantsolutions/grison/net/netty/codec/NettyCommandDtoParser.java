@@ -1,9 +1,9 @@
-package com.sibilantsolutions.grison.net.netty.parse;
+package com.sibilantsolutions.grison.net.netty.codec;
 
 import static com.google.common.base.Verify.verify;
 import static com.sibilantsolutions.grison.driver.foscam.dto.CommandDto.PROTOCOL_LEN;
 import static com.sibilantsolutions.grison.driver.foscam.dto.CommandDto.RESERVE2_LEN;
-import static com.sibilantsolutions.grison.net.netty.parse.NettyByteBufHelper.readBytes;
+import static com.sibilantsolutions.grison.net.netty.codec.parse.NettyByteBufHelper.readBytes;
 
 import com.sibilantsolutions.grison.driver.foscam.domain.ProtocolE;
 import com.sibilantsolutions.grison.driver.foscam.dto.CommandDto;
@@ -12,6 +12,7 @@ import com.sibilantsolutions.grison.driver.foscam.dto.FoscamTextDto;
 import com.sibilantsolutions.grison.driver.foscam.type.FosInt16;
 import com.sibilantsolutions.grison.driver.foscam.type.FosInt32;
 import com.sibilantsolutions.grison.driver.foscam.type.FosInt8;
+import com.sibilantsolutions.grison.net.netty.codec.parse.NettyFosTypeReader;
 import io.netty.buffer.ByteBuf;
 
 public class NettyCommandDtoParser {
@@ -28,7 +29,7 @@ public class NettyCommandDtoParser {
         verify(textLength.value() == buf.readableBytes(), "expected=%s, actual=%s", textLength, buf.readableBytes());
 
         ProtocolE p = ProtocolE.fromValue(protocolBytes);
-        final FoscamOpCode foscamOpCode = FoscamOpCode.fromValue(p, operationCode.value());
+        final FoscamOpCode foscamOpCode = FoscamOpCode.fromValue(p, operationCode);
         FoscamTextDto foscamTextDto = NettyFoscamTextParser.parse(foscamOpCode, buf);
 
         verify(0 == buf.readableBytes(), "expected=%s, actual=%s", 0, buf.readableBytes());

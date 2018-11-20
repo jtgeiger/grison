@@ -1,4 +1,4 @@
-package com.sibilantsolutions.grison.net.netty.parse;
+package com.sibilantsolutions.grison.net.netty.codec.parse;
 
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
@@ -10,6 +10,7 @@ import org.junit.Test;
 import com.google.common.base.VerifyException;
 import com.sibilantsolutions.grison.driver.foscam.dto.LoginRespDetailsDto;
 import com.sibilantsolutions.grison.driver.foscam.dto.LoginRespTextDto;
+import com.sibilantsolutions.grison.net.netty.codec.NettyFoscamTextParser;
 import io.netty.buffer.ByteBuf;
 
 public class NettyFoscamTextParserTest {

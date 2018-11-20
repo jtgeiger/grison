@@ -1,6 +1,7 @@
 package com.sibilantsolutions.grison.driver.foscam.dto;
 
 import com.sibilantsolutions.grison.driver.foscam.domain.ProtocolE;
+import com.sibilantsolutions.grison.driver.foscam.type.FosInt16;
 
 public enum FoscamOpCode {
 
@@ -72,21 +73,21 @@ public enum FoscamOpCode {
     }
 
     public final ProtocolE protocol;
-    public final short value;
+    public final FosInt16 value;
 
     FoscamOpCode(ProtocolE protocol, short value) {
         this.protocol = protocol;
-        this.value = value;
+        this.value = FosInt16.create(value);
     }
 
-    public static FoscamOpCode fromValue(ProtocolE protocol, short value) {
+    public static FoscamOpCode fromValue(ProtocolE protocol, FosInt16 value) {
         for (FoscamOpCode foscamOpCode : values()) {
-            if (foscamOpCode.protocol == protocol && foscamOpCode.value == value) {
+            if (foscamOpCode.protocol == protocol && foscamOpCode.value.equals(value)) {
                 return foscamOpCode;
             }
         }
 
-        throw new IllegalArgumentException(String.format("Unexpected protocol=%s, value=%d", protocol, value));
+        throw new IllegalArgumentException(String.format("Unexpected protocol=%s, value=%s", protocol, value));
     }
 
 }

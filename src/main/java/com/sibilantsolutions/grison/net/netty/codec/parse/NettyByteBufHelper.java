@@ -1,4 +1,4 @@
-package com.sibilantsolutions.grison.net.netty.parse;
+package com.sibilantsolutions.grison.net.netty.codec.parse;
 
 import io.netty.buffer.ByteBuf;
 
