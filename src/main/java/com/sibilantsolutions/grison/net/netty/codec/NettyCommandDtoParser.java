@@ -2,7 +2,7 @@ package com.sibilantsolutions.grison.net.netty.codec;
 
 import static com.google.common.base.Verify.verify;
 import static com.sibilantsolutions.grison.driver.foscam.dto.CommandDto.PROTOCOL_LEN;
-import static com.sibilantsolutions.grison.driver.foscam.dto.CommandDto.RESERVE2_LEN;
+import static com.sibilantsolutions.grison.driver.foscam.dto.CommandDto.RESERVE2;
 import static com.sibilantsolutions.grison.net.netty.codec.parse.NettyByteBufHelper.readBytes;
 
 import com.sibilantsolutions.grison.driver.foscam.domain.ProtocolE;
@@ -22,7 +22,7 @@ public class NettyCommandDtoParser {
         final byte[] protocolBytes = readBytes(PROTOCOL_LEN, buf);
         final FosInt16 operationCode = NettyFosTypeReader.fosInt16(buf);
         final FosInt8 reserve1 = NettyFosTypeReader.fosInt8(buf);
-        final byte[] reserve2 = readBytes(RESERVE2_LEN, buf);
+        final byte[] reserve2 = readBytes(RESERVE2.length, buf);
         final FosInt32 textLength = NettyFosTypeReader.fosInt32(buf);
         final FosInt32 reserve3 = NettyFosTypeReader.fosInt32(buf);
 

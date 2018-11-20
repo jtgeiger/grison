@@ -2,8 +2,8 @@ package com.sibilantsolutions.grison.net.netty.codec;
 
 import static com.sibilantsolutions.grison.driver.foscam.dto.LoginRespDetailsDto.CAMERA_ID_LEN;
 import static com.sibilantsolutions.grison.driver.foscam.dto.LoginRespDetailsDto.FIRMWARE_VERSION_LEN;
-import static com.sibilantsolutions.grison.driver.foscam.dto.LoginRespDetailsDto.RESERVE1_LEN;
-import static com.sibilantsolutions.grison.driver.foscam.dto.LoginRespDetailsDto.RESERVE2_LEN;
+import static com.sibilantsolutions.grison.driver.foscam.dto.LoginRespDetailsDto.RESERVE1;
+import static com.sibilantsolutions.grison.driver.foscam.dto.LoginRespDetailsDto.RESERVE2;
 import static com.sibilantsolutions.grison.net.netty.codec.parse.NettyByteBufHelper.readBytes;
 
 import com.sibilantsolutions.grison.driver.foscam.domain.ResultCodeE;
@@ -99,8 +99,8 @@ public final class NettyFoscamTextParser {
 
         if (ResultCodeE.fromValue(result.value()) == ResultCodeE.CORRECT) {
             final byte[] cameraId = readBytes(CAMERA_ID_LEN, buf);
-            final byte[] reserve1 = readBytes(RESERVE1_LEN, buf);
-            final byte[] reserve2 = readBytes(RESERVE2_LEN, buf);
+            final byte[] reserve1 = readBytes(RESERVE1.length, buf);
+            final byte[] reserve2 = readBytes(RESERVE2.length, buf);
             final byte[] firmwareVersion = readBytes(FIRMWARE_VERSION_LEN, buf);
 
             return builder

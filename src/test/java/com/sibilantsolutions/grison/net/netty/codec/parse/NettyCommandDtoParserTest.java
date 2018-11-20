@@ -35,8 +35,6 @@ public class NettyCommandDtoParserTest {
                 .resultCode(FosInt16.create(ResultCodeE.CORRECT.getValue()))
                 .loginRespDetails(LoginRespDetailsDto.builder()
                         .cameraId("00626E4E72BF\0".getBytes(StandardCharsets.ISO_8859_1))
-                        .reserve1(new byte[]{0, 0, 0, 1})
-                        .reserve2(new byte[]{0, 0, 0, 0})
                         .firmwareVersion(new byte[]{11, 37, 2, 56})
                         .build())
                 .build(), dto.text());

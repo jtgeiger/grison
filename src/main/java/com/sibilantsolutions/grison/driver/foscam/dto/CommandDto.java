@@ -11,12 +11,9 @@ import com.sibilantsolutions.grison.driver.foscam.type.FosInt8;
 public abstract class CommandDto {
 
     public static final int PROTOCOL_LEN = 4;
-    public static final int RESERVE2_LEN = 8;
-
-    public static final int COMMAND_PREFIX_LENGTH = 4 + 2 + 1 + 8 + 4 + 4;
-
     public static final FosInt8 RESERVE1 = FosInt8.create(0);
     public static final byte[] RESERVE2 = new byte[]{0, 0, 0, 0, 0, 0, 0, 0};
+    public static final int COMMAND_PREFIX_LENGTH = PROTOCOL_LEN + 2 + 1 + RESERVE2.length + 4 + 4;
 
     public abstract ProtocolE protocol();
 
@@ -33,7 +30,9 @@ public abstract class CommandDto {
     public abstract FoscamTextDto text();
 
     public static Builder builder() {
-        return new AutoValue_CommandDto.Builder();
+        return new AutoValue_CommandDto.Builder()
+                .reserve1(RESERVE1)
+                .reserve2(RESERVE2);
     }
 
     @AutoValue.Builder
@@ -57,7 +56,7 @@ public abstract class CommandDto {
 
         public CommandDto build() {
             CommandDto dto = autoBuild();
-            checkArgument(dto.reserve2().length == RESERVE2_LEN, "reserve2 len expected=%s actual=%s", RESERVE2_LEN, dto.reserve2().length);
+            checkArgument(dto.reserve2().length == RESERVE2.length, "reserve2 len expected=%s actual=%s", RESERVE2.length, dto.reserve2().length);
             return dto;
         }
     }
