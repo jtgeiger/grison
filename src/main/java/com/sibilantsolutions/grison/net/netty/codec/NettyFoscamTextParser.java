@@ -9,8 +9,12 @@ import static com.sibilantsolutions.grison.net.netty.codec.parse.NettyByteBufHel
 import com.sibilantsolutions.grison.driver.foscam.domain.ResultCodeE;
 import com.sibilantsolutions.grison.driver.foscam.dto.FoscamOpCode;
 import com.sibilantsolutions.grison.driver.foscam.dto.FoscamTextDto;
+import com.sibilantsolutions.grison.driver.foscam.dto.LoginReqOperationTextDto;
 import com.sibilantsolutions.grison.driver.foscam.dto.LoginRespDetailsDto;
 import com.sibilantsolutions.grison.driver.foscam.dto.LoginRespTextDto;
+import com.sibilantsolutions.grison.driver.foscam.dto.Unk02TextDto;
+import com.sibilantsolutions.grison.driver.foscam.dto.VerifyReqTextDto;
+import com.sibilantsolutions.grison.driver.foscam.dto.VerifyRespTextDto;
 import com.sibilantsolutions.grison.driver.foscam.type.FosInt16;
 import com.sibilantsolutions.grison.net.netty.codec.parse.NettyFosTypeReader;
 import io.netty.buffer.ByteBuf;
@@ -22,12 +26,53 @@ public final class NettyFoscamTextParser {
 
     public static FoscamTextDto parse(FoscamOpCode foscamOpCode, ByteBuf buf) {
         switch (foscamOpCode) {
+            case Login_Req_Operation:
+                return loginReqOperation(buf);
+
             case Login_Resp:
                 return loginRespDto(buf);
+
+            case Verify_Req:
+                return verifyReq(buf);
+
+            case Verify_Resp:
+                return verifyResp(buf);
+
+            case UNK02:
+                return unk02(buf);
 
             default:
                 throw new IllegalArgumentException(String.format("Unexpected foscamOpCode=%s", foscamOpCode));
         }
+    }
+
+    private static Unk02TextDto unk02(ByteBuf buf) {
+        return Unk02TextDto.builder()
+                .data(readBytes(Unk02TextDto.DATA_LEN, buf))
+                .build();
+    }
+
+    private static VerifyRespTextDto verifyResp(ByteBuf buf) {
+        final FosInt16 resultCode = NettyFosTypeReader.fosInt16(buf);
+        final VerifyRespTextDto.Builder builder = VerifyRespTextDto.builder()
+                .resultCode(resultCode);
+
+        if (resultCode.value() == ResultCodeE.CORRECT.getValue()) {
+            builder.reserve(NettyFosTypeReader.fosInt8(buf));
+        }
+
+        return builder.build();
+    }
+
+    private static VerifyReqTextDto verifyReq(ByteBuf buf) {
+        return VerifyReqTextDto.builder()
+                .user(readBytes(VerifyReqTextDto.USER_LEN, buf))
+                .password(readBytes(VerifyReqTextDto.PASSWORD_LEN, buf))
+                .build();
+    }
+
+    private static LoginReqOperationTextDto loginReqOperation(ByteBuf buf) {
+        return LoginReqOperationTextDto.builder().build();
     }
 
     public static LoginRespTextDto loginRespDto(ByteBuf buf) {

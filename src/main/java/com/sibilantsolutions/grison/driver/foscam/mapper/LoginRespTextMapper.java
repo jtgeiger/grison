@@ -3,9 +3,7 @@ package com.sibilantsolutions.grison.driver.foscam.mapper;
 import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
 
-import com.google.common.base.VerifyException;
 import com.sibilantsolutions.grison.driver.foscam.domain.ResultCodeE;
-import com.sibilantsolutions.grison.driver.foscam.dto.LoginRespDetailsDto;
 import com.sibilantsolutions.grison.driver.foscam.dto.LoginRespTextDto;
 import com.sibilantsolutions.grison.driver.foscam.entity.LoginRespTextEntity;
 import com.sibilantsolutions.grison.driver.foscam.entity.VersionEntity;
@@ -19,9 +17,7 @@ public final class LoginRespTextMapper implements DtoToEntityMapper<LoginRespTex
         final ResultCodeE resultCode = ResultCodeE.fromValue(dto.resultCode().value());
         builder.resultCode(resultCode);
 
-        if (resultCode == ResultCodeE.CORRECT) {
-            final LoginRespDetailsDto loginRespDetailsDto = dto.loginRespDetails().orElseThrow(VerifyException::new);
-
+        dto.loginRespDetails().ifPresent(loginRespDetailsDto -> {
             final String cameraId = new String(loginRespDetailsDto.cameraId(), StandardCharsets.ISO_8859_1);
 
             //Original array holds a null-terminated string so right-trim.
@@ -35,7 +31,7 @@ public final class LoginRespTextMapper implements DtoToEntityMapper<LoginRespTex
                     .patch(buf.get())
                     .buildNum(buf.get())
                     .build());
-        }
+        });
 
         return builder.build();
     }
