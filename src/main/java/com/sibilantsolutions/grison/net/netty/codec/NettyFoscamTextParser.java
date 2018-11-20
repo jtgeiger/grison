@@ -9,6 +9,8 @@ import static com.sibilantsolutions.grison.net.netty.codec.parse.NettyByteBufHel
 import com.sibilantsolutions.grison.driver.foscam.domain.ResultCodeE;
 import com.sibilantsolutions.grison.driver.foscam.dto.FoscamOpCode;
 import com.sibilantsolutions.grison.driver.foscam.dto.FoscamTextDto;
+import com.sibilantsolutions.grison.driver.foscam.dto.KeepAliveAudioVideoTextDto;
+import com.sibilantsolutions.grison.driver.foscam.dto.KeepAliveOperationTextDto;
 import com.sibilantsolutions.grison.driver.foscam.dto.LoginReqOperationTextDto;
 import com.sibilantsolutions.grison.driver.foscam.dto.LoginRespDetailsDto;
 import com.sibilantsolutions.grison.driver.foscam.dto.LoginRespTextDto;
@@ -40,6 +42,12 @@ public final class NettyFoscamTextParser {
 
             case UNK02:
                 return unk02(buf);
+
+            case Keep_Alive_Operation:
+                return keepAliveOperation(buf);
+
+            case Keep_Alive_AudioVideo:
+                return keepAliveAudioVideo(buf);
 
             default:
                 throw new IllegalArgumentException(String.format("Unexpected foscamOpCode=%s", foscamOpCode));
@@ -73,6 +81,14 @@ public final class NettyFoscamTextParser {
 
     private static LoginReqOperationTextDto loginReqOperation(ByteBuf buf) {
         return LoginReqOperationTextDto.builder().build();
+    }
+
+    private static KeepAliveOperationTextDto keepAliveOperation(ByteBuf buf) {
+        return KeepAliveOperationTextDto.builder().build();
+    }
+
+    private static KeepAliveAudioVideoTextDto keepAliveAudioVideo(ByteBuf buf) {
+        return KeepAliveAudioVideoTextDto.builder().build();
     }
 
     public static LoginRespTextDto loginRespDto(ByteBuf buf) {
