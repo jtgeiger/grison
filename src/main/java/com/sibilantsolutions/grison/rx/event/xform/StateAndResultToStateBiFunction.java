@@ -3,11 +3,11 @@ package com.sibilantsolutions.grison.rx.event.xform;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.sibilantsolutions.grison.driver.foscam.domain.LoginRespText;
-import com.sibilantsolutions.grison.driver.foscam.domain.Unk02Text;
-import com.sibilantsolutions.grison.driver.foscam.domain.VerifyRespText;
-import com.sibilantsolutions.grison.driver.foscam.domain.VideoDataText;
-import com.sibilantsolutions.grison.driver.foscam.domain.VideoStartRespText;
+import com.sibilantsolutions.grison.driver.foscam.dto.LoginRespTextDto;
+import com.sibilantsolutions.grison.driver.foscam.dto.Unk02TextDto;
+import com.sibilantsolutions.grison.driver.foscam.dto.VerifyRespTextDto;
+import com.sibilantsolutions.grison.driver.foscam.dto.VideoDataTextDto;
+import com.sibilantsolutions.grison.driver.foscam.dto.VideoStartRespTextDto;
 import com.sibilantsolutions.grison.rx.State;
 import com.sibilantsolutions.grison.rx.event.result.AbstractResult;
 import com.sibilantsolutions.grison.rx.event.result.AudioVideoConnectResult;
@@ -28,7 +28,7 @@ public class StateAndResultToStateBiFunction implements BiFunction<State, Abstra
     private static final Logger LOG = LoggerFactory.getLogger(StateAndResultToStateBiFunction.class);
 
     @Override
-    public State apply(State state, AbstractResult result) throws Exception {
+    public State apply(State state, AbstractResult result) {
         if (state == State.INITIAL && result == OperationConnectResult.IN_FLIGHT) {
             return State.OP_CONNECT_IN_FLIGHT;
         } else if (state == State.OP_CONNECT_IN_FLIGHT && result instanceof OperationConnectResult) {
@@ -86,18 +86,16 @@ public class StateAndResultToStateBiFunction implements BiFunction<State, Abstra
 
             switch (state.handshakeState) {
                 case LOGIN_SENT:
-                    final State state1 = State.loginRespText((LoginRespText) r.command.getCommandText(), state);
-                    return state1;
+                    return State.loginRespText((LoginRespTextDto) r.command.text(), state);
 
                 case VERIFY_SENT:
-                    return State.verifyRespText((VerifyRespText) r.command.getCommandText(), state);
+                    return State.verifyRespText((VerifyRespTextDto) r.command.text(), state);
 
                 case VERIFY_RESPONDED:
-                    final State state2 = State.unk02((Unk02Text) r.command.getCommandText(), state);
-                    return state2;
+                    return State.unk02((Unk02TextDto) r.command.text(), state);
 
                 case VIDEO_START_SENT:
-                    return State.videoStartResp((VideoStartRespText) r.command.getCommandText(), state);
+                    return State.videoStartResp((VideoStartRespTextDto) r.command.text(), state);
 
                 default:
                     throw new IllegalArgumentException("Unexpected handshake state=" + state.handshakeState);
@@ -105,8 +103,8 @@ public class StateAndResultToStateBiFunction implements BiFunction<State, Abstra
         } else if (state.handshakeState == State.HandshakeState.AUDIO_VIDEO_LOGIN_SENT && result instanceof AudioVideoReceiveResult) {
             AudioVideoReceiveResult r = (AudioVideoReceiveResult) result;
 
-            if (r.command.getCommandText() instanceof VideoDataText) {
-                VideoDataText t = (VideoDataText) r.command.getCommandText();
+            if (r.command.text() instanceof VideoDataTextDto) {
+                VideoDataTextDto t = (VideoDataTextDto) r.command.text();
                 return State.videoDataText(t, state);
             }
 

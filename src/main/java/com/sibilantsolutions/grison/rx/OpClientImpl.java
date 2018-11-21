@@ -1,12 +1,16 @@
 package com.sibilantsolutions.grison.rx;
 
-import com.sibilantsolutions.grison.driver.foscam.domain.Command;
-import com.sibilantsolutions.grison.driver.foscam.domain.KeepAliveText;
-import com.sibilantsolutions.grison.driver.foscam.domain.LoginReqText;
-import com.sibilantsolutions.grison.driver.foscam.domain.OperationProtocolOpCodeE;
-import com.sibilantsolutions.grison.driver.foscam.domain.ProtocolE;
-import com.sibilantsolutions.grison.driver.foscam.domain.VerifyReqText;
-import com.sibilantsolutions.grison.driver.foscam.domain.VideoStartReqText;
+import static com.sibilantsolutions.grison.driver.foscam.dto.VerifyReqTextDto.PASSWORD_LEN;
+import static com.sibilantsolutions.grison.driver.foscam.dto.VerifyReqTextDto.USER_LEN;
+
+import java.nio.charset.StandardCharsets;
+
+import com.google.common.base.Strings;
+import com.sibilantsolutions.grison.driver.foscam.dto.KeepAliveOperationTextDto;
+import com.sibilantsolutions.grison.driver.foscam.dto.LoginReqOperationTextDto;
+import com.sibilantsolutions.grison.driver.foscam.dto.VerifyReqTextDto;
+import com.sibilantsolutions.grison.driver.foscam.dto.VideoEndTextDto;
+import com.sibilantsolutions.grison.driver.foscam.dto.VideoStartReqTextDto;
 import io.reactivex.Completable;
 
 public class OpClientImpl implements OpClient {
@@ -19,59 +23,45 @@ public class OpClientImpl implements OpClient {
 
     @Override
     public Completable login() {
-        Command c = new Command();
-        c.setProtocol(ProtocolE.OPERATION_PROTOCOL);
-        c.setOpCode(OperationProtocolOpCodeE.Login_Req);
-        LoginReqText login = new LoginReqText();
-        c.setCommandText(login);
-        login.setDataConnectionId(new byte[0]);
 
-        return channelSender.doSend(c);
+        final LoginReqOperationTextDto text = LoginReqOperationTextDto.builder().build();
+
+        return channelSender.doSend(text);
     }
 
     @Override
     public Completable ping() {
-        Command c = new Command();
-        c.setProtocol(ProtocolE.OPERATION_PROTOCOL);
-        c.setOpCode(OperationProtocolOpCodeE.Keep_Alive);
-        KeepAliveText text = new KeepAliveText();
-        c.setCommandText(text);
 
-        return channelSender.doSend(c);
+        final KeepAliveOperationTextDto text = KeepAliveOperationTextDto.builder().build();
+
+        return channelSender.doSend(text);
     }
 
     @Override
     public Completable verify(String username, String password) {
-        Command c = new Command();
-        c.setProtocol(ProtocolE.OPERATION_PROTOCOL);
-        c.setOpCode(OperationProtocolOpCodeE.Verify_Req);
-        VerifyReqText verify = new VerifyReqText();
-        c.setCommandText(verify);
-        verify.setUsername(username);
-        verify.setPassword(password);
 
-        return channelSender.doSend(c);
+        final VerifyReqTextDto text = VerifyReqTextDto.builder()
+                .user(Strings.padEnd(username, USER_LEN, (char) 0).getBytes(StandardCharsets.ISO_8859_1))
+                .password(Strings.padEnd(password, PASSWORD_LEN, (char) 0).getBytes(StandardCharsets.ISO_8859_1))
+                .build();
+
+        return channelSender.doSend(text);
     }
 
     @Override
     public Completable videoStart() {
-        Command c = new Command();
-        c.setProtocol(ProtocolE.OPERATION_PROTOCOL);
-        c.setOpCode(OperationProtocolOpCodeE.Video_Start_Req);
-        VideoStartReqText video = new VideoStartReqText();
-        c.setCommandText(video);
-        video.setData(1);
 
-        return channelSender.doSend(c);
+        final VideoStartReqTextDto text = VideoStartReqTextDto.builder().build();
+
+        return channelSender.doSend(text);
     }
 
     @Override
     public Completable videoEnd() {
-        Command c = new Command();
-        c.setProtocol(ProtocolE.OPERATION_PROTOCOL);
-        c.setOpCode(OperationProtocolOpCodeE.Video_End);
 
-        return channelSender.doSend(c);
+        final VideoEndTextDto text = VideoEndTextDto.builder().build();
+
+        return channelSender.doSend(text);
     }
 
 }

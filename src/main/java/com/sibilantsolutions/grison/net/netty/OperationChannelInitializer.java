@@ -7,9 +7,15 @@ import org.reactivestreams.Subscriber;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.sibilantsolutions.grison.driver.foscam.domain.Command;
-import com.sibilantsolutions.grison.driver.foscam.domain.OperationProtocolOpCodeE;
-import com.sibilantsolutions.grison.driver.foscam.domain.ProtocolE;
+import com.sibilantsolutions.grison.driver.foscam.dto.CommandDto;
+import com.sibilantsolutions.grison.driver.foscam.dto.FoscamOpCode;
+import com.sibilantsolutions.grison.net.netty.codec.FoscamCommandDtoDecoder;
+import com.sibilantsolutions.grison.net.netty.codec.FoscamTextByteBufDTOEncoder;
+import com.sibilantsolutions.grison.net.netty.codec.KeepAliveOperationTextDtoEncoder;
+import com.sibilantsolutions.grison.net.netty.codec.LoginReqOperationTextDtoEncoder;
+import com.sibilantsolutions.grison.net.netty.codec.VerifyReqTextDtoEncoder;
+import com.sibilantsolutions.grison.net.netty.codec.VideoEndTextDtoEncoder;
+import com.sibilantsolutions.grison.net.netty.codec.VideoStartReqTextDtoEncoder;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelFutureListener;
 import io.netty.channel.ChannelHandlerContext;
@@ -34,10 +40,10 @@ public class OperationChannelInitializer extends ChannelInitializer {
     private static final int KEEPALIVE_SEND_TIMEOUT_SECS = 73;
     private static final int WRITE_TIMEOUT_SECS = KEEPALIVE_SEND_TIMEOUT_SECS + 5;
 
-    private final Subscriber<Command> operationDatastream;
+    private final Subscriber<CommandDto> operationDatastream;
     private final NioEventLoopGroup group;
 
-    public OperationChannelInitializer(Subscriber<Command> operationDatastream, NioEventLoopGroup group) {
+    public OperationChannelInitializer(Subscriber<CommandDto> operationDatastream, NioEventLoopGroup group) {
         this.operationDatastream = operationDatastream;
         this.group = group;
     }
@@ -52,23 +58,29 @@ public class OperationChannelInitializer extends ChannelInitializer {
                 //Log lifecycle events AND datastream ("io.netty.handler.logging.LoggingHandler"; DEBUG level).
                 .addLast(new LoggingHandler())
                 .addLast(new LengthFieldBasedFrameDecoder(ByteOrder.LITTLE_ENDIAN, MAX_FRAME_LENGTH, 0x0F, 4, 4, 0, true))
-                .addLast(new FoscamCommandCodec())
+                .addLast(new FoscamCommandDtoDecoder())
+                .addLast(new FoscamTextByteBufDTOEncoder())
+                .addLast(new KeepAliveOperationTextDtoEncoder())
+                .addLast(new LoginReqOperationTextDtoEncoder())
+                .addLast(new VerifyReqTextDtoEncoder())
+                .addLast(new VideoStartReqTextDtoEncoder())
+                .addLast(new VideoEndTextDtoEncoder())
                 .addLast(new IdleStateHandler(READ_TIMEOUT_SECS, WRITE_TIMEOUT_SECS, 0))
                 .addLast(new IdleStateEventHandler())
                 //Receive and drop inbound pings.  We don't respond to these.  We send outbound
                 //pings on a set schedule, not dependent on inbound pings.
-                .addLast(new KeepAliveInboundDropper(ProtocolE.OPERATION_PROTOCOL, OperationProtocolOpCodeE.Keep_Alive))
+                .addLast(new KeepAliveInboundDropper(FoscamOpCode.Keep_Alive_Operation))
                 //Emit KeepAliveTimerEvents at regular intervals.
                 .addLast(new KeepAliveTimerEventScheduler(KEEPALIVE_SEND_TIMEOUT_SECS))
-                .addLast(new KeepAliveSender(ProtocolE.OPERATION_PROTOCOL, OperationProtocolOpCodeE.Keep_Alive))
-                .addLast(new SimpleChannelInboundHandler<Command>() {
+                .addLast(new KeepAliveSender(FoscamOpCode.Keep_Alive_Operation))
+                .addLast(new SimpleChannelInboundHandler<CommandDto>() {
                     @Override
-                    protected void channelRead0(ChannelHandlerContext ctx, Command msg) throws Exception {
+                    protected void channelRead0(ChannelHandlerContext ctx, CommandDto msg) {
                         operationDatastream.onNext(msg);
                     }
 
                     @Override
-                    public void channelInactive(ChannelHandlerContext ctx) throws Exception {
+                    public void channelInactive(ChannelHandlerContext ctx) {
                         operationDatastream.onComplete();
                     }
                 })

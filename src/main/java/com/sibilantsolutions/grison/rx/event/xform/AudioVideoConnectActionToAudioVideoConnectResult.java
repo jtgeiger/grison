@@ -5,7 +5,7 @@ import java.net.InetSocketAddress;
 import org.reactivestreams.Publisher;
 import org.reactivestreams.Subscriber;
 
-import com.sibilantsolutions.grison.driver.foscam.domain.Command;
+import com.sibilantsolutions.grison.driver.foscam.dto.CommandDto;
 import com.sibilantsolutions.grison.net.netty.AudioVideoConnectionBootstrap;
 import com.sibilantsolutions.grison.net.netty.BootstrapConnector;
 import com.sibilantsolutions.grison.rx.ChannelConnectEvent;
@@ -18,9 +18,9 @@ import io.reactivex.FlowableTransformer;
 
 public class AudioVideoConnectActionToAudioVideoConnectResult implements FlowableTransformer<AudioVideoConnectAction, AudioVideoConnectResult> {
 
-    private final Subscriber<Command> audioVideoDatastream;
+    private final Subscriber<CommandDto> audioVideoDatastream;
 
-    public AudioVideoConnectActionToAudioVideoConnectResult(Subscriber<Command> audioVideoDatastream) {
+    public AudioVideoConnectActionToAudioVideoConnectResult(Subscriber<CommandDto> audioVideoDatastream) {
         this.audioVideoDatastream = audioVideoDatastream;
     }
 

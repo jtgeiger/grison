@@ -5,7 +5,7 @@ import java.net.InetSocketAddress;
 import org.reactivestreams.Publisher;
 import org.reactivestreams.Subscriber;
 
-import com.sibilantsolutions.grison.driver.foscam.domain.Command;
+import com.sibilantsolutions.grison.driver.foscam.dto.CommandDto;
 import com.sibilantsolutions.grison.net.netty.BootstrapConnector;
 import com.sibilantsolutions.grison.net.netty.OperationConnectionBootstrap;
 import com.sibilantsolutions.grison.rx.ChannelConnectEvent;
@@ -18,9 +18,9 @@ import io.reactivex.FlowableTransformer;
 
 public class OperationConnectActionToOperationConnectResult implements FlowableTransformer<OperationConnectAction, OperationConnectResult> {
 
-    private final Subscriber<Command> operationDatastream;
+    private final Subscriber<CommandDto> operationDatastream;
 
-    public OperationConnectActionToOperationConnectResult(Subscriber<Command> operationDatastream) {
+    public OperationConnectActionToOperationConnectResult(Subscriber<CommandDto> operationDatastream) {
         this.operationDatastream = operationDatastream;
     }
 

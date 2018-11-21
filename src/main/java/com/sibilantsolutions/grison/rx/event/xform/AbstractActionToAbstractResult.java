@@ -5,7 +5,7 @@ import java.util.Arrays;
 import org.reactivestreams.Publisher;
 import org.reactivestreams.Subscriber;
 
-import com.sibilantsolutions.grison.driver.foscam.domain.Command;
+import com.sibilantsolutions.grison.driver.foscam.dto.CommandDto;
 import com.sibilantsolutions.grison.rx.event.action.AbstractAction;
 import com.sibilantsolutions.grison.rx.event.action.AudioVideoConnectAction;
 import com.sibilantsolutions.grison.rx.event.action.AudioVideoLoginAction;
@@ -21,10 +21,10 @@ import io.reactivex.processors.PublishProcessor;
 
 public class AbstractActionToAbstractResult implements FlowableTransformer<AbstractAction, AbstractResult> {
 
-    private final Subscriber<Command> operationDatastream;
-    private final Subscriber<Command> audioVideoDatastream;
+    private final Subscriber<CommandDto> operationDatastream;
+    private final Subscriber<CommandDto> audioVideoDatastream;
 
-    public AbstractActionToAbstractResult(PublishProcessor<Command> operationDatastream, PublishProcessor<Command> audioVideoDatastream) {
+    public AbstractActionToAbstractResult(PublishProcessor<CommandDto> operationDatastream, PublishProcessor<CommandDto> audioVideoDatastream) {
         this.operationDatastream = operationDatastream;
         this.audioVideoDatastream = audioVideoDatastream;
     }

@@ -5,6 +5,7 @@ import java.net.SocketAddress;
 
 import org.reactivestreams.Publisher;
 
+import com.google.common.base.VerifyException;
 import com.sibilantsolutions.grison.rx.State;
 import com.sibilantsolutions.grison.rx.event.action.AbstractAction;
 import com.sibilantsolutions.grison.rx.event.action.AudioVideoConnectAction;
@@ -58,7 +59,7 @@ public class StateToState implements FlowableTransformer<State, State> {
                             break;
 
                         case AUDIO_VIDEO_CONNECTED:
-                            final AudioVideoLoginAction audioVideoLoginAction = new AudioVideoLoginAction(state.audioVideoChannel, state.videoStartRespText.getDataConnectionId());
+                            final AudioVideoLoginAction audioVideoLoginAction = new AudioVideoLoginAction(state.audioVideoChannel, state.videoStartRespText.dataConnectionId().orElseThrow(VerifyException::new));
                             dynamicActions.onNext(audioVideoLoginAction);
                             break;
                     }

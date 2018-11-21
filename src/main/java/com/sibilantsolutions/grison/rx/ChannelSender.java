@@ -5,7 +5,7 @@ import java.util.concurrent.CancellationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.sibilantsolutions.grison.driver.foscam.domain.Command;
+import com.sibilantsolutions.grison.driver.foscam.dto.FoscamTextDto;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelFutureListener;
@@ -21,10 +21,10 @@ public class ChannelSender {
         this.channel = channel;
     }
 
-    public Completable doSend(Command command) {
+    public Completable doSend(FoscamTextDto text) {
         return Completable.create(emitter -> {
             final ChannelFuture channelFuture = channel
-                    .writeAndFlush(command)
+                    .writeAndFlush(text)
                     .addListener((ChannelFutureListener) future -> {
                         if (future.isSuccess()) {
                             emitter.onComplete();

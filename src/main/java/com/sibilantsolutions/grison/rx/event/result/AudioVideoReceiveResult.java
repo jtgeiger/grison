@@ -1,12 +1,12 @@
 package com.sibilantsolutions.grison.rx.event.result;
 
-import com.sibilantsolutions.grison.driver.foscam.domain.Command;
+import com.sibilantsolutions.grison.driver.foscam.dto.CommandDto;
 
 public class AudioVideoReceiveResult extends AbstractResult {
 
-    public final Command command;
+    public final CommandDto command;
 
-    public AudioVideoReceiveResult(Command command) {
+    public AudioVideoReceiveResult(CommandDto command) {
         this.command = command;
     }
 

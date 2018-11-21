@@ -10,6 +10,7 @@ import com.sibilantsolutions.grison.driver.foscam.domain.Command;
 import com.sibilantsolutions.grison.driver.foscam.domain.ProtocolE;
 import com.sibilantsolutions.grison.driver.foscam.domain.SearchProtocolOpCodeE;
 import com.sibilantsolutions.grison.driver.foscam.domain.SearchReqText;
+import com.sibilantsolutions.grison.driver.foscam.dto.CommandDto;
 import com.sibilantsolutions.grison.net.netty.SearchChannelInitializer;
 import com.sibilantsolutions.grison.net.retrofit.CgiRetrofitService;
 import com.sibilantsolutions.grison.net.retrofit.FoscamInsecureAuthInterceptor;
@@ -86,8 +87,8 @@ public class NettyDemo {
                         uiEventsToActions,
                         dynamicActions);
 
-        final PublishProcessor<Command> operationDatastream = PublishProcessor.create();
-        final PublishProcessor<Command> audioVideoDatastream = PublishProcessor.create();
+        final PublishProcessor<CommandDto> operationDatastream = PublishProcessor.create();
+        final PublishProcessor<CommandDto> audioVideoDatastream = PublishProcessor.create();
 
         final Flowable<OperationReceiveResult> operationReceiveResults = operationDatastream
                 .compose(new CommandToOperationReceiveResult());

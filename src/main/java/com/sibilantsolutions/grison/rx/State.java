@@ -5,12 +5,12 @@ import java.util.Objects;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.sibilantsolutions.grison.driver.foscam.domain.LoginRespText;
 import com.sibilantsolutions.grison.driver.foscam.domain.ResultCodeE;
-import com.sibilantsolutions.grison.driver.foscam.domain.Unk02Text;
-import com.sibilantsolutions.grison.driver.foscam.domain.VerifyRespText;
-import com.sibilantsolutions.grison.driver.foscam.domain.VideoDataText;
-import com.sibilantsolutions.grison.driver.foscam.domain.VideoStartRespText;
+import com.sibilantsolutions.grison.driver.foscam.dto.LoginRespTextDto;
+import com.sibilantsolutions.grison.driver.foscam.dto.Unk02TextDto;
+import com.sibilantsolutions.grison.driver.foscam.dto.VerifyRespTextDto;
+import com.sibilantsolutions.grison.driver.foscam.dto.VideoDataTextDto;
+import com.sibilantsolutions.grison.driver.foscam.dto.VideoStartRespTextDto;
 import io.netty.channel.Channel;
 
 public class State {
@@ -40,16 +40,16 @@ public class State {
 
     public final HandshakeState handshakeState;
 
-    public final LoginRespText loginRespText;
-    public final VerifyRespText verifyRespText;
+    public final LoginRespTextDto loginRespText;
+    public final VerifyRespTextDto verifyRespText;
 
-    public final VideoStartRespText videoStartRespText;
+    public final VideoStartRespTextDto videoStartRespText;
 
     public final Channel audioVideoChannel;
 
-    public final VideoDataText videoDataText;
+    public final VideoDataTextDto videoDataText;
 
-    private State(Channel operationChannel, Throwable failureCause, HandshakeState handshakeState, LoginRespText loginRespText, VerifyRespText verifyRespText, VideoStartRespText videoStartRespText, Channel audioVideoChannel, VideoDataText videoDataText) {
+    private State(Channel operationChannel, Throwable failureCause, HandshakeState handshakeState, LoginRespTextDto loginRespText, VerifyRespTextDto verifyRespText, VideoStartRespTextDto videoStartRespText, Channel audioVideoChannel, VideoDataTextDto videoDataText) {
         this.operationChannel = operationChannel;
         this.failureCause = failureCause;
         this.handshakeState = Objects.requireNonNull(handshakeState);
@@ -80,13 +80,13 @@ public class State {
                 '}';
     }
 
-    public static State loginRespText(LoginRespText loginRespText, State state) {
+    public static State loginRespText(LoginRespTextDto loginRespText, State state) {
         if (state.handshakeState != HandshakeState.LOGIN_SENT) {
             throw new IllegalStateException("" + state.handshakeState);
         }
 
-        if (loginRespText.getResultCode() != ResultCodeE.CORRECT) {
-            throw new RuntimeException("Invalid result=" + loginRespText.getResultCode());
+        if (loginRespText.resultCode().value() != ResultCodeE.CORRECT.getValue()) {
+            throw new RuntimeException("Invalid result=" + loginRespText.resultCode());
         }
 
         return new State(state.operationChannel, null, HandshakeState.LOGIN_RESPONDED, Objects.requireNonNull(loginRespText), null, null, null, null);
@@ -106,35 +106,35 @@ public class State {
         return new State(state.operationChannel, null, HandshakeState.VERIFY_SENT, state.loginRespText, null, null, null, null);
     }
 
-    public static State verifyRespText(VerifyRespText verifyRespText, State state) {
+    public static State verifyRespText(VerifyRespTextDto verifyRespText, State state) {
         if (state.handshakeState != HandshakeState.VERIFY_SENT) {
             throw new IllegalStateException("" + state.handshakeState);
         }
 
-        if (verifyRespText.getResultCode() != ResultCodeE.CORRECT) {
-            throw new RuntimeException("Invalid result=" + verifyRespText.getResultCode());
+        if (verifyRespText.resultCode().value() != ResultCodeE.CORRECT.getValue()) {
+            throw new RuntimeException("Invalid result=" + verifyRespText.resultCode());
         }
 
         return new State(state.operationChannel, null, HandshakeState.VERIFY_RESPONDED, state.loginRespText, Objects.requireNonNull(verifyRespText), null, null, null);
     }
 
-    public static State unk02(Unk02Text unk02Text, State state) {
+    public static State unk02(Unk02TextDto unk02Text, State state) {
         if (state.handshakeState != HandshakeState.VERIFY_RESPONDED) {
             throw new IllegalStateException("" + state.handshakeState);
         }
 
         final int LEN = 1152;
-        if (unk02Text.getData().length == LEN) {
+        if (unk02Text.data().length == LEN) {
             //Make sure its 1152 null bytes.
-            for (int i = 0; i < unk02Text.getData().length; i++) {
-                if (unk02Text.getData()[i] != 0) {
-                    throw new RuntimeException("Offset=" + i + ", expected=0, actual=" + unk02Text.getData()[i]);
+            for (int i = 0; i < unk02Text.data().length; i++) {
+                if (unk02Text.data()[i] != 0) {
+                    throw new RuntimeException("Offset=" + i + ", expected=0, actual=" + unk02Text.data()[i]);
                 }
             }
 
             LOG.info("{} Handshake completed successfully.", state.operationChannel);
         } else {
-            throw new RuntimeException("Length mismatch: expected=" + LEN + ", actual=" + unk02Text.getData().length);
+            throw new RuntimeException("Length mismatch: expected=" + LEN + ", actual=" + unk02Text.data().length);
         }
 
         return new State(state.operationChannel, null, HandshakeState.UNK02_RECEIVED, state.loginRespText, state.verifyRespText, null, null, null);
@@ -148,13 +148,13 @@ public class State {
         return new State(state.operationChannel, null, HandshakeState.VIDEO_START_SENT, state.loginRespText, state.verifyRespText, null, state.audioVideoChannel, state.videoDataText);
     }
 
-    public static State videoStartResp(VideoStartRespText videoStartRespText, State state) {
+    public static State videoStartResp(VideoStartRespTextDto videoStartRespText, State state) {
         if (state.handshakeState != HandshakeState.VIDEO_START_SENT) {
             throw new IllegalStateException("" + state.handshakeState);
         }
 
-        if (videoStartRespText.getResultCode() != ResultCodeE.CORRECT) {
-            throw new RuntimeException("Invalid result=" + videoStartRespText.getResultCode());
+        if (videoStartRespText.result().value() != ResultCodeE.CORRECT.getValue()) {
+            throw new RuntimeException("Invalid result=" + videoStartRespText.result());
         }
 
         return new State(state.operationChannel, null, HandshakeState.VIDEO_START_RESPONDED, state.loginRespText, state.verifyRespText, Objects.requireNonNull(videoStartRespText), state.audioVideoChannel, state.videoDataText);
@@ -201,7 +201,7 @@ public class State {
         return new State(state.operationChannel, null, HandshakeState.AUDIO_VIDEO_LOGIN_SENT, state.loginRespText, state.verifyRespText, state.videoStartRespText, state.audioVideoChannel, null);
     }
 
-    public static State videoDataText(VideoDataText videoDataText, State state) {
+    public static State videoDataText(VideoDataTextDto videoDataText, State state) {
         if (state.handshakeState != HandshakeState.AUDIO_VIDEO_LOGIN_SENT) {
             throw new IllegalStateException("" + state.handshakeState);
         }

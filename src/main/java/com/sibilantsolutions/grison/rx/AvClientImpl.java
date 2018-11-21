@@ -1,9 +1,7 @@
 package com.sibilantsolutions.grison.rx;
 
-import com.sibilantsolutions.grison.driver.foscam.domain.AudioVideoProtocolOpCodeE;
-import com.sibilantsolutions.grison.driver.foscam.domain.Command;
-import com.sibilantsolutions.grison.driver.foscam.domain.LoginReqText;
-import com.sibilantsolutions.grison.driver.foscam.domain.ProtocolE;
+import com.sibilantsolutions.grison.driver.foscam.dto.LoginReqAudioVideoTextDto;
+import com.sibilantsolutions.grison.driver.foscam.type.FosInt32;
 import io.reactivex.Completable;
 
 public class AvClientImpl implements AvClient {
@@ -15,15 +13,13 @@ public class AvClientImpl implements AvClient {
     }
 
     @Override
-    public Completable audioVideoLogin(byte[] dataConnectionId) {
-        Command c = new Command();
-        c.setProtocol(ProtocolE.AUDIO_VIDEO_PROTOCOL);
-        c.setOpCode(AudioVideoProtocolOpCodeE.Login_Req);
-        LoginReqText login = new LoginReqText();
-        c.setCommandText(login);
-        login.setDataConnectionId(dataConnectionId);
+    public Completable audioVideoLogin(FosInt32 dataConnectionId) {
 
-        return channelSender.doSend(c);
+        final LoginReqAudioVideoTextDto text = LoginReqAudioVideoTextDto.builder()
+                .dataConnectionId(dataConnectionId)
+                .build();
+
+        return channelSender.doSend(text);
     }
 
 }

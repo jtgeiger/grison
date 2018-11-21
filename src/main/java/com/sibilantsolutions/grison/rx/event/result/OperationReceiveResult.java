@@ -1,12 +1,12 @@
 package com.sibilantsolutions.grison.rx.event.result;
 
-import com.sibilantsolutions.grison.driver.foscam.domain.Command;
+import com.sibilantsolutions.grison.driver.foscam.dto.CommandDto;
 
 public class OperationReceiveResult extends AbstractResult {
 
-    public final Command command;
+    public final CommandDto command;
 
-    public OperationReceiveResult(Command command) {
+    public OperationReceiveResult(CommandDto command) {
         this.command = command;
     }
 
