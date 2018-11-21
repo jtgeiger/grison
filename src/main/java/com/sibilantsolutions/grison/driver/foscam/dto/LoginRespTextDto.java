@@ -39,7 +39,7 @@ public abstract class LoginRespTextDto implements FoscamTextDto {
 
         public LoginRespTextDto build() {
             LoginRespTextDto dto = autoBuild();
-            if (ResultCodeE.fromValue(dto.resultCode().value()) == ResultCodeE.CORRECT) {
+            if (ResultCodeE.fromValue(dto.resultCode()) == ResultCodeE.CORRECT) {
                 checkArgument(dto.loginRespDetails().isPresent(), "missing loginRespDetails");
             } else {
                 checkArgument(!dto.loginRespDetails().isPresent(), "expected loginRespDetails to be absent");

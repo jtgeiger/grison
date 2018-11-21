@@ -3,6 +3,8 @@ package com.sibilantsolutions.grison.driver.foscam.domain;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 
+import com.sibilantsolutions.grison.driver.foscam.type.FosInt16;
+
 public class VerifyRespText implements DatastreamI
 {
 
@@ -28,7 +30,7 @@ public class VerifyRespText implements DatastreamI
 
         short resultCodeNum = bb.getShort();
 
-        text.resultCode = ResultCodeE.fromValue( resultCodeNum );
+        text.resultCode = ResultCodeE.fromValue(FosInt16.create(resultCodeNum));
 
         /*
          * When result code is CORRECT, then there is an extra byte.  But when result code is USER_WRONG, there is no
@@ -54,7 +56,7 @@ public class VerifyRespText implements DatastreamI
         ByteBuffer bb = ByteBuffer.allocate(capacity);
         bb.order( ByteOrder.LITTLE_ENDIAN );
 
-        bb.putShort( resultCode.getValue() );
+        bb.putShort(resultCode.value.value());
 
         /*
          * When result code is CORRECT, then there is an extra byte.  But when result code is USER_WRONG, there is no

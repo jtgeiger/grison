@@ -85,7 +85,7 @@ public class State {
             throw new IllegalStateException("" + state.handshakeState);
         }
 
-        if (loginRespText.resultCode().value() != ResultCodeE.CORRECT.getValue()) {
+        if (ResultCodeE.fromValue(loginRespText.resultCode()) != ResultCodeE.CORRECT) {
             throw new RuntimeException("Invalid result=" + loginRespText.resultCode());
         }
 
@@ -111,7 +111,7 @@ public class State {
             throw new IllegalStateException("" + state.handshakeState);
         }
 
-        if (verifyRespText.resultCode().value() != ResultCodeE.CORRECT.getValue()) {
+        if (ResultCodeE.fromValue(verifyRespText.resultCode()) != ResultCodeE.CORRECT) {
             throw new RuntimeException("Invalid result=" + verifyRespText.resultCode());
         }
 
@@ -153,7 +153,7 @@ public class State {
             throw new IllegalStateException("" + state.handshakeState);
         }
 
-        if (videoStartRespText.result().value() != ResultCodeE.CORRECT.getValue()) {
+        if (ResultCodeE.fromValue(videoStartRespText.result()) != ResultCodeE.CORRECT) {
             throw new RuntimeException("Invalid result=" + videoStartRespText.result());
         }
 

@@ -1,5 +1,7 @@
 package com.sibilantsolutions.grison.driver.foscam.domain;
 
+import com.sibilantsolutions.grison.driver.foscam.type.FosInt16;
+
 public enum ResultCodeE
 {
     CORRECT( Values.CORRECT ),
@@ -10,31 +12,26 @@ public enum ResultCodeE
     UNSUPPORTED( Values.UNSUPPORTED ),
     ;
 
-    static private interface Values
+    private interface Values
     {
-        final static public short CORRECT                 = 0;
-        final static public short USER_WRONG              = 1;
-        final static public short REFUSE_OVER_MAX_CONNS   = 2;
-        final static public short PWD_ERROR               = 5;
-        final static public short PRI_ERROR               = 6;
-        final static public short UNSUPPORTED             = 7;
+        short CORRECT = 0;
+        short USER_WRONG = 1;
+        short REFUSE_OVER_MAX_CONNS = 2;
+        short PWD_ERROR = 5;
+        short PRI_ERROR = 6;
+        short UNSUPPORTED = 7;
     }
 
-    final private short value;
+    final public FosInt16 value;
 
-    private ResultCodeE( short value )
+    ResultCodeE(short value)
     {
-        this.value = value;
+        this.value = FosInt16.create(value);
     }
 
-    public short getValue()
+    public static ResultCodeE fromValue(FosInt16 value)
     {
-        return value;
-    }
-
-    public static ResultCodeE fromValue( short value )
-    {
-        switch ( value )
+        switch (value.value())
         {
             case Values.CORRECT:
                 return CORRECT;

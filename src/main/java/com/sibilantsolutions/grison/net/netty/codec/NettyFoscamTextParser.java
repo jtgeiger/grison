@@ -105,7 +105,7 @@ public final class NettyFoscamTextParser {
         final FosInt16 result = NettyFosTypeReader.fosInt16(buf);
         final VideoStartRespTextDto.Builder builder = VideoStartRespTextDto.builder()
                 .result(result);
-        if (result.value() == ResultCodeE.CORRECT.getValue()) {
+        if (ResultCodeE.fromValue(result) == ResultCodeE.CORRECT) {
             builder.dataConnectionId(NettyFosTypeReader.fosInt32(buf));
         }
         return builder.build();
@@ -126,7 +126,7 @@ public final class NettyFoscamTextParser {
         final VerifyRespTextDto.Builder builder = VerifyRespTextDto.builder()
                 .resultCode(resultCode);
 
-        if (resultCode.value() == ResultCodeE.CORRECT.getValue()) {
+        if (ResultCodeE.fromValue(resultCode) == ResultCodeE.CORRECT) {
             builder.reserve(NettyFosTypeReader.fosInt8(buf));
         }
 
@@ -158,7 +158,7 @@ public final class NettyFoscamTextParser {
         final LoginRespTextDto.Builder builder = LoginRespTextDto.builder()
                 .resultCode(result);
 
-        if (ResultCodeE.fromValue(result.value()) == ResultCodeE.CORRECT) {
+        if (ResultCodeE.fromValue(result) == ResultCodeE.CORRECT) {
             final byte[] cameraId = readBytes(CAMERA_ID_LEN, buf);
             final byte[] reserve1 = readBytes(RESERVE1.length, buf);
             final byte[] reserve2 = readBytes(RESERVE2.length, buf);

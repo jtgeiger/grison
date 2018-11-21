@@ -13,7 +13,6 @@ import com.sibilantsolutions.grison.driver.foscam.dto.CommandDto;
 import com.sibilantsolutions.grison.driver.foscam.dto.FoscamOpCode;
 import com.sibilantsolutions.grison.driver.foscam.dto.LoginRespDetailsDto;
 import com.sibilantsolutions.grison.driver.foscam.dto.LoginRespTextDto;
-import com.sibilantsolutions.grison.driver.foscam.type.FosInt16;
 import com.sibilantsolutions.grison.driver.foscam.type.FosInt32;
 import com.sibilantsolutions.grison.driver.foscam.type.FosInt8;
 import com.sibilantsolutions.grison.net.netty.codec.NettyCommandDtoParser;
@@ -32,7 +31,7 @@ public class NettyCommandDtoParserTest {
         assertEquals(FosInt32.create(27), dto.textLength());
         assertEquals(FosInt32.create(27), dto.reserve3());
         assertEquals(LoginRespTextDto.builder()
-                .resultCode(FosInt16.create(ResultCodeE.CORRECT.getValue()))
+                .resultCode(ResultCodeE.CORRECT.value)
                 .loginRespDetails(LoginRespDetailsDto.builder()
                         .cameraId("00626E4E72BF\0".getBytes(StandardCharsets.ISO_8859_1))
                         .firmwareVersion(new byte[]{11, 37, 2, 56})

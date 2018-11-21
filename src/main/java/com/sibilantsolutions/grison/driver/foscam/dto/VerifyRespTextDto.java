@@ -42,7 +42,7 @@ public abstract class VerifyRespTextDto implements FoscamTextDto {
         public VerifyRespTextDto build() {
             final VerifyRespTextDto dto = autoBuild();
 
-            if (dto.resultCode().value() == ResultCodeE.CORRECT.getValue()) {
+            if (ResultCodeE.fromValue(dto.resultCode()) == ResultCodeE.CORRECT) {
                 checkArgument(dto.reserve().isPresent(), "reserve missing");
             } else {
                 checkArgument(!dto.reserve().isPresent(), "expected reserve to be absent");

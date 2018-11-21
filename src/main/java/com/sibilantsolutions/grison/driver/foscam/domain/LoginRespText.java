@@ -3,6 +3,7 @@ package com.sibilantsolutions.grison.driver.foscam.domain;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 
+import com.sibilantsolutions.grison.driver.foscam.type.FosInt16;
 import com.sibilantsolutions.utils.util.Convert;
 
 public class LoginRespText implements DatastreamI
@@ -53,7 +54,7 @@ public class LoginRespText implements DatastreamI
 
         short resultCodeNum = bb.getShort();
 
-        text.resultCode = ResultCodeE.fromValue( resultCodeNum );
+        text.resultCode = ResultCodeE.fromValue(FosInt16.create(resultCodeNum));
 
         String cameraId = Convert.get( 13, bb );
         cameraId = cameraId.trim();
@@ -78,7 +79,7 @@ public class LoginRespText implements DatastreamI
         ByteBuffer bb = ByteBuffer.allocate( 2 + 13 + 4 + 4 + 4 );
         bb.order( ByteOrder.LITTLE_ENDIAN );
 
-        bb.putShort( resultCode.getValue() );
+        bb.putShort(resultCode.value.value());
 
         Convert.put( Convert.padRearOrTruncate( cameraId, 12, (char)0 ), bb ); //12 bytes
         bb.put( (byte)0x00 );   //Null terminator.

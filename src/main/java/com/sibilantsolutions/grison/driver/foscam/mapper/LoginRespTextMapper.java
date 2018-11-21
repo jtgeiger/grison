@@ -14,7 +14,7 @@ public final class LoginRespTextMapper implements DtoToEntityMapper<LoginRespTex
     public LoginRespTextEntity apply(LoginRespTextDto dto) {
         final LoginRespTextEntity.Builder builder = LoginRespTextEntity.builder();
 
-        final ResultCodeE resultCode = ResultCodeE.fromValue(dto.resultCode().value());
+        final ResultCodeE resultCode = ResultCodeE.fromValue(dto.resultCode());
         builder.resultCode(resultCode);
 
         dto.loginRespDetails().ifPresent(loginRespDetailsDto -> {

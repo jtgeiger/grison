@@ -41,7 +41,7 @@ public abstract class VideoStartRespTextDto implements FoscamTextDto {
         public VideoStartRespTextDto build() {
             final VideoStartRespTextDto dto = autoBuild();
 
-            if (dto.result().value() == ResultCodeE.CORRECT.getValue()) {
+            if (ResultCodeE.fromValue(dto.result()) == ResultCodeE.CORRECT) {
                 checkArgument(dto.dataConnectionId().isPresent(), "dataConnectionId missing");
             } else {
                 checkArgument(!dto.dataConnectionId().isPresent(), "expected dataConnectionId to be absent");

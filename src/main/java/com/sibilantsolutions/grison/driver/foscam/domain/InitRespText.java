@@ -3,6 +3,8 @@ package com.sibilantsolutions.grison.driver.foscam.domain;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 
+import com.sibilantsolutions.grison.driver.foscam.type.FosInt16;
+
 public class InitRespText implements DatastreamI
 {
     private ResultCodeE resultCode;     //INT16 (2 bytes; little endian)
@@ -24,7 +26,7 @@ public class InitRespText implements DatastreamI
         ByteBuffer bb = ByteBuffer.wrap( data, offset, length );
         bb.order( ByteOrder.LITTLE_ENDIAN );
 
-        text.resultCode = ResultCodeE.fromValue( bb.getShort() );
+        text.resultCode = ResultCodeE.fromValue(FosInt16.create(bb.getShort()));
 
         return text;
     }
@@ -35,7 +37,7 @@ public class InitRespText implements DatastreamI
         ByteBuffer bb = ByteBuffer.allocate( 2 );
         bb.order( ByteOrder.LITTLE_ENDIAN );
 
-        bb.putShort( resultCode.getValue() );
+        bb.putShort(resultCode.value.value());
 
         return bb.array();
     }
