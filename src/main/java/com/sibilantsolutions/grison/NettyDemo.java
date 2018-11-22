@@ -6,12 +6,12 @@ import org.reactivestreams.Subscription;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.sibilantsolutions.grison.driver.foscam.domain.Command;
-import com.sibilantsolutions.grison.driver.foscam.domain.ProtocolE;
-import com.sibilantsolutions.grison.driver.foscam.domain.SearchProtocolOpCodeE;
-import com.sibilantsolutions.grison.driver.foscam.domain.SearchReqText;
 import com.sibilantsolutions.grison.driver.foscam.dto.CommandDto;
+import com.sibilantsolutions.grison.driver.foscam.dto.SearchReqTextDto;
 import com.sibilantsolutions.grison.net.netty.SearchChannelInitializer;
+import com.sibilantsolutions.grison.net.netty.codec.FoscamTextByteBufDTOEncoder;
+import com.sibilantsolutions.grison.net.netty.codec.SearchReqTextDtoEncoder;
+import com.sibilantsolutions.grison.net.netty.codec.dto.FoscamTextByteBufDTO;
 import com.sibilantsolutions.grison.net.retrofit.CgiRetrofitService;
 import com.sibilantsolutions.grison.net.retrofit.FoscamInsecureAuthInterceptor;
 import com.sibilantsolutions.grison.net.retrofit.HttpResult;
@@ -30,6 +30,7 @@ import com.sibilantsolutions.grison.rx.event.xform.StateAndResultToStateBiFuncti
 import com.sibilantsolutions.grison.rx.event.xform.StateToState;
 import com.sibilantsolutions.grison.rx.event.xform.UiEventToAbstractAction;
 import io.netty.bootstrap.Bootstrap;
+import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelFutureListener;
@@ -137,15 +138,18 @@ public class NettyDemo {
 
             LOG.info("{} got channel.", channel);
 
-            Command c = new Command();
-            c.setProtocol(ProtocolE.SEARCH_PROTOCOL);
-            c.setOpCode(SearchProtocolOpCodeE.Search_Req);
-            c.setCommandText(new SearchReqText());
-//
+            final SearchReqTextDto searchReqTextDto = SearchReqTextDto.builder().build();
+            final FoscamTextByteBufDTO foscamTextByteBufDTO = FoscamTextByteBufDTO.create(searchReqTextDto.opCode(),
+                    SearchReqTextDtoEncoder.encodeToNewBuf(searchReqTextDto));
+
+            int len = CommandDto.COMMAND_PREFIX_LENGTH + searchReqTextDto.encodedLength();
+            final ByteBuf buffer = Unpooled.buffer(len, len);
+            new FoscamTextByteBufDTOEncoder().encode(null, foscamTextByteBufDTO, buffer);
+
             channel
                     .writeAndFlush(
                             new DatagramPacket(
-                                    Unpooled.wrappedBuffer(c.toDatastream()),
+                                    buffer,
                                     new InetSocketAddress(BROADCAST_ADDRESS, BROADCAST_PORT)))
                     .addListener((ChannelFutureListener) future -> {
                         if (future.isSuccess()) {

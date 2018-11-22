@@ -12,7 +12,7 @@ import io.netty.handler.codec.MessageToByteEncoder;
 public class FoscamTextByteBufDTOEncoder extends MessageToByteEncoder<FoscamTextByteBufDTO> {
 
     @Override
-    protected void encode(ChannelHandlerContext ctx, FoscamTextByteBufDTO msg, ByteBuf out) {
+    public void encode(ChannelHandlerContext ctx, FoscamTextByteBufDTO msg, ByteBuf out) {
         out.writeBytes(msg.opCode().protocol.getValue());   //4
         NettyFosTypeWriter.write(msg.opCode().value, out);  //2
         NettyFosTypeWriter.write(CommandDto.RESERVE1, out); //1

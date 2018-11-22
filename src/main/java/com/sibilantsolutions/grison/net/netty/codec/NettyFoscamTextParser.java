@@ -1,6 +1,5 @@
 package com.sibilantsolutions.grison.net.netty.codec;
 
-import static com.sibilantsolutions.grison.driver.foscam.dto.LoginRespDetailsDto.CAMERA_ID_LEN;
 import static com.sibilantsolutions.grison.driver.foscam.dto.LoginRespDetailsDto.FIRMWARE_VERSION_LEN;
 import static com.sibilantsolutions.grison.driver.foscam.dto.LoginRespDetailsDto.RESERVE1;
 import static com.sibilantsolutions.grison.driver.foscam.dto.LoginRespDetailsDto.RESERVE2;
@@ -9,12 +8,16 @@ import static com.sibilantsolutions.grison.net.netty.codec.parse.NettyByteBufHel
 import com.sibilantsolutions.grison.driver.foscam.domain.ResultCodeE;
 import com.sibilantsolutions.grison.driver.foscam.dto.FoscamOpCode;
 import com.sibilantsolutions.grison.driver.foscam.dto.FoscamTextDto;
+import com.sibilantsolutions.grison.driver.foscam.dto.InitReqTextDto;
+import com.sibilantsolutions.grison.driver.foscam.dto.InitRespTextDto;
 import com.sibilantsolutions.grison.driver.foscam.dto.KeepAliveAudioVideoTextDto;
 import com.sibilantsolutions.grison.driver.foscam.dto.KeepAliveOperationTextDto;
 import com.sibilantsolutions.grison.driver.foscam.dto.LoginReqAudioVideoTextDto;
 import com.sibilantsolutions.grison.driver.foscam.dto.LoginReqOperationTextDto;
 import com.sibilantsolutions.grison.driver.foscam.dto.LoginRespDetailsDto;
 import com.sibilantsolutions.grison.driver.foscam.dto.LoginRespTextDto;
+import com.sibilantsolutions.grison.driver.foscam.dto.SearchReqTextDto;
+import com.sibilantsolutions.grison.driver.foscam.dto.SearchRespTextDto;
 import com.sibilantsolutions.grison.driver.foscam.dto.Unk02TextDto;
 import com.sibilantsolutions.grison.driver.foscam.dto.VerifyReqTextDto;
 import com.sibilantsolutions.grison.driver.foscam.dto.VerifyRespTextDto;
@@ -71,9 +74,69 @@ public final class NettyFoscamTextParser {
             case Video_Data:
                 return videoData(buf);
 
+            case Search_Req:
+                return searchReq(buf);
+
+            case Search_Resp:
+                return searchResp(buf);
+
+            case Init_Req:
+                return initReq(buf);
+
+            case Init_Resp:
+                return initResp(buf);
+
             default:
                 throw new IllegalArgumentException(String.format("Unexpected foscamOpCode=%s", foscamOpCode));
         }
+    }
+
+    private static InitRespTextDto initResp(ByteBuf buf) {
+        return InitRespTextDto.builder()
+                .resultCode(NettyFosTypeReader.fosInt16(buf))
+                .build();
+    }
+
+    private static InitReqTextDto initReq(ByteBuf buf) {
+        return InitReqTextDto.builder()
+                .reserve1(NettyFosTypeReader.fosInt8(buf))
+                .reserve2(NettyFosTypeReader.fosInt8(buf))
+                .reserve3(NettyFosTypeReader.fosInt8(buf))
+                .reserve4(NettyFosTypeReader.fosInt8(buf))
+                .cameraId(readBytes(InitReqTextDto.CAMERA_ID_LEN, buf))
+                .user(readBytes(InitReqTextDto.USER_LEN, buf))
+                .password(readBytes(InitReqTextDto.PASSWORD_LEN, buf))
+                .ip(NettyFosTypeReader.fosInt32R(buf))
+                .mask(NettyFosTypeReader.fosInt32R(buf))
+                .gateway(NettyFosTypeReader.fosInt32R(buf))
+                .dns(NettyFosTypeReader.fosInt32R(buf))
+                .cameraPort(NettyFosTypeReader.fosInt16R(buf))
+                .build();
+    }
+
+    private static SearchRespTextDto searchResp(ByteBuf buf) {
+        return SearchRespTextDto.builder()
+                .cameraId(readBytes(SearchRespTextDto.CAMERA_ID_LEN, buf))
+                .cameraName(readBytes(SearchRespTextDto.CAMERA_NAME_LEN, buf))
+                .ip(NettyFosTypeReader.fosInt32R(buf))
+                .mask(NettyFosTypeReader.fosInt32R(buf))
+                .gateway(NettyFosTypeReader.fosInt32R(buf))
+                .dns(NettyFosTypeReader.fosInt32R(buf))
+                .reserve(readBytes(SearchRespTextDto.RESERVE.length, buf))
+                .sysSoftwareVersion(readBytes(SearchRespTextDto.SYS_SOFTWARE_VERSION_LEN, buf))
+                .appSoftwareVersion(readBytes(SearchRespTextDto.APP_SOFTWARE_VERSION_LEN, buf))
+                .cameraPort(NettyFosTypeReader.fosInt16R(buf))
+                .dhcpEnabled(NettyFosTypeReader.fosInt8(buf))
+                .build();
+    }
+
+    private static SearchReqTextDto searchReq(ByteBuf buf) {
+        return SearchReqTextDto.builder()
+                .reserve1(NettyFosTypeReader.fosInt8(buf))
+                .reserve2(NettyFosTypeReader.fosInt8(buf))
+                .reserve3(NettyFosTypeReader.fosInt8(buf))
+                .reserve4(NettyFosTypeReader.fosInt8(buf))
+                .build();
     }
 
     private static VideoDataTextDto videoData(ByteBuf buf) {
@@ -159,7 +222,7 @@ public final class NettyFoscamTextParser {
                 .resultCode(result);
 
         if (ResultCodeE.fromValue(result) == ResultCodeE.CORRECT) {
-            final byte[] cameraId = readBytes(CAMERA_ID_LEN, buf);
+            final byte[] cameraId = readBytes(LoginRespDetailsDto.CAMERA_ID_LEN, buf);
             final byte[] reserve1 = readBytes(RESERVE1.length, buf);
             final byte[] reserve2 = readBytes(RESERVE2.length, buf);
             final byte[] firmwareVersion = readBytes(FIRMWARE_VERSION_LEN, buf);

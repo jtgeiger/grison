@@ -7,7 +7,8 @@ import java.util.concurrent.TimeUnit;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.sibilantsolutions.grison.driver.foscam.domain.Command;
+import com.sibilantsolutions.grison.driver.foscam.dto.CommandDto;
+import com.sibilantsolutions.grison.net.netty.codec.FoscamCommandDtoDecoder;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelFutureListener;
@@ -46,7 +47,7 @@ public class SearchChannelInitializer extends ChannelInitializer {
                 .addLast(new LoggingHandler())
                 .addLast(new DatagramPacketDecoder(new MessageToMessageDecoder<ByteBuf>() {
                     @Override
-                    protected void decode(ChannelHandlerContext ctx, ByteBuf msg, List<Object> out) throws Exception {
+                    protected void decode(ChannelHandlerContext ctx, ByteBuf msg, List<Object> out) {
                         //Extract the ByteBuf from the DatagramPacket and pass it along.
                         //It has to be retained here since it still needs to be consumed downstream.
                         out.add(msg.retain());
@@ -57,7 +58,7 @@ public class SearchChannelInitializer extends ChannelInitializer {
                 //small enough to be sent in one indivisible chunk.  Here it's just used to validate
                 //the packet format and do a sanity check.
                 .addLast(new LengthFieldBasedFrameDecoder(ByteOrder.LITTLE_ENDIAN, 128, 0x0F, 4, 4, 0, true))
-                .addLast(new FoscamCommandCodec())
+                .addLast(new FoscamCommandDtoDecoder())
                 //Only wait for responses for so long.  Fires ReadTimeoutException and closes the channel.
                 .addLast(new ReadTimeoutHandler(READ_TIMEOUT_SECONDS))
                 .addLast(new ChannelInboundHandlerAdapter() {
@@ -70,10 +71,10 @@ public class SearchChannelInitializer extends ChannelInitializer {
                         }
                     }
                 })
-                .addLast(new SimpleChannelInboundHandler<Command>() {
+                .addLast(new SimpleChannelInboundHandler<CommandDto>() {
                     @Override
-                    protected void channelRead0(ChannelHandlerContext ctx, Command msg) throws Exception {
-                        LOG.info("Got msg={}, text={}.", msg, msg.getCommandText());
+                    protected void channelRead0(ChannelHandlerContext ctx, CommandDto msg) {
+                        LOG.info("Got msg={}.", msg);
                         //TODO: Fire to subscriber.
                     }
                 })
