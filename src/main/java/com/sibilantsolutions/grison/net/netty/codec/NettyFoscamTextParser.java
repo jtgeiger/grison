@@ -6,6 +6,11 @@ import static com.sibilantsolutions.grison.driver.foscam.dto.LoginRespDetailsDto
 import static com.sibilantsolutions.grison.net.netty.codec.parse.NettyByteBufHelper.readBytes;
 
 import com.sibilantsolutions.grison.driver.foscam.domain.ResultCodeE;
+import com.sibilantsolutions.grison.driver.foscam.dto.AlarmNotifyTextDto;
+import com.sibilantsolutions.grison.driver.foscam.dto.AudioDataTextDto;
+import com.sibilantsolutions.grison.driver.foscam.dto.AudioEndTextDto;
+import com.sibilantsolutions.grison.driver.foscam.dto.AudioStartReqTextDto;
+import com.sibilantsolutions.grison.driver.foscam.dto.AudioStartRespTextDto;
 import com.sibilantsolutions.grison.driver.foscam.dto.FoscamOpCode;
 import com.sibilantsolutions.grison.driver.foscam.dto.FoscamTextDto;
 import com.sibilantsolutions.grison.driver.foscam.dto.InitReqTextDto;
@@ -18,6 +23,10 @@ import com.sibilantsolutions.grison.driver.foscam.dto.LoginRespDetailsDto;
 import com.sibilantsolutions.grison.driver.foscam.dto.LoginRespTextDto;
 import com.sibilantsolutions.grison.driver.foscam.dto.SearchReqTextDto;
 import com.sibilantsolutions.grison.driver.foscam.dto.SearchRespTextDto;
+import com.sibilantsolutions.grison.driver.foscam.dto.TalkDataTextDto;
+import com.sibilantsolutions.grison.driver.foscam.dto.TalkEndTextDto;
+import com.sibilantsolutions.grison.driver.foscam.dto.TalkStartReqTextDto;
+import com.sibilantsolutions.grison.driver.foscam.dto.TalkStartRespTextDto;
 import com.sibilantsolutions.grison.driver.foscam.dto.Unk02TextDto;
 import com.sibilantsolutions.grison.driver.foscam.dto.VerifyReqTextDto;
 import com.sibilantsolutions.grison.driver.foscam.dto.VerifyRespTextDto;
@@ -68,11 +77,38 @@ public final class NettyFoscamTextParser {
             case Video_End:
                 return videoEnd(buf);
 
+            case Audio_Start_Req:
+                return audioStartReq(buf);
+
+            case Audio_Start_Resp:
+                return audioStartResp(buf);
+
+            case Audio_End:
+                return audioEnd(buf);
+
+            case Talk_Start_Req:
+                return talkStartReq(buf);
+
+            case Talk_Start_Resp:
+                return talkStartResp(buf);
+
+            case Talk_End:
+                return talkEnd(buf);
+
+            case Alarm_Notify:
+                return alarmNotify(buf);
+
             case Login_Req_AudioVideo:
                 return loginReqAudioVideo(buf);
 
             case Video_Data:
                 return videoData(buf);
+
+            case Audio_Data:
+                return audioData(buf);
+
+            case Talk_Data:
+                return talkData(buf);
 
             case Search_Req:
                 return searchReq(buf);
@@ -89,6 +125,52 @@ public final class NettyFoscamTextParser {
             default:
                 throw new IllegalArgumentException(String.format("Unexpected foscamOpCode=%s", foscamOpCode));
         }
+    }
+
+    private static TalkDataTextDto talkData(ByteBuf buf) {
+        final FosInt32 timestampMs = NettyFosTypeReader.fosInt32(buf);
+        final FosInt32 snOfPacket = NettyFosTypeReader.fosInt32(buf);
+        final FosInt32 gatherTimeSecs = NettyFosTypeReader.fosInt32(buf);
+        final FosInt8 audioFormat = NettyFosTypeReader.fosInt8(buf);
+        final FosInt32 dataLength = NettyFosTypeReader.fosInt32(buf);
+        final byte[] data = readBytes(dataLength.value(), buf);
+
+        return TalkDataTextDto.builder()
+                .timestampMs(timestampMs)
+                .snOfPacket(snOfPacket)
+                .gatherTimeSecs(gatherTimeSecs)
+                .audioFormat(audioFormat)
+                .dataLength(dataLength)
+                .data(data)
+                .build();
+    }
+
+    private static AudioDataTextDto audioData(ByteBuf buf) {
+        final FosInt32 timestampMs = NettyFosTypeReader.fosInt32(buf);
+        final FosInt32 snOfPacket = NettyFosTypeReader.fosInt32(buf);
+        final FosInt32 gatherTimeSecs = NettyFosTypeReader.fosInt32(buf);
+        final FosInt8 audioFormat = NettyFosTypeReader.fosInt8(buf);
+        final FosInt32 dataLength = NettyFosTypeReader.fosInt32(buf);
+        final byte[] data = readBytes(dataLength.value(), buf);
+
+        return AudioDataTextDto.builder()
+                .timestampMs(timestampMs)
+                .snOfPacket(snOfPacket)
+                .gatherTimeSecs(gatherTimeSecs)
+                .audioFormat(audioFormat)
+                .dataLength(dataLength)
+                .data(data)
+                .build();
+    }
+
+    private static AlarmNotifyTextDto alarmNotify(ByteBuf buf) {
+        return AlarmNotifyTextDto.builder()
+                .type(NettyFosTypeReader.fosInt8(buf))
+                .reserve1(NettyFosTypeReader.fosInt16(buf))
+                .reserve2(NettyFosTypeReader.fosInt16(buf))
+                .reserve3(NettyFosTypeReader.fosInt16(buf))
+                .reserve4(NettyFosTypeReader.fosInt16(buf))
+                .build();
     }
 
     private static InitRespTextDto initResp(ByteBuf buf) {
@@ -176,6 +258,42 @@ public final class NettyFoscamTextParser {
 
     private static VideoStartReqTextDto videoStartReq(ByteBuf buf) {
         return VideoStartReqTextDto.builder().reserve(NettyFosTypeReader.fosInt8(buf)).build();
+    }
+
+    private static AudioEndTextDto audioEnd(ByteBuf buf) {
+        return AudioEndTextDto.builder().build();
+    }
+
+    private static AudioStartRespTextDto audioStartResp(ByteBuf buf) {
+        final FosInt16 result = NettyFosTypeReader.fosInt16(buf);
+        final AudioStartRespTextDto.Builder builder = AudioStartRespTextDto.builder()
+                .result(result);
+        if (ResultCodeE.fromValue(result) == ResultCodeE.CORRECT) {
+            builder.dataConnectionId(NettyFosTypeReader.fosInt32(buf));
+        }
+        return builder.build();
+    }
+
+    private static AudioStartReqTextDto audioStartReq(ByteBuf buf) {
+        return AudioStartReqTextDto.builder().reserve(NettyFosTypeReader.fosInt8(buf)).build();
+    }
+
+    private static TalkStartReqTextDto talkStartReq(ByteBuf buf) {
+        return TalkStartReqTextDto.builder().reserve(NettyFosTypeReader.fosInt8(buf)).build();
+    }
+
+    private static TalkEndTextDto talkEnd(ByteBuf buf) {
+        return TalkEndTextDto.builder().build();
+    }
+
+    private static TalkStartRespTextDto talkStartResp(ByteBuf buf) {
+        final FosInt16 result = NettyFosTypeReader.fosInt16(buf);
+        final TalkStartRespTextDto.Builder builder = TalkStartRespTextDto.builder()
+                .result(result);
+        if (ResultCodeE.fromValue(result) == ResultCodeE.CORRECT) {
+            builder.dataConnectionId(NettyFosTypeReader.fosInt32(buf));
+        }
+        return builder.build();
     }
 
     private static Unk02TextDto unk02(ByteBuf buf) {
