@@ -10,10 +10,11 @@ import io.netty.buffer.ByteBuf;
 public class VerifyReqTextDtoParser implements Function<ByteBuf, VerifyReqTextDto> {
     @Override
     public VerifyReqTextDto apply(ByteBuf buf) {
-        return VerifyReqTextDto.builder()
-                .user(readBytes(VerifyReqTextDto.USER_LEN, buf))
-                .password(readBytes(VerifyReqTextDto.PASSWORD_LEN, buf))
-                .build();
-
+        return parse.apply(buf);
     }
+
+    public static final Function<ByteBuf, VerifyReqTextDto> parse = buf -> VerifyReqTextDto.builder()
+            .user(readBytes(VerifyReqTextDto.USER_LEN, buf))
+            .password(readBytes(VerifyReqTextDto.PASSWORD_LEN, buf))
+            .build();
 }
