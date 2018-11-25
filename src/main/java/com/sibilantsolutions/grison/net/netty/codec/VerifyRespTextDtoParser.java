@@ -8,7 +8,7 @@ import com.sibilantsolutions.grison.driver.foscam.type.FosInt16;
 import com.sibilantsolutions.grison.net.netty.codec.parse.NettyFosTypeReader;
 import io.netty.buffer.ByteBuf;
 
-public class VerifyRespDtoParser implements Function<ByteBuf, VerifyRespTextDto> {
+public class VerifyRespTextDtoParser implements Function<ByteBuf, VerifyRespTextDto> {
     @Override
     public VerifyRespTextDto apply(ByteBuf buf) {
         final FosInt16 resultCode = NettyFosTypeReader.fosInt16(buf);

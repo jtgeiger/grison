@@ -18,10 +18,10 @@ public final class NettyFoscamTextParser {
                 return new LoginRespTextDtoParser().apply(buf);
 
             case Verify_Req:
-                return new VerifyReqDtoParser().apply(buf);
+                return new VerifyReqTextDtoParser().apply(buf);
 
             case Verify_Resp:
-                return new VerifyRespDtoParser().apply(buf);
+                return new VerifyRespTextDtoParser().apply(buf);
 
             case UNK02:
                 return new Unk02TextDtoParser().apply(buf);
