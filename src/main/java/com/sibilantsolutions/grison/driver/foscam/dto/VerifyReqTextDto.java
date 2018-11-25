@@ -41,7 +41,9 @@ public abstract class VerifyReqTextDto implements FoscamTextDto {
             final VerifyReqTextDto dto = autoBuild();
 
             checkArgument(dto.user().length == USER_LEN, "user len expected=%s actual=%s", USER_LEN, dto.user().length);
+            checkArgument(dto.user()[USER_LEN - 1] == 0, "user should end with null byte actual=%s", dto.user()[USER_LEN - 1]);
             checkArgument(dto.password().length == PASSWORD_LEN, "password len expected=%s actual=%s", PASSWORD_LEN, dto.password().length);
+            checkArgument(dto.password()[PASSWORD_LEN - 1] == 0, "user should end with null byte actual=%s", dto.password()[PASSWORD_LEN - 1]);
 
             return dto;
         }

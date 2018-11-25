@@ -7,6 +7,7 @@ import java.util.Optional;
 import org.junit.Test;
 
 import com.sibilantsolutions.grison.driver.foscam.domain.ResultCodeE;
+import com.sibilantsolutions.grison.driver.foscam.dto.CommandDto;
 import com.sibilantsolutions.grison.driver.foscam.dto.LoginRespTextDto;
 import com.sibilantsolutions.grison.driver.foscam.entity.LoginRespTextEntity;
 import com.sibilantsolutions.grison.driver.foscam.entity.VersionEntity;
@@ -20,7 +21,7 @@ public class LoginRespTextMapperTest {
     public void apply() {
 
         final ByteBuf byteBuf = new ResourceToByteBuf().apply("/samples/login_resp.bin");
-        byteBuf.readerIndex(4 + 2 + 1 + 8 + 4 + 4); //Skip ahead to the text.
+        byteBuf.readerIndex(CommandDto.COMMAND_PREFIX_LENGTH); //Skip ahead to the text.
         final LoginRespTextDto dto = new LoginRespTextDtoParser().apply(byteBuf);
         final LoginRespTextEntity entity = new LoginRespTextMapper().apply(dto);
         assertEquals(ResultCodeE.CORRECT, entity.resultCode());

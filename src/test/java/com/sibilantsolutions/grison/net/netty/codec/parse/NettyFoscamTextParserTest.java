@@ -8,6 +8,7 @@ import java.nio.charset.StandardCharsets;
 import org.junit.Test;
 
 import com.google.common.base.VerifyException;
+import com.sibilantsolutions.grison.driver.foscam.dto.CommandDto;
 import com.sibilantsolutions.grison.driver.foscam.dto.LoginRespDetailsDto;
 import com.sibilantsolutions.grison.driver.foscam.dto.LoginRespTextDto;
 import com.sibilantsolutions.grison.net.netty.codec.LoginRespTextDtoParser;
@@ -18,7 +19,7 @@ public class NettyFoscamTextParserTest {
     @Test
     public void loginRespDto() {
         final ByteBuf byteBuf = new ResourceToByteBuf().apply("/samples/login_resp.bin");
-        byteBuf.readerIndex(4 + 2 + 1 + 8 + 4 + 4); //Skip ahead to the text.
+        byteBuf.readerIndex(CommandDto.COMMAND_PREFIX_LENGTH); //Skip ahead to the text.
         final LoginRespTextDto dto = new LoginRespTextDtoParser().apply(byteBuf);
         assertEquals(0, dto.resultCode().value());
         final LoginRespDetailsDto loginRespDetailsDto = dto.loginRespDetails().orElseThrow(VerifyException::new);
