@@ -10,7 +10,7 @@ import org.junit.Test;
 import com.google.common.base.VerifyException;
 import com.sibilantsolutions.grison.driver.foscam.dto.LoginRespDetailsDto;
 import com.sibilantsolutions.grison.driver.foscam.dto.LoginRespTextDto;
-import com.sibilantsolutions.grison.net.netty.codec.NettyFoscamTextParser;
+import com.sibilantsolutions.grison.net.netty.codec.LoginRespTextDtoParser;
 import io.netty.buffer.ByteBuf;
 
 public class NettyFoscamTextParserTest {
@@ -19,7 +19,7 @@ public class NettyFoscamTextParserTest {
     public void loginRespDto() {
         final ByteBuf byteBuf = new ResourceToByteBuf().apply("/samples/login_resp.bin");
         byteBuf.readerIndex(4 + 2 + 1 + 8 + 4 + 4); //Skip ahead to the text.
-        final LoginRespTextDto dto = NettyFoscamTextParser.loginRespDto(byteBuf);
+        final LoginRespTextDto dto = new LoginRespTextDtoParser().apply(byteBuf);
         assertEquals(0, dto.resultCode().value());
         final LoginRespDetailsDto loginRespDetailsDto = dto.loginRespDetails().orElseThrow(VerifyException::new);
         assertArrayEquals("00626E4E72BF\0".getBytes(StandardCharsets.ISO_8859_1), loginRespDetailsDto.cameraId());
