@@ -6,7 +6,6 @@ import com.sibilantsolutions.grison.driver.foscam.dto.AlarmNotifyTextDto;
 import com.sibilantsolutions.grison.net.netty.codec.dto.FoscamTextByteBufDTO;
 import com.sibilantsolutions.grison.net.netty.codec.parse.NettyFosTypeWriter;
 import io.netty.buffer.ByteBuf;
-import io.netty.buffer.Unpooled;
 import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.MessageToMessageEncoder;
@@ -16,7 +15,7 @@ public class AlarmNotifyTextDtoEncoder extends MessageToMessageEncoder<AlarmNoti
     @Override
     protected void encode(ChannelHandlerContext ctx, AlarmNotifyTextDto msg, List<Object> out) {
 
-        final ByteBuf textBuf = Unpooled.buffer(msg.encodedLength(), msg.encodedLength());
+        final ByteBuf textBuf = ctx.alloc().buffer(msg.encodedLength(), msg.encodedLength());
 
         NettyFosTypeWriter.write(msg.type(), textBuf);
         NettyFosTypeWriter.write(msg.reserve1(), textBuf);

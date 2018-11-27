@@ -31,7 +31,6 @@ import com.sibilantsolutions.grison.rx.event.xform.StateToState;
 import com.sibilantsolutions.grison.rx.event.xform.UiEventToAbstractAction;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.buffer.ByteBuf;
-import io.netty.buffer.Unpooled;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelFutureListener;
 import io.netty.channel.ChannelOption;
@@ -137,10 +136,10 @@ public class NettyDemo {
 
             final SearchReqTextDto searchReqTextDto = SearchReqTextDto.builder().build();
             final FoscamTextByteBufDTO foscamTextByteBufDTO = FoscamTextByteBufDTO.create(searchReqTextDto.opCode(),
-                    SearchReqTextDtoEncoder.encodeToNewBuf(searchReqTextDto));
+                    SearchReqTextDtoEncoder.encode(searchReqTextDto, channel.alloc().buffer(searchReqTextDto.encodedLength(), searchReqTextDto.encodedLength())));
 
             int len = CommandDto.COMMAND_PREFIX_LENGTH + searchReqTextDto.encodedLength();
-            final ByteBuf buffer = Unpooled.buffer(len, len);
+            final ByteBuf buffer = channel.alloc().buffer(len, len);
             new FoscamTextByteBufDTOEncoder().encode(null, foscamTextByteBufDTO, buffer);
 
             channel
