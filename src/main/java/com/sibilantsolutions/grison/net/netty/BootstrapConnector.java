@@ -21,7 +21,16 @@ public class BootstrapConnector {
     public Flowable<ChannelConnectEvent> connect(Bootstrap bootstrap) {
         return Flowable.create(emitter -> {
 
+            //Use a worker to make sure that all emissions occur on the same thread for the sake of consistency for
+            //downstream.
             final Scheduler.Worker worker = Schedulers.io().createWorker();
+
+            //Add the worker to a CompositeDisposable that will be set to the emitter.
+            //Since the worker is registered to be disposed, we don't need to add any of the schedule() Disposables
+            //since those will be cancelled if the worker is disposed.
+            final CompositeDisposable compositeDisposable = new CompositeDisposable(worker);
+
+            emitter.setDisposable(compositeDisposable);
 
             worker.schedule(() -> emitter.onNext(ChannelConnectEvent.IN_FLIGHT));
 
@@ -41,28 +50,26 @@ public class BootstrapConnector {
                             worker.schedule(() -> emitter.onNext(ChannelConnectEvent.fail(new RuntimeException(future.cause()))));
                         }
 
-                        worker.schedule(emitter::onComplete);
-
                         //We're done with the worker, release it to avoid any leaks.
-                        worker.dispose();
+                        worker.schedule(worker::dispose);
                     });
 
-            emitter.setDisposable(new CompositeDisposable(
-                    new CancellableDisposable(() -> {
-                        if (channelFuture.isDone()) {
-                            if (channelFuture.isSuccess()) {
-                                LOG.info("channel={} closing due to downstream dispose.", channelFuture.channel());
-                                channelFuture
-                                        .channel()
-                                        .close();
-                            }
-                        } else {
-                            LOG.info("Cancelling channel future.");
-                            channelFuture.cancel(true);
-                        }
-                    }),
-                    worker)
-            );
+            final CancellableDisposable channelFutureDisposable = new CancellableDisposable(() -> {
+                if (channelFuture.isDone()) {
+                    if (channelFuture.isSuccess()) {
+                        LOG.info("channel={} closing due to downstream dispose.", channelFuture.channel());
+                        channelFuture
+                                .channel()
+                                .close();
+                    }
+                } else {
+                    LOG.info("Cancelling channel future.");
+                    channelFuture.cancel(true);
+                }
+            });
+
+            compositeDisposable.add(channelFutureDisposable);
+
         }, BackpressureStrategy.BUFFER);
     }
 

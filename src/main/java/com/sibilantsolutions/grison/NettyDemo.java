@@ -80,16 +80,13 @@ public class NettyDemo {
 
         final FlowableProcessor<AbstractAction> dynamicActions = PublishProcessor.<AbstractAction>create().toSerialized();
 
-//        //HACK TODO: Funkiness some times; connect the av channel but we never fire the av login; worker hasn't fixed it yet.
-//        final Scheduler.Worker worker = Schedulers.io().createWorker();
-
         Flowable<AbstractAction> actions = Flowable
                 .merge(
                         uiEventsToActions,
                         dynamicActions);
 
-        final PublishProcessor<CommandDto> operationDatastream = PublishProcessor.create();
-        final PublishProcessor<CommandDto> audioVideoDatastream = PublishProcessor.create();
+        final FlowableProcessor<CommandDto> operationDatastream = PublishProcessor.<CommandDto>create().toSerialized();
+        final FlowableProcessor<CommandDto> audioVideoDatastream = PublishProcessor.<CommandDto>create().toSerialized();
 
         final Flowable<OperationReceiveResult> operationReceiveResults = operationDatastream
                 .compose(new CommandToOperationReceiveResult());

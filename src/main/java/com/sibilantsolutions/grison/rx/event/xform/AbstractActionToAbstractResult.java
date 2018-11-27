@@ -17,14 +17,13 @@ import com.sibilantsolutions.grison.rx.event.action.VideoStartAction;
 import com.sibilantsolutions.grison.rx.event.result.AbstractResult;
 import io.reactivex.Flowable;
 import io.reactivex.FlowableTransformer;
-import io.reactivex.processors.PublishProcessor;
 
 public class AbstractActionToAbstractResult implements FlowableTransformer<AbstractAction, AbstractResult> {
 
     private final Subscriber<CommandDto> operationDatastream;
     private final Subscriber<CommandDto> audioVideoDatastream;
 
-    public AbstractActionToAbstractResult(PublishProcessor<CommandDto> operationDatastream, PublishProcessor<CommandDto> audioVideoDatastream) {
+    public AbstractActionToAbstractResult(Subscriber<CommandDto> operationDatastream, Subscriber<CommandDto> audioVideoDatastream) {
         this.operationDatastream = operationDatastream;
         this.audioVideoDatastream = audioVideoDatastream;
     }
