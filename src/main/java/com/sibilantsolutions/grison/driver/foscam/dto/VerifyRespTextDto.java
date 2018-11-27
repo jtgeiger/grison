@@ -23,7 +23,7 @@ public abstract class VerifyRespTextDto implements FoscamTextDto {
 
     @Override
     public final int encodedLength() {
-        return 3;
+        return 2 + reserve().map(fosInt8 -> 1).orElse(0);
     }
 
     public static Builder builder() {

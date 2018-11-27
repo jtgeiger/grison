@@ -6,7 +6,7 @@ import com.google.auto.value.AutoValue;
 import com.sibilantsolutions.grison.driver.foscam.domain.ResultCodeE;
 
 @AutoValue
-public abstract class LoginRespTextEntity {
+public abstract class LoginRespTextEntity implements FoscamTextEntity {
 
     public abstract ResultCodeE resultCode();
 
