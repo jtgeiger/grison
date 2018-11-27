@@ -5,6 +5,7 @@ import java.util.function.Function;
 import com.sibilantsolutions.grison.driver.foscam.dto.VideoDataTextDto;
 import com.sibilantsolutions.grison.driver.foscam.type.FosInt32;
 import com.sibilantsolutions.grison.driver.foscam.type.FosInt8;
+import com.sibilantsolutions.grison.net.netty.codec.parse.NettyByteBufHelper;
 import com.sibilantsolutions.grison.net.netty.codec.parse.NettyFosTypeReader;
 import io.netty.buffer.ByteBuf;
 
@@ -15,8 +16,9 @@ public class VideoDataTextDtoParser implements Function<ByteBuf, VideoDataTextDt
         final FosInt32 framePerSec = NettyFosTypeReader.fosInt32(buf);
         final FosInt8 reserve = NettyFosTypeReader.fosInt8(buf);
         final FosInt32 videoLength = NettyFosTypeReader.fosInt32(buf);
-        byte[] videoData = new byte[videoLength.value()];
-        buf.readBytes(videoData);
+        //Copy the video data out of the buffer into a new array.  Two reasons: we don't want downstream to depend
+        //on Netty, and we can't count on downstream to release a buffer.
+        byte[] videoData = NettyByteBufHelper.readBytes(videoLength.value(), buf);
 
         return VideoDataTextDto.builder()
                 .timestamp(timestamp)
