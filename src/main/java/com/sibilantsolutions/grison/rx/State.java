@@ -6,11 +6,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.sibilantsolutions.grison.driver.foscam.domain.ResultCodeE;
-import com.sibilantsolutions.grison.driver.foscam.dto.LoginRespTextDto;
-import com.sibilantsolutions.grison.driver.foscam.dto.Unk02TextDto;
-import com.sibilantsolutions.grison.driver.foscam.dto.VerifyRespTextDto;
-import com.sibilantsolutions.grison.driver.foscam.dto.VideoDataTextDto;
-import com.sibilantsolutions.grison.driver.foscam.dto.VideoStartRespTextDto;
+import com.sibilantsolutions.grison.driver.foscam.entity.LoginRespTextEntity;
+import com.sibilantsolutions.grison.driver.foscam.entity.Unk02TextEntity;
+import com.sibilantsolutions.grison.driver.foscam.entity.VerifyRespTextEntity;
+import com.sibilantsolutions.grison.driver.foscam.entity.VideoDataTextEntity;
+import com.sibilantsolutions.grison.driver.foscam.entity.VideoStartRespTextEntity;
 import io.netty.channel.Channel;
 
 public class State {
@@ -44,16 +44,16 @@ public class State {
 
     public final HandshakeState handshakeState;
 
-    public final LoginRespTextDto loginRespText;
-    public final VerifyRespTextDto verifyRespText;
+    public final LoginRespTextEntity loginRespText;
+    public final VerifyRespTextEntity verifyRespText;
 
-    public final VideoStartRespTextDto videoStartRespText;
+    public final VideoStartRespTextEntity videoStartRespText;
 
     public final Channel audioVideoChannel;
 
-    public final VideoDataTextDto videoDataText;
+    public final VideoDataTextEntity videoDataText;
 
-    private State(Channel operationChannel, Throwable failureCause, HandshakeState handshakeState, LoginRespTextDto loginRespText, VerifyRespTextDto verifyRespText, VideoStartRespTextDto videoStartRespText, Channel audioVideoChannel, VideoDataTextDto videoDataText) {
+    private State(Channel operationChannel, Throwable failureCause, HandshakeState handshakeState, LoginRespTextEntity loginRespText, VerifyRespTextEntity verifyRespText, VideoStartRespTextEntity videoStartRespText, Channel audioVideoChannel, VideoDataTextEntity videoDataText) {
         this.operationChannel = operationChannel;
         this.failureCause = failureCause;
         this.handshakeState = Objects.requireNonNull(handshakeState);
@@ -84,12 +84,12 @@ public class State {
                 '}';
     }
 
-    public static State loginRespText(LoginRespTextDto loginRespText, State state) {
+    public static State loginRespText(LoginRespTextEntity loginRespText, State state) {
         if (state.handshakeState != HandshakeState.LOGIN_SENT) {
             throw new IllegalStateException("" + state.handshakeState);
         }
 
-        if (ResultCodeE.fromValue(loginRespText.resultCode()) != ResultCodeE.CORRECT) {
+        if (loginRespText.resultCode() != ResultCodeE.CORRECT) {
             throw new RuntimeException("Invalid result=" + loginRespText.resultCode());
         }
 
@@ -116,6 +116,7 @@ public class State {
         }
         return new State(state.operationChannel, null, HandshakeState.VERIFY_SENDING, state.loginRespText, null, null, null, null);
     }
+
     public static State verifySent(State state) {
         if (state.handshakeState != HandshakeState.VERIFY_SENDING) {
             throw new IllegalStateException("" + state.handshakeState);
@@ -123,36 +124,24 @@ public class State {
         return new State(state.operationChannel, null, HandshakeState.VERIFY_SENT, state.loginRespText, null, null, null, null);
     }
 
-    public static State verifyRespText(VerifyRespTextDto verifyRespText, State state) {
+    public static State verifyRespText(VerifyRespTextEntity verifyRespText, State state) {
         if (state.handshakeState != HandshakeState.VERIFY_SENT) {
             throw new IllegalStateException("" + state.handshakeState);
         }
 
-        if (ResultCodeE.fromValue(verifyRespText.resultCode()) != ResultCodeE.CORRECT) {
+        if (verifyRespText.resultCode() != ResultCodeE.CORRECT) {
             throw new RuntimeException("Invalid result=" + verifyRespText.resultCode());
         }
 
         return new State(state.operationChannel, null, HandshakeState.VERIFY_RESPONDED, state.loginRespText, Objects.requireNonNull(verifyRespText), null, null, null);
     }
 
-    public static State unk02(Unk02TextDto unk02Text, State state) {
+    public static State unk02(Unk02TextEntity unk02Text, State state) {
         if (state.handshakeState != HandshakeState.VERIFY_RESPONDED) {
             throw new IllegalStateException("" + state.handshakeState);
         }
 
-        final int LEN = 1152;
-        if (unk02Text.data().length == LEN) {
-            //Make sure its 1152 null bytes.
-            for (int i = 0; i < unk02Text.data().length; i++) {
-                if (unk02Text.data()[i] != 0) {
-                    throw new RuntimeException("Offset=" + i + ", expected=0, actual=" + unk02Text.data()[i]);
-                }
-            }
-
-            LOG.info("{} Handshake completed successfully.", state.operationChannel);
-        } else {
-            throw new RuntimeException("Length mismatch: expected=" + LEN + ", actual=" + unk02Text.data().length);
-        }
+        LOG.info("{} Handshake completed successfully.", state.operationChannel);
 
         return new State(state.operationChannel, null, HandshakeState.UNK02_RECEIVED, state.loginRespText, state.verifyRespText, null, null, null);
     }
@@ -173,12 +162,12 @@ public class State {
         return new State(state.operationChannel, null, HandshakeState.VIDEO_START_SENT, state.loginRespText, state.verifyRespText, null, state.audioVideoChannel, state.videoDataText);
     }
 
-    public static State videoStartResp(VideoStartRespTextDto videoStartRespText, State state) {
+    public static State videoStartResp(VideoStartRespTextEntity videoStartRespText, State state) {
         if (state.handshakeState != HandshakeState.VIDEO_START_SENT) {
             throw new IllegalStateException("" + state.handshakeState);
         }
 
-        if (ResultCodeE.fromValue(videoStartRespText.result()) != ResultCodeE.CORRECT) {
+        if (videoStartRespText.result() != ResultCodeE.CORRECT) {
             throw new RuntimeException("Invalid result=" + videoStartRespText.result());
         }
 
@@ -234,7 +223,7 @@ public class State {
         return new State(state.operationChannel, null, HandshakeState.AUDIO_VIDEO_LOGIN_SENT, state.loginRespText, state.verifyRespText, state.videoStartRespText, state.audioVideoChannel, null);
     }
 
-    public static State videoDataText(VideoDataTextDto videoDataText, State state) {
+    public static State videoDataText(VideoDataTextEntity videoDataText, State state) {
         if (state.handshakeState != HandshakeState.AUDIO_VIDEO_LOGIN_SENT) {
             throw new IllegalStateException("" + state.handshakeState);
         }

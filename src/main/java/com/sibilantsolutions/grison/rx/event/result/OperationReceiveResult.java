@@ -1,20 +1,14 @@
 package com.sibilantsolutions.grison.rx.event.result;
 
-import com.sibilantsolutions.grison.driver.foscam.dto.CommandDto;
+import com.google.auto.value.AutoValue;
+import com.sibilantsolutions.grison.driver.foscam.entity.FoscamTextEntity;
 
-public class OperationReceiveResult extends AbstractResult {
+@AutoValue
+public abstract class OperationReceiveResult extends AbstractResult {
 
-    public final CommandDto command;
+    public abstract FoscamTextEntity text();
 
-    public OperationReceiveResult(CommandDto command) {
-        this.command = command;
+    public static OperationReceiveResult create(FoscamTextEntity text) {
+        return new AutoValue_OperationReceiveResult(text);
     }
-
-    @Override
-    public String toString() {
-        return "OperationReceiveResult{" +
-                "command=" + command +
-                '}';
-    }
-
 }

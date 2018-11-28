@@ -3,11 +3,11 @@ package com.sibilantsolutions.grison.rx.event.xform;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.sibilantsolutions.grison.driver.foscam.dto.LoginRespTextDto;
-import com.sibilantsolutions.grison.driver.foscam.dto.Unk02TextDto;
-import com.sibilantsolutions.grison.driver.foscam.dto.VerifyRespTextDto;
-import com.sibilantsolutions.grison.driver.foscam.dto.VideoDataTextDto;
-import com.sibilantsolutions.grison.driver.foscam.dto.VideoStartRespTextDto;
+import com.sibilantsolutions.grison.driver.foscam.entity.LoginRespTextEntity;
+import com.sibilantsolutions.grison.driver.foscam.entity.Unk02TextEntity;
+import com.sibilantsolutions.grison.driver.foscam.entity.VerifyRespTextEntity;
+import com.sibilantsolutions.grison.driver.foscam.entity.VideoDataTextEntity;
+import com.sibilantsolutions.grison.driver.foscam.entity.VideoStartRespTextEntity;
 import com.sibilantsolutions.grison.rx.State;
 import com.sibilantsolutions.grison.rx.event.result.AbstractResult;
 import com.sibilantsolutions.grison.rx.event.result.AudioVideoConnectResult;
@@ -94,16 +94,16 @@ public class StateAndResultToStateBiFunction implements BiFunction<State, Abstra
 
             switch (state.handshakeState) {
                 case LOGIN_SENT:
-                    return State.loginRespText((LoginRespTextDto) r.command.text(), state);
+                    return State.loginRespText((LoginRespTextEntity) r.text(), state);
 
                 case VERIFY_SENT:
-                    return State.verifyRespText((VerifyRespTextDto) r.command.text(), state);
+                    return State.verifyRespText((VerifyRespTextEntity) r.text(), state);
 
                 case VERIFY_RESPONDED:
-                    return State.unk02((Unk02TextDto) r.command.text(), state);
+                    return State.unk02((Unk02TextEntity) r.text(), state);
 
                 case VIDEO_START_SENT:
-                    return State.videoStartResp((VideoStartRespTextDto) r.command.text(), state);
+                    return State.videoStartResp((VideoStartRespTextEntity) r.text(), state);
 
                 default:
                     throw new IllegalArgumentException("Unexpected handshake state=" + state.handshakeState);
@@ -111,8 +111,8 @@ public class StateAndResultToStateBiFunction implements BiFunction<State, Abstra
         } else if (state.handshakeState == State.HandshakeState.AUDIO_VIDEO_LOGIN_SENT && result instanceof AudioVideoReceiveResult) {
             AudioVideoReceiveResult r = (AudioVideoReceiveResult) result;
 
-            if (r.command.text() instanceof VideoDataTextDto) {
-                VideoDataTextDto t = (VideoDataTextDto) r.command.text();
+            if (r.text() instanceof VideoDataTextEntity) {
+                VideoDataTextEntity t = (VideoDataTextEntity) r.text();
                 return State.videoDataText(t, state);
             }
 
