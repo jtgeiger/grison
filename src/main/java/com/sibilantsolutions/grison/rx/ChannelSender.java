@@ -50,6 +50,8 @@ public class ChannelSender {
                         } else {
                             worker.schedule(() -> emitter.onNext(ChannelSendEvent.fail(new IllegalArgumentException("Channel future is in a weird state"))));
                         }
+
+                        worker.schedule(worker::dispose);
                     });
 
             final CancellableDisposable cancellableDisposable = new CancellableDisposable(() -> channelFuture.cancel(true));
