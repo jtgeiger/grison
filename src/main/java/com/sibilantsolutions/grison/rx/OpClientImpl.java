@@ -1,16 +1,12 @@
 package com.sibilantsolutions.grison.rx;
 
-import static com.sibilantsolutions.grison.driver.foscam.dto.VerifyReqTextDto.PASSWORD_LEN;
-import static com.sibilantsolutions.grison.driver.foscam.dto.VerifyReqTextDto.USER_LEN;
-
-import java.nio.charset.StandardCharsets;
-
-import com.google.common.base.Strings;
 import com.sibilantsolutions.grison.driver.foscam.dto.KeepAliveOperationTextDto;
 import com.sibilantsolutions.grison.driver.foscam.dto.LoginReqOperationTextDto;
 import com.sibilantsolutions.grison.driver.foscam.dto.VerifyReqTextDto;
 import com.sibilantsolutions.grison.driver.foscam.dto.VideoEndTextDto;
 import com.sibilantsolutions.grison.driver.foscam.dto.VideoStartReqTextDto;
+import com.sibilantsolutions.grison.driver.foscam.entity.VerifyReqTextEntity;
+import com.sibilantsolutions.grison.driver.foscam.mapper.EntityToDto;
 import io.reactivex.Flowable;
 
 public class OpClientImpl implements OpClient {
@@ -40,10 +36,10 @@ public class OpClientImpl implements OpClient {
     @Override
     public Flowable<ChannelSendEvent> verify(String username, String password) {
 
-        final VerifyReqTextDto text = VerifyReqTextDto.builder()
-                .user(Strings.padEnd(username, USER_LEN, (char) 0).getBytes(StandardCharsets.ISO_8859_1))
-                .password(Strings.padEnd(password, PASSWORD_LEN, (char) 0).getBytes(StandardCharsets.ISO_8859_1))
-                .build();
+        final VerifyReqTextDto text = EntityToDto.verifyReqTextDto.apply(VerifyReqTextEntity.builder()
+                .username(username)
+                .password(password)
+                .build());
 
         return channelSender.doSend(text);
     }
