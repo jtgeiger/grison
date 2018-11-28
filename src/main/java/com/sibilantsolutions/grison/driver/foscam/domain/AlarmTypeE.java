@@ -1,6 +1,8 @@
 package com.sibilantsolutions.grison.driver.foscam.domain;
 
 
+import com.sibilantsolutions.grison.driver.foscam.type.FosInt8;
+
 public enum AlarmTypeE
 {
     ALARM_STOP( Values.ALARM_STOP ),
@@ -9,29 +11,24 @@ public enum AlarmTypeE
     SOUND_DETECTION( Values.SOUND_DETECTION ),
     ;
 
-    static private interface Values
+    private interface Values
     {
-        final static public int ALARM_STOP          = 0;
-        final static public int MOTION_DETECTION    = 1;
-        final static public int OUTSIDE_ALARM       = 2;
-        final static public int SOUND_DETECTION     = 3;
+        int ALARM_STOP = 0;
+        int MOTION_DETECTION = 1;
+        int OUTSIDE_ALARM = 2;
+        int SOUND_DETECTION = 3;
     }
 
-    final private int value;
+    public final FosInt8 value;
 
-    private AlarmTypeE( int value )
+    AlarmTypeE(int value)
     {
-        this.value = value;
+        this.value = FosInt8.create(value);
     }
 
-    public int getValue()
+    public static AlarmTypeE fromValue(FosInt8 value)
     {
-        return value;
-    }
-
-    public static AlarmTypeE fromValue( int value )
-    {
-        switch ( value )
+        switch (value.value())
         {
             case Values.ALARM_STOP:
                 return ALARM_STOP;

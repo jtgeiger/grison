@@ -4,7 +4,9 @@ import java.nio.charset.StandardCharsets;
 import java.time.Instant;
 import java.util.function.Function;
 
+import com.sibilantsolutions.grison.driver.foscam.domain.AlarmTypeE;
 import com.sibilantsolutions.grison.driver.foscam.domain.ResultCodeE;
+import com.sibilantsolutions.grison.driver.foscam.dto.AlarmNotifyTextDto;
 import com.sibilantsolutions.grison.driver.foscam.dto.LoginReqAudioVideoTextDto;
 import com.sibilantsolutions.grison.driver.foscam.dto.LoginReqOperationTextDto;
 import com.sibilantsolutions.grison.driver.foscam.dto.LoginRespTextDto;
@@ -14,6 +16,7 @@ import com.sibilantsolutions.grison.driver.foscam.dto.VerifyRespTextDto;
 import com.sibilantsolutions.grison.driver.foscam.dto.VideoDataTextDto;
 import com.sibilantsolutions.grison.driver.foscam.dto.VideoStartReqTextDto;
 import com.sibilantsolutions.grison.driver.foscam.dto.VideoStartRespTextDto;
+import com.sibilantsolutions.grison.driver.foscam.entity.AlarmNotifyTextEntity;
 import com.sibilantsolutions.grison.driver.foscam.entity.LoginReqAudioVideoTextEntity;
 import com.sibilantsolutions.grison.driver.foscam.entity.LoginReqOperationTextEntity;
 import com.sibilantsolutions.grison.driver.foscam.entity.LoginRespTextEntity;
@@ -69,6 +72,10 @@ public final class DtoToEntity {
             .uptimeMs(dto.timestamp().value() * 10)
             .timestamp(Instant.ofEpochSecond(dto.framePerSec().value()))
             .videoData(dto.videoData())
+            .build();
+
+    public static final Function<AlarmNotifyTextDto, AlarmNotifyTextEntity> alarmNotifyTextEntity = dto -> AlarmNotifyTextEntity.builder()
+            .alarmType(AlarmTypeE.fromValue(dto.type()))
             .build();
 
 }

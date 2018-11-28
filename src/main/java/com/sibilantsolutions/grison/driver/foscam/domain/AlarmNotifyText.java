@@ -1,6 +1,8 @@
 package com.sibilantsolutions.grison.driver.foscam.domain;
 
 
+import com.sibilantsolutions.grison.driver.foscam.type.FosInt8;
+
 public class AlarmNotifyText implements DatastreamI
 {
 
@@ -24,7 +26,7 @@ public class AlarmNotifyText implements DatastreamI
     {
         AlarmNotifyText text = new AlarmNotifyText();
 
-        text.alarmType = AlarmTypeE.fromValue( data[offset] );
+        text.alarmType = AlarmTypeE.fromValue(FosInt8.create(data[offset]));
 
         return text;
     }

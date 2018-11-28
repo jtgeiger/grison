@@ -4,6 +4,7 @@ import java.util.Arrays;
 
 import org.reactivestreams.Publisher;
 
+import com.sibilantsolutions.grison.driver.foscam.dto.AlarmNotifyTextDto;
 import com.sibilantsolutions.grison.driver.foscam.dto.CommandDto;
 import com.sibilantsolutions.grison.driver.foscam.dto.FoscamTextDto;
 import com.sibilantsolutions.grison.driver.foscam.dto.LoginRespTextDto;
@@ -34,7 +35,8 @@ public class CommandToOperationReceiveResult implements FlowableTransformer<Comm
                     foscamTextDtoFlowable.ofType(LoginRespTextDto.class).map(DtoToEntity.loginRespTextEntity::apply),
                     foscamTextDtoFlowable.ofType(VerifyRespTextDto.class).map(DtoToEntity.verifyRespTextEntity::apply),
                     foscamTextDtoFlowable.ofType(Unk02TextDto.class).map(DtoToEntity.unk02TextEntity::apply),
-                    foscamTextDtoFlowable.ofType(VideoStartRespTextDto.class).map(DtoToEntity.videoStartRespTextEntity::apply)
+                    foscamTextDtoFlowable.ofType(VideoStartRespTextDto.class).map(DtoToEntity.videoStartRespTextEntity::apply),
+                    foscamTextDtoFlowable.ofType(AlarmNotifyTextDto.class).map(DtoToEntity.alarmNotifyTextEntity::apply)
             )));
         }
     }
