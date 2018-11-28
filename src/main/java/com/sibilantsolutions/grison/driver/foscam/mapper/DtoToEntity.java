@@ -1,17 +1,28 @@
 package com.sibilantsolutions.grison.driver.foscam.mapper;
 
 import java.nio.charset.StandardCharsets;
+import java.time.Instant;
 import java.util.function.Function;
 
 import com.sibilantsolutions.grison.driver.foscam.domain.ResultCodeE;
+import com.sibilantsolutions.grison.driver.foscam.dto.LoginReqAudioVideoTextDto;
 import com.sibilantsolutions.grison.driver.foscam.dto.LoginReqOperationTextDto;
 import com.sibilantsolutions.grison.driver.foscam.dto.LoginRespTextDto;
+import com.sibilantsolutions.grison.driver.foscam.dto.Unk02TextDto;
 import com.sibilantsolutions.grison.driver.foscam.dto.VerifyReqTextDto;
 import com.sibilantsolutions.grison.driver.foscam.dto.VerifyRespTextDto;
+import com.sibilantsolutions.grison.driver.foscam.dto.VideoDataTextDto;
+import com.sibilantsolutions.grison.driver.foscam.dto.VideoStartReqTextDto;
+import com.sibilantsolutions.grison.driver.foscam.dto.VideoStartRespTextDto;
+import com.sibilantsolutions.grison.driver.foscam.entity.LoginReqAudioVideoTextEntity;
 import com.sibilantsolutions.grison.driver.foscam.entity.LoginReqOperationTextEntity;
 import com.sibilantsolutions.grison.driver.foscam.entity.LoginRespTextEntity;
+import com.sibilantsolutions.grison.driver.foscam.entity.Unk02TextEntity;
 import com.sibilantsolutions.grison.driver.foscam.entity.VerifyReqTextEntity;
 import com.sibilantsolutions.grison.driver.foscam.entity.VerifyRespTextEntity;
+import com.sibilantsolutions.grison.driver.foscam.entity.VideoDataTextEntity;
+import com.sibilantsolutions.grison.driver.foscam.entity.VideoStartReqTextEntity;
+import com.sibilantsolutions.grison.driver.foscam.entity.VideoStartRespTextEntity;
 
 public final class DtoToEntity {
 
@@ -33,6 +44,31 @@ public final class DtoToEntity {
 
     public static final Function<VerifyRespTextDto, VerifyRespTextEntity> verifyRespTextEntity = dto -> VerifyRespTextEntity.builder()
             .resultCode(ResultCodeE.fromValue(dto.resultCode()))
+            .build();
+
+    public static final Function<Unk02TextDto, Unk02TextEntity> unk02TextEntity = dto -> Unk02TextEntity.builder()
+            .build();
+
+    public static final Function<VideoStartReqTextDto, VideoStartReqTextEntity> videoStartReqTextEntity = dto -> VideoStartReqTextEntity.builder()
+            .build();
+
+    public static final Function<VideoStartRespTextDto, VideoStartRespTextEntity> videoStartRespTextEntity = dto -> {
+        final VideoStartRespTextEntity.Builder builder = VideoStartRespTextEntity.builder()
+                .result(ResultCodeE.fromValue(dto.result()));
+        if (dto.dataConnectionId().isPresent()) {
+            builder.dataConnectionId(dto.dataConnectionId().get());
+        }
+        return builder.build();
+    };
+
+    public static final Function<LoginReqAudioVideoTextDto, LoginReqAudioVideoTextEntity> loginReqAudioVideoTextEntity = dto -> LoginReqAudioVideoTextEntity.builder()
+            .dataConnectionId(dto.dataConnectionId())
+            .build();
+
+    public static final Function<VideoDataTextDto, VideoDataTextEntity> videoDataTextEntity = dto -> VideoDataTextEntity.builder()
+            .uptimeMs(dto.timestamp().value() * 10)
+            .timestamp(Instant.ofEpochSecond(dto.framePerSec().value()))
+            .videoData(dto.videoData())
             .build();
 
 }
