@@ -37,6 +37,10 @@ public abstract class Unk02TextDto implements FoscamTextDto {
 
             checkArgument(dto.data().length == DATA_LEN, "data len expected=%s actual=%s", DATA_LEN, dto.data().length);
 
+            for (int i = 0; i < DATA_LEN; i++) {
+                checkArgument(dto.data()[i] == 0, "expected data[%s]==0, actual=%s", i, dto.data()[i]);
+            }
+
             return dto;
         }
     }
