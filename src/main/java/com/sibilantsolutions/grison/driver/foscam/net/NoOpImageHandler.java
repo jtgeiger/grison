@@ -3,9 +3,8 @@ package com.sibilantsolutions.grison.driver.foscam.net;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.sibilantsolutions.grison.driver.foscam.domain.VideoDataText;
+import com.sibilantsolutions.grison.driver.foscam.entity.VideoDataTextEntity;
 import com.sibilantsolutions.grison.evt.ImageHandlerI;
-import com.sibilantsolutions.grison.evt.VideoStoppedEvt;
 
 /*package*/ class NoOpImageHandler implements ImageHandlerI
 {
@@ -13,13 +12,13 @@ import com.sibilantsolutions.grison.evt.VideoStoppedEvt;
     final static private Logger log = LoggerFactory.getLogger( NoOpImageHandler.class );
 
     @Override
-    public void onReceive( VideoDataText videoData )
+    public void onReceive(VideoDataTextEntity videoData)
     {
         log.info( "Ignoring video data." );
     }
 
     @Override
-    public void onVideoStopped( VideoStoppedEvt videoStoppedEvt )
+    public void onVideoStopped()
     {
         log.info( "Ignoring video stopped." );
     }

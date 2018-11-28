@@ -1,11 +1,12 @@
 package com.sibilantsolutions.grison.evt;
 
-import com.sibilantsolutions.grison.driver.foscam.domain.VideoDataText;
+import com.sibilantsolutions.grison.driver.foscam.entity.VideoDataTextEntity;
 
 public interface ImageHandlerI
 {
 
-    public void onReceive( VideoDataText videoData );
-    public void onVideoStopped( VideoStoppedEvt videoStoppedEvt );
+    void onReceive(VideoDataTextEntity videoData);
+
+    void onVideoStopped();
 
 }

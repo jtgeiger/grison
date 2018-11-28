@@ -1,5 +1,12 @@
 package com.sibilantsolutions.grison.driver.foscam.net;
 
+import java.net.InetSocketAddress;
+import java.time.Instant;
+import java.util.List;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.sibilantsolutions.grison.driver.foscam.domain.AlarmNotifyText;
 import com.sibilantsolutions.grison.driver.foscam.domain.AudioDataText;
 import com.sibilantsolutions.grison.driver.foscam.domain.AudioStartRespText;
@@ -13,6 +20,7 @@ import com.sibilantsolutions.grison.driver.foscam.domain.VerifyRespText;
 import com.sibilantsolutions.grison.driver.foscam.domain.Version;
 import com.sibilantsolutions.grison.driver.foscam.domain.VideoDataText;
 import com.sibilantsolutions.grison.driver.foscam.domain.VideoStartRespText;
+import com.sibilantsolutions.grison.driver.foscam.entity.VideoDataTextEntity;
 import com.sibilantsolutions.grison.evt.AlarmEvt;
 import com.sibilantsolutions.grison.evt.AlarmHandlerI;
 import com.sibilantsolutions.grison.evt.AudioHandlerI;
@@ -20,13 +28,7 @@ import com.sibilantsolutions.grison.evt.AudioStoppedEvt;
 import com.sibilantsolutions.grison.evt.ImageHandlerI;
 import com.sibilantsolutions.grison.evt.LostConnectionEvt;
 import com.sibilantsolutions.grison.evt.LostConnectionHandlerI;
-import com.sibilantsolutions.grison.evt.VideoStoppedEvt;
 import com.sibilantsolutions.utils.util.HexDumpDeferred;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import java.net.InetSocketAddress;
-import java.util.List;
 
 public class FoscamSession
 {
@@ -144,7 +146,12 @@ public class FoscamSession
                 @Override
                 public void onReceiveVideo( VideoDataText videoDataText )
                 {
-                    imageHandler.onReceive( videoDataText );
+                    final VideoDataTextEntity videoDataTextEntity = VideoDataTextEntity.builder()
+                            .videoData(videoDataText.getDataContent())
+                            .uptimeMs(videoDataText.getUptimeMs())
+                            .timestamp(Instant.ofEpochMilli(videoDataText.getTimestampMs()))
+                            .build();
+                    imageHandler.onReceive(videoDataTextEntity);
                 }
 
                 @Override
@@ -157,7 +164,7 @@ public class FoscamSession
                 public void onLostConnection( FoscamConnection connection )
                 {
                     audioHandler.onAudioStopped( new AudioStoppedEvt() );
-                    imageHandler.onVideoStopped( new VideoStoppedEvt() );
+                    imageHandler.onVideoStopped();
                     audioVideoService = null;
                 }
 

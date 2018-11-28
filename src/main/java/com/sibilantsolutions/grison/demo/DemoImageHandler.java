@@ -1,24 +1,22 @@
 package com.sibilantsolutions.grison.demo;
 
-import com.sibilantsolutions.grison.driver.foscam.domain.VideoDataText;
-import com.sibilantsolutions.grison.evt.ImageHandlerI;
-import com.sibilantsolutions.grison.evt.VideoStoppedEvt;
-
-import javax.swing.Icon;
-import javax.swing.ImageIcon;
-import javax.swing.JLabel;
-import javax.swing.SwingUtilities;
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
-import java.util.Date;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
+import javax.swing.Icon;
+import javax.swing.ImageIcon;
+import javax.swing.JLabel;
+import javax.swing.SwingUtilities;
+
+import com.sibilantsolutions.grison.driver.foscam.entity.VideoDataTextEntity;
+import com.sibilantsolutions.grison.evt.ImageHandlerI;
 
 public class DemoImageHandler implements ImageHandlerI
 {
@@ -98,12 +96,12 @@ public class DemoImageHandler implements ImageHandlerI
     }
 
     @Override
-    public void onReceive(VideoDataText videoData)
+    public void onReceive(VideoDataTextEntity videoData)
     {
         frameCounter.incrementAndGet();
-        final ImageIcon icon = new ImageIcon(videoData.getDataContent());
+        final ImageIcon icon = new ImageIcon(videoData.videoData());
 
-        final long uptimeMs = videoData.getUptimeMs();
+        final long uptimeMs = videoData.uptimeMs();
         String uptimeDuration = String.format("%dd %02d:%02d:%02d", TimeUnit.MILLISECONDS.toDays(
                 uptimeMs), TimeUnit.MILLISECONDS.toHours(uptimeMs) - TimeUnit.DAYS.toHours(
                 TimeUnit.MILLISECONDS.toDays(uptimeMs)), TimeUnit.MILLISECONDS.toMinutes(
@@ -113,8 +111,9 @@ public class DemoImageHandler implements ImageHandlerI
                 .toMinutes(uptimeMs)));
 
         final String uptimeStr = String.valueOf(uptimeMs) + " (" + uptimeDuration + ")";
-        final String timestampStr = String.valueOf(videoData.getTimestampMs()) + " (" + new Date(
-                videoData.getTimestampMs()) + ')';
+//        final String timestampStr = String.valueOf(videoData.getTimestampMs()) + " (" + new Date(
+//                videoData.getTimestampMs()) + ')';
+        final String timestampStr = videoData.timestamp().toString();
 
         Runnable r = new Runnable() {
 
@@ -135,7 +134,7 @@ public class DemoImageHandler implements ImageHandlerI
     }
 
     @Override
-    public void onVideoStopped( VideoStoppedEvt videoStoppedEvt )
+    public void onVideoStopped()
     {
         showNoSignalImage();
     }

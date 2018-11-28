@@ -1,20 +1,25 @@
 package com.sibilantsolutions.grison.demo;
 
+import java.net.InetSocketAddress;
+import javax.swing.JLabel;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.sibilantsolutions.grison.NettyDemo;
 import com.sibilantsolutions.grison.driver.foscam.net.FoscamSession;
 import com.sibilantsolutions.grison.evt.AlarmEvt;
 import com.sibilantsolutions.grison.evt.AlarmHandlerI;
 import com.sibilantsolutions.grison.evt.AudioHandlerI;
-import com.sibilantsolutions.grison.evt.LostConnectionEvt;
 import com.sibilantsolutions.grison.evt.LostConnectionHandlerI;
+import com.sibilantsolutions.grison.rx.State;
 import com.sibilantsolutions.grison.ui.Ui;
 import com.sibilantsolutions.utils.util.DurationLoggingRunnable;
-
-import javax.swing.JLabel;
-import java.net.InetSocketAddress;
+import io.reactivex.Flowable;
 
 public class Demo
 {
-//    final static private Logger log = LoggerFactory.getLogger( Demo.class );
+    final static private Logger LOG = LoggerFactory.getLogger(Demo.class);
 
     static private AudioHandlerI audioHandler = new DemoAudioHandler();
     static private JLabel imageLabel = new JLabel();
@@ -42,18 +47,32 @@ public class Demo
     {
         Ui.buildUi(imageLabel, uptimeLabel, timestampLabel, fpsLabel);
 
-        final LostConnectionHandlerI lostConnectionHandler = new LostConnectionHandlerI()
-        {
+//        final LostConnectionHandlerI lostConnectionHandler = new LostConnectionHandlerI()
+//        {
+//
+//            @Override
+//            public void onLostConnection( LostConnectionEvt evt )
+//            {
+//                connectLoopThread( hostname, port, username, password, this );
+//            }
+//        };
+//
+//        connectLoopThread( hostname, port, username, password, lostConnectionHandler );
 
-            @Override
-            public void onLostConnection( LostConnectionEvt evt )
-            {
-                connectLoopThread( hostname, port, username, password, this );
-            }
-        };
+        final Flowable<State> stateFlowable = NettyDemo.go11(hostname, port, username, password);
 
-        connectLoopThread( hostname, port, username, password, lostConnectionHandler );
-
+        stateFlowable
+                .subscribe(
+                        state -> {
+                            if (state.videoDataText != null) {
+                                imageHandler.onReceive(state.videoDataText);
+                            }
+                        },
+                        throwable -> {
+                            LOG.error("Trouble: ", throwable);
+                            imageHandler.onVideoStopped();
+                        },
+                        () -> imageHandler.onVideoStopped());
     }
 
     private static void connect( final String hostname, final int port, final String username,

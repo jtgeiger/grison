@@ -62,13 +62,14 @@ public class NettyDemo {
 
     void go(String host, int port, String username, String password) {
 
-        go11(host, port, username, password);
+        go11(host, port, username, password)
+                .subscribe(new LogSubscriber<>());
 
 //        search();
 //        cgi(host, port, username, password);
     }
 
-    private void go11(String host, int port, String username, String password) {
+    public static Flowable<State> go11(String host, int port, String username, String password) {
 
         Flowable<UiEvent> events = Flowable.just(new ConnectUiEvent(host, port));
 
@@ -109,10 +110,12 @@ public class NettyDemo {
         states = states
                 .compose(new StateToState(dynamicActions, username, password));
 
-        states
-                //TODO: Pretend UI disabled video, but only if it was validly connected, after some period of time.
-//                .observeOn(Schedulers.io())
-                .subscribe(new LogSubscriber<>());
+//        states
+//                //TODO: Pretend UI disabled video, but only if it was validly connected, after some period of time.
+////                .observeOn(Schedulers.io())
+//                .subscribe(new LogSubscriber<>());
+
+        return states;
     }
 
     private void search() {
