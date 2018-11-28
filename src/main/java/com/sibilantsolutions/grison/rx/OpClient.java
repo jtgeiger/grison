@@ -1,17 +1,17 @@
 package com.sibilantsolutions.grison.rx;
 
-import io.reactivex.Completable;
+import io.reactivex.Flowable;
 
 public interface OpClient {
 
-    Completable login();
+    Flowable<ChannelSendEvent> login();
 
-    Completable ping();
+    Flowable<ChannelSendEvent> ping();
 
-    Completable verify(String username, String password);
+    Flowable<ChannelSendEvent> verify(String username, String password);
 
-    Completable videoStart();
+    Flowable<ChannelSendEvent> videoStart();
 
-    Completable videoEnd();
+    Flowable<ChannelSendEvent> videoEnd();
 
 }

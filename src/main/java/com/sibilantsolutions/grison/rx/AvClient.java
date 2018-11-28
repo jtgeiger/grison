@@ -1,10 +1,10 @@
 package com.sibilantsolutions.grison.rx;
 
 import com.sibilantsolutions.grison.driver.foscam.type.FosInt32;
-import io.reactivex.Completable;
+import io.reactivex.Flowable;
 
 public interface AvClient {
 
-    Completable audioVideoLogin(FosInt32 dataConnectionId);
+    Flowable<ChannelSendEvent> audioVideoLogin(FosInt32 dataConnectionId);
 
 }

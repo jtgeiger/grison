@@ -2,7 +2,7 @@ package com.sibilantsolutions.grison.rx;
 
 import com.sibilantsolutions.grison.driver.foscam.dto.LoginReqAudioVideoTextDto;
 import com.sibilantsolutions.grison.driver.foscam.type.FosInt32;
-import io.reactivex.Completable;
+import io.reactivex.Flowable;
 
 public class AvClientImpl implements AvClient {
 
@@ -13,7 +13,7 @@ public class AvClientImpl implements AvClient {
     }
 
     @Override
-    public Completable audioVideoLogin(FosInt32 dataConnectionId) {
+    public Flowable<ChannelSendEvent> audioVideoLogin(FosInt32 dataConnectionId) {
 
         final LoginReqAudioVideoTextDto text = LoginReqAudioVideoTextDto.builder()
                 .dataConnectionId(dataConnectionId)

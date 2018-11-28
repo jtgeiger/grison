@@ -41,6 +41,8 @@ public class StateAndResultToStateBiFunction implements BiFunction<State, Abstra
         } else if (state.operationChannel != null && result instanceof LoginSendResult) {
             LoginSendResult lsr = (LoginSendResult) result;
             if (lsr == LoginSendResult.IN_FLIGHT) {
+                return State.loginSending(state);
+            } else if (lsr == LoginSendResult.SENT) {
                 return State.loginSent(state);
             } else {
                 return State.fail(lsr.failureCause, state);
@@ -48,6 +50,8 @@ public class StateAndResultToStateBiFunction implements BiFunction<State, Abstra
         } else if (state.operationChannel != null && result instanceof VerifySendResult) {
             VerifySendResult vsr = (VerifySendResult) result;
             if (vsr == VerifySendResult.IN_FLIGHT) {
+                return State.verifySending(state);
+            } else if (vsr == VerifySendResult.SENT) {
                 return State.verifySent(state);
             } else {
                 return State.fail(vsr.failureCause, state);
@@ -55,6 +59,8 @@ public class StateAndResultToStateBiFunction implements BiFunction<State, Abstra
         } else if (state.operationChannel != null && result instanceof VideoStartSendResult) {
             VideoStartSendResult vsr = (VideoStartSendResult) result;
             if (vsr == VideoStartSendResult.IN_FLIGHT) {
+                return State.videoStartSending(state);
+            } else if (vsr == VideoStartSendResult.SENT) {
                 return State.videoStartSent(state);
             } else {
                 return State.fail(vsr.failureCause, state);
@@ -77,6 +83,8 @@ public class StateAndResultToStateBiFunction implements BiFunction<State, Abstra
             LOG.info("AudioVideoLoginSendResult={}.", r);
 
             if (r == AudioVideoLoginSendResult.IN_FLIGHT) {
+                return State.audioVideoLoginSending(state);
+            } else if (r == AudioVideoLoginSendResult.SENT) {
                 return State.audioVideoLoginSent(state);
             } else {
                 return State.fail(new RuntimeException(r.failureCause), state);

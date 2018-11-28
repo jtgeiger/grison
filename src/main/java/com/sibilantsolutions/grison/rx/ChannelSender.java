@@ -9,7 +9,12 @@ import com.sibilantsolutions.grison.driver.foscam.dto.FoscamTextDto;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelFutureListener;
-import io.reactivex.Completable;
+import io.reactivex.BackpressureStrategy;
+import io.reactivex.Flowable;
+import io.reactivex.Scheduler;
+import io.reactivex.disposables.CompositeDisposable;
+import io.reactivex.internal.disposables.CancellableDisposable;
+import io.reactivex.schedulers.Schedulers;
 
 public class ChannelSender {
 
@@ -21,25 +26,36 @@ public class ChannelSender {
         this.channel = channel;
     }
 
-    public Completable doSend(FoscamTextDto text) {
-        return Completable.create(emitter -> {
+    public Flowable<ChannelSendEvent> doSend(FoscamTextDto text) {
+        return Flowable.create(emitter -> {
+
+            final Scheduler.Worker worker = Schedulers.io().createWorker();
+
+            final CompositeDisposable compositeDisposable = new CompositeDisposable(worker);
+
+            emitter.setDisposable(compositeDisposable);
+
+            worker.schedule(() -> emitter.onNext(ChannelSendEvent.IN_FLIGHT));
+
             final ChannelFuture channelFuture = channel
                     .writeAndFlush(text)
                     .addListener((ChannelFutureListener) future -> {
                         if (future.isSuccess()) {
-                            emitter.onComplete();
+                            worker.schedule(() -> emitter.onNext(ChannelSendEvent.SENT));
                         } else if (future.cause() != null) {
                             LOG.error("Can't send: future={}:", future, future.cause());
-                            emitter.onError(new RuntimeException(future.cause()));
+                            worker.schedule(() -> emitter.onNext(ChannelSendEvent.fail(new RuntimeException(future.cause()))));
                         } else if (future.isCancelled()) {
-                            emitter.onError(new CancellationException("Future was cancelled"));
+                            worker.schedule(() -> emitter.onNext(ChannelSendEvent.fail(new CancellationException("Future was cancelled"))));
                         } else {
-                            emitter.onError(new IllegalArgumentException("Channel future is in a weird state"));
+                            worker.schedule(() -> emitter.onNext(ChannelSendEvent.fail(new IllegalArgumentException("Channel future is in a weird state"))));
                         }
                     });
 
-            emitter.setCancellable(() -> channelFuture.cancel(true));
-        });
+            final CancellableDisposable cancellableDisposable = new CancellableDisposable(() -> channelFuture.cancel(true));
+
+            compositeDisposable.add(cancellableDisposable);
+        }, BackpressureStrategy.BUFFER);
     }
 
 }

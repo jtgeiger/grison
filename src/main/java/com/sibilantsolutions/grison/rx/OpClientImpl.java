@@ -11,7 +11,7 @@ import com.sibilantsolutions.grison.driver.foscam.dto.LoginReqOperationTextDto;
 import com.sibilantsolutions.grison.driver.foscam.dto.VerifyReqTextDto;
 import com.sibilantsolutions.grison.driver.foscam.dto.VideoEndTextDto;
 import com.sibilantsolutions.grison.driver.foscam.dto.VideoStartReqTextDto;
-import io.reactivex.Completable;
+import io.reactivex.Flowable;
 
 public class OpClientImpl implements OpClient {
 
@@ -22,7 +22,7 @@ public class OpClientImpl implements OpClient {
     }
 
     @Override
-    public Completable login() {
+    public Flowable<ChannelSendEvent> login() {
 
         final LoginReqOperationTextDto text = LoginReqOperationTextDto.builder().build();
 
@@ -30,7 +30,7 @@ public class OpClientImpl implements OpClient {
     }
 
     @Override
-    public Completable ping() {
+    public Flowable<ChannelSendEvent> ping() {
 
         final KeepAliveOperationTextDto text = KeepAliveOperationTextDto.builder().build();
 
@@ -38,7 +38,7 @@ public class OpClientImpl implements OpClient {
     }
 
     @Override
-    public Completable verify(String username, String password) {
+    public Flowable<ChannelSendEvent> verify(String username, String password) {
 
         final VerifyReqTextDto text = VerifyReqTextDto.builder()
                 .user(Strings.padEnd(username, USER_LEN, (char) 0).getBytes(StandardCharsets.ISO_8859_1))
@@ -49,7 +49,7 @@ public class OpClientImpl implements OpClient {
     }
 
     @Override
-    public Completable videoStart() {
+    public Flowable<ChannelSendEvent> videoStart() {
 
         final VideoStartReqTextDto text = VideoStartReqTextDto.builder().build();
 
@@ -57,7 +57,7 @@ public class OpClientImpl implements OpClient {
     }
 
     @Override
-    public Completable videoEnd() {
+    public Flowable<ChannelSendEvent> videoEnd() {
 
         final VideoEndTextDto text = VideoEndTextDto.builder().build();
 

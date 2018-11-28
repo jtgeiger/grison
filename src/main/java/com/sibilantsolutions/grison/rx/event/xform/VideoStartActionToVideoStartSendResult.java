@@ -2,6 +2,7 @@ package com.sibilantsolutions.grison.rx.event.xform;
 
 import org.reactivestreams.Publisher;
 
+import com.sibilantsolutions.grison.rx.ChannelSendEvent;
 import com.sibilantsolutions.grison.rx.ChannelSender;
 import com.sibilantsolutions.grison.rx.OpClient;
 import com.sibilantsolutions.grison.rx.OpClientImpl;
@@ -21,9 +22,15 @@ public class VideoStartActionToVideoStartSendResult implements FlowableTransform
         return opClientFlowable
                 .flatMap(opClient -> opClient
                         .videoStart()
-                        .<VideoStartSendResult>toFlowable()
-                        .startWith(Flowable.just(VideoStartSendResult.IN_FLIGHT))
-                        .onErrorReturn(VideoStartSendResult::new)
+                        .map(channelSendEvent -> {
+                            if (channelSendEvent == ChannelSendEvent.IN_FLIGHT) {
+                                return VideoStartSendResult.IN_FLIGHT;
+                            } else if (channelSendEvent == ChannelSendEvent.SENT) {
+                                return VideoStartSendResult.SENT;
+                            } else {
+                                return new VideoStartSendResult(new RuntimeException(channelSendEvent.failureCause));
+                            }
+                        })
                 );
     }
 }

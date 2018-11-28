@@ -2,6 +2,7 @@ package com.sibilantsolutions.grison.rx.event.xform;
 
 import org.reactivestreams.Publisher;
 
+import com.sibilantsolutions.grison.rx.ChannelSendEvent;
 import com.sibilantsolutions.grison.rx.ChannelSender;
 import com.sibilantsolutions.grison.rx.OpClient;
 import com.sibilantsolutions.grison.rx.OpClientImpl;
@@ -21,9 +22,15 @@ public class LoginActionToLoginSendResult implements FlowableTransformer<LoginAc
         return opClientFlowable
                 .flatMap(opClient -> opClient
                         .login()
-                        .<LoginSendResult>toFlowable()
-                        .startWith(Flowable.just(LoginSendResult.IN_FLIGHT))
-                        .onErrorReturn(LoginSendResult::new)
+                        .map(channelSendEvent -> {
+                            if (channelSendEvent == ChannelSendEvent.IN_FLIGHT) {
+                                return LoginSendResult.IN_FLIGHT;
+                            } else if (channelSendEvent == ChannelSendEvent.SENT) {
+                                return LoginSendResult.SENT;
+                            } else {
+                                return new LoginSendResult(new RuntimeException(channelSendEvent.failureCause));
+                            }
+                        })
                 );
     }
 }

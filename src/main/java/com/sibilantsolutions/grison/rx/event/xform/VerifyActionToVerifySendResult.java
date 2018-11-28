@@ -2,6 +2,7 @@ package com.sibilantsolutions.grison.rx.event.xform;
 
 import org.reactivestreams.Publisher;
 
+import com.sibilantsolutions.grison.rx.ChannelSendEvent;
 import com.sibilantsolutions.grison.rx.ChannelSender;
 import com.sibilantsolutions.grison.rx.OpClient;
 import com.sibilantsolutions.grison.rx.OpClientImpl;
@@ -19,9 +20,15 @@ public class VerifyActionToVerifySendResult implements FlowableTransformer<Verif
 
                     return opClient
                             .verify(verifyAction.username, verifyAction.password)
-                            .<VerifySendResult>toFlowable()
-                            .startWith(Flowable.just(VerifySendResult.IN_FLIGHT))
-                            .onErrorReturn(VerifySendResult::new);
+                            .map(channelSendEvent -> {
+                                if (channelSendEvent == ChannelSendEvent.IN_FLIGHT) {
+                                    return VerifySendResult.IN_FLIGHT;
+                                } else if (channelSendEvent == ChannelSendEvent.SENT) {
+                                    return VerifySendResult.SENT;
+                                } else {
+                                    return new VerifySendResult(new RuntimeException(channelSendEvent.failureCause));
+                                }
+                            });
                 });
     }
 }

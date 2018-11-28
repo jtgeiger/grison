@@ -20,15 +20,19 @@ public class State {
     public enum HandshakeState {
         INIT,
         OPERATION_CONNECTED,
+        LOGIN_SENDING,
         LOGIN_SENT,
         LOGIN_RESPONDED,
+        VERIFY_SENDING,
         VERIFY_SENT,
         VERIFY_RESPONDED,
         UNK02_RECEIVED,
+        VIDEO_START_SENDING,
         VIDEO_START_SENT,
         VIDEO_START_RESPONDED,
         AUDIO_VIDEO_CONNECT_IN_FLIGHT,
         AUDIO_VIDEO_CONNECTED,
+        AUDIO_VIDEO_LOGIN_SENDING,
         AUDIO_VIDEO_LOGIN_SENT,
     }
 
@@ -92,15 +96,28 @@ public class State {
         return new State(state.operationChannel, null, HandshakeState.LOGIN_RESPONDED, Objects.requireNonNull(loginRespText), null, null, null, null);
     }
 
-    public static State loginSent(State state) {
+    public static State loginSending(State state) {
         if (state.handshakeState != HandshakeState.OPERATION_CONNECTED) {
+            throw new IllegalStateException("" + state.handshakeState);
+        }
+        return new State(state.operationChannel, null, HandshakeState.LOGIN_SENDING, null, null, null, null, null);
+    }
+
+    public static State loginSent(State state) {
+        if (state.handshakeState != HandshakeState.LOGIN_SENDING) {
             throw new IllegalStateException("" + state.handshakeState);
         }
         return new State(state.operationChannel, null, HandshakeState.LOGIN_SENT, null, null, null, null, null);
     }
 
-    public static State verifySent(State state) {
+    public static State verifySending(State state) {
         if (state.handshakeState != HandshakeState.LOGIN_RESPONDED) {
+            throw new IllegalStateException("" + state.handshakeState);
+        }
+        return new State(state.operationChannel, null, HandshakeState.VERIFY_SENDING, state.loginRespText, null, null, null, null);
+    }
+    public static State verifySent(State state) {
+        if (state.handshakeState != HandshakeState.VERIFY_SENDING) {
             throw new IllegalStateException("" + state.handshakeState);
         }
         return new State(state.operationChannel, null, HandshakeState.VERIFY_SENT, state.loginRespText, null, null, null, null);
@@ -140,8 +157,16 @@ public class State {
         return new State(state.operationChannel, null, HandshakeState.UNK02_RECEIVED, state.loginRespText, state.verifyRespText, null, null, null);
     }
 
-    public static State videoStartSent(State state) {
+    public static State videoStartSending(State state) {
         if (state.handshakeState != HandshakeState.UNK02_RECEIVED) {
+            throw new IllegalStateException("" + state.handshakeState);
+        }
+
+        return new State(state.operationChannel, null, HandshakeState.VIDEO_START_SENDING, state.loginRespText, state.verifyRespText, null, state.audioVideoChannel, state.videoDataText);
+    }
+
+    public static State videoStartSent(State state) {
+        if (state.handshakeState != HandshakeState.VIDEO_START_SENDING) {
             throw new IllegalStateException("" + state.handshakeState);
         }
 
@@ -193,8 +218,16 @@ public class State {
                 null);
     }
 
-    public static State audioVideoLoginSent(State state) {
+    public static State audioVideoLoginSending(State state) {
         if (state.handshakeState != HandshakeState.AUDIO_VIDEO_CONNECTED) {
+            throw new IllegalStateException("" + state.handshakeState);
+        }
+
+        return new State(state.operationChannel, null, HandshakeState.AUDIO_VIDEO_LOGIN_SENDING, state.loginRespText, state.verifyRespText, state.videoStartRespText, state.audioVideoChannel, null);
+    }
+
+    public static State audioVideoLoginSent(State state) {
+        if (state.handshakeState != HandshakeState.AUDIO_VIDEO_LOGIN_SENDING) {
             throw new IllegalStateException("" + state.handshakeState);
         }
 
