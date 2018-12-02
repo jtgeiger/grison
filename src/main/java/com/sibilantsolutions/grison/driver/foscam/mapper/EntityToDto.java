@@ -6,6 +6,7 @@ import java.util.function.Function;
 import com.google.common.base.Strings;
 import com.sibilantsolutions.grison.driver.foscam.domain.ResultCodeE;
 import com.sibilantsolutions.grison.driver.foscam.dto.AlarmNotifyTextDto;
+import com.sibilantsolutions.grison.driver.foscam.dto.AudioDataTextDto;
 import com.sibilantsolutions.grison.driver.foscam.dto.LoginReqAudioVideoTextDto;
 import com.sibilantsolutions.grison.driver.foscam.dto.LoginReqOperationTextDto;
 import com.sibilantsolutions.grison.driver.foscam.dto.LoginRespTextDto;
@@ -16,6 +17,7 @@ import com.sibilantsolutions.grison.driver.foscam.dto.VideoDataTextDto;
 import com.sibilantsolutions.grison.driver.foscam.dto.VideoStartReqTextDto;
 import com.sibilantsolutions.grison.driver.foscam.dto.VideoStartRespTextDto;
 import com.sibilantsolutions.grison.driver.foscam.entity.AlarmNotifyTextEntity;
+import com.sibilantsolutions.grison.driver.foscam.entity.AudioDataTextEntity;
 import com.sibilantsolutions.grison.driver.foscam.entity.LoginReqAudioVideoTextEntity;
 import com.sibilantsolutions.grison.driver.foscam.entity.LoginReqOperationTextEntity;
 import com.sibilantsolutions.grison.driver.foscam.entity.LoginRespTextEntity;
@@ -76,8 +78,18 @@ public final class EntityToDto {
     public static final Function<VideoDataTextEntity, VideoDataTextDto> videoDataTextDto = entity -> VideoDataTextDto.builder()
             .timestamp(FosInt32.create((int) (entity.uptime().toMillis() / 10)))
             .framePerSec(FosInt32.create((int) entity.timestamp().getEpochSecond()))
+            .videoLength(FosInt32.create(entity.videoData().length))
             .videoData(entity.videoData())
             .reserve(FosInt8.create(0))
+            .build();
+
+    public static final Function<AudioDataTextEntity, AudioDataTextDto> audioDataTextDto = entity -> AudioDataTextDto.builder()
+            .timestampHundredths(FosInt32.create((int) (entity.uptime().toMillis() / 10)))
+            .snOfPacket(FosInt32.create((int) entity.serialNumber()))
+            .gatherTimeSecs(FosInt32.create((int) entity.timestamp().getEpochSecond()))
+            .audioFormat(entity.audioFormat().value)
+            .dataLength(FosInt32.create(entity.data().length))
+            .data(entity.data())
             .build();
 
     public static final Function<AlarmNotifyTextEntity, AlarmNotifyTextDto> alarmNotifyTextDto = entity -> AlarmNotifyTextDto.builder()

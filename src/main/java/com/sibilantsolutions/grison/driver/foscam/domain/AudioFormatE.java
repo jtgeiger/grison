@@ -1,30 +1,27 @@
 package com.sibilantsolutions.grison.driver.foscam.domain;
 
+import com.sibilantsolutions.grison.driver.foscam.type.FosInt8;
+
 public enum AudioFormatE
 {
     ADPCM( Values.ADPCM ),
     ;
 
-    static private interface Values
+    private interface Values
     {
-        final static public int ADPCM   = 0;
+        int ADPCM = 0;
     }
 
-    private int value;
+    public final FosInt8 value;
 
-    private AudioFormatE( int value )
+    AudioFormatE(int value)
     {
-        this.value = value;
+        this.value = FosInt8.create(value);
     }
 
-    public int getValue()
+    public static AudioFormatE fromValue(FosInt8 value)
     {
-        return value;
-    }
-
-    public static AudioFormatE fromValue( char value )
-    {
-        switch ( value )
+        switch (value.value())
         {
             case Values.ADPCM:
                 return ADPCM;

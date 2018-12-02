@@ -3,6 +3,8 @@ package com.sibilantsolutions.grison.driver.foscam.domain;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 
+import com.sibilantsolutions.grison.driver.foscam.type.FosInt8;
+
 abstract public class AbstractAudioDataText implements DatastreamI
 {
 
@@ -79,7 +81,7 @@ abstract public class AbstractAudioDataText implements DatastreamI
         this.serialNumber = bb.getInt();
         this.timestampMs = ( (long)bb.getInt() ) * 1000;
 
-        this.audioFormat = AudioFormatE.fromValue( (char)bb.get() );
+        this.audioFormat = AudioFormatE.fromValue(FosInt8.create((char) bb.get()));
 
         int dataLen = bb.getInt();
 
@@ -97,7 +99,7 @@ abstract public class AbstractAudioDataText implements DatastreamI
         bb.putInt( (int)( uptimeMs / uptimeScale ) );
         bb.putInt( (int)serialNumber );
         bb.putInt( (int)( timestampMs / 1000 ) );
-        bb.put( (byte)audioFormat.getValue() );
+        bb.put((byte) audioFormat.value.value());
         bb.putInt( dataContent.length );
         bb.put( dataContent );
 

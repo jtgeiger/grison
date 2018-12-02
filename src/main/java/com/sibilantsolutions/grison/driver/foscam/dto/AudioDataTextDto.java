@@ -9,7 +9,7 @@ import com.sibilantsolutions.grison.driver.foscam.type.FosInt8;
 @AutoValue
 public abstract class AudioDataTextDto implements FoscamTextDto {
 
-    public abstract FosInt32 timestampMs();
+    public abstract FosInt32 timestampHundredths();
 
     public abstract FosInt32 snOfPacket();
 
@@ -38,7 +38,7 @@ public abstract class AudioDataTextDto implements FoscamTextDto {
     @AutoValue.Builder
     public abstract static class Builder {
 
-        public abstract Builder timestampMs(FosInt32 timestampMs);
+        public abstract Builder timestampHundredths(FosInt32 timestampHundredths);
 
         public abstract Builder snOfPacket(FosInt32 snOfPacket);
 

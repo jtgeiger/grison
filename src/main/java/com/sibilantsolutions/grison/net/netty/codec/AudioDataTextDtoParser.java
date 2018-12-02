@@ -13,7 +13,7 @@ import io.netty.buffer.ByteBuf;
 public class AudioDataTextDtoParser implements Function<ByteBuf, AudioDataTextDto> {
     @Override
     public AudioDataTextDto apply(ByteBuf buf) {
-        final FosInt32 timestampMs = NettyFosTypeReader.fosInt32(buf);
+        final FosInt32 timestampHundredths = NettyFosTypeReader.fosInt32(buf);
         final FosInt32 snOfPacket = NettyFosTypeReader.fosInt32(buf);
         final FosInt32 gatherTimeSecs = NettyFosTypeReader.fosInt32(buf);
         final FosInt8 audioFormat = NettyFosTypeReader.fosInt8(buf);
@@ -21,7 +21,7 @@ public class AudioDataTextDtoParser implements Function<ByteBuf, AudioDataTextDt
         final byte[] data = readBytes(dataLength.value(), buf);
 
         return AudioDataTextDto.builder()
-                .timestampMs(timestampMs)
+                .timestampHundredths(timestampHundredths)
                 .snOfPacket(snOfPacket)
                 .gatherTimeSecs(gatherTimeSecs)
                 .audioFormat(audioFormat)

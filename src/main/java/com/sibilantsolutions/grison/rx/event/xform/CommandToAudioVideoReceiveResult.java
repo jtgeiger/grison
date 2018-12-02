@@ -1,9 +1,10 @@
 package com.sibilantsolutions.grison.rx.event.xform;
 
-import java.util.Collections;
+import java.util.Arrays;
 
 import org.reactivestreams.Publisher;
 
+import com.sibilantsolutions.grison.driver.foscam.dto.AudioDataTextDto;
 import com.sibilantsolutions.grison.driver.foscam.dto.CommandDto;
 import com.sibilantsolutions.grison.driver.foscam.dto.FoscamTextDto;
 import com.sibilantsolutions.grison.driver.foscam.dto.VideoDataTextDto;
@@ -27,8 +28,9 @@ public class CommandToAudioVideoReceiveResult implements FlowableTransformer<Com
 
         @Override
         public Publisher<FoscamTextEntity> apply(Flowable<FoscamTextDto> upstream) {
-            return upstream.publish(foscamTextDtoFlowable -> Flowable.merge(Collections.singletonList(
-                    foscamTextDtoFlowable.ofType(VideoDataTextDto.class).map(DtoToEntity.videoDataTextEntity::apply)
+            return upstream.publish(foscamTextDtoFlowable -> Flowable.merge(Arrays.asList(
+                    foscamTextDtoFlowable.ofType(VideoDataTextDto.class).map(DtoToEntity.videoDataTextEntity::apply),
+                    foscamTextDtoFlowable.ofType(AudioDataTextDto.class).map(DtoToEntity.audioDataTextEntity::apply)
             )));
         }
     }

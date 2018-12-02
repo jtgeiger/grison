@@ -17,7 +17,7 @@ public class AudioDataTextDtoEncoder extends MessageToMessageEncoder<AudioDataTe
 
         final ByteBuf textBuf = ctx.alloc().buffer(msg.encodedLength(), msg.encodedLength());
 
-        NettyFosTypeWriter.write(msg.timestampMs(), textBuf);
+        NettyFosTypeWriter.write(msg.timestampHundredths(), textBuf);
         NettyFosTypeWriter.write(msg.snOfPacket(), textBuf);
         NettyFosTypeWriter.write(msg.gatherTimeSecs(), textBuf);
         NettyFosTypeWriter.write(msg.audioFormat(), textBuf);
