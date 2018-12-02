@@ -7,6 +7,7 @@ import org.reactivestreams.Publisher;
 import com.sibilantsolutions.grison.driver.foscam.dto.AudioDataTextDto;
 import com.sibilantsolutions.grison.driver.foscam.dto.CommandDto;
 import com.sibilantsolutions.grison.driver.foscam.dto.FoscamTextDto;
+import com.sibilantsolutions.grison.driver.foscam.dto.TalkDataTextDto;
 import com.sibilantsolutions.grison.driver.foscam.dto.VideoDataTextDto;
 import com.sibilantsolutions.grison.driver.foscam.entity.FoscamTextEntity;
 import com.sibilantsolutions.grison.driver.foscam.mapper.DtoToEntity;
@@ -30,7 +31,8 @@ public class CommandToAudioVideoReceiveResult implements FlowableTransformer<Com
         public Publisher<FoscamTextEntity> apply(Flowable<FoscamTextDto> upstream) {
             return upstream.publish(foscamTextDtoFlowable -> Flowable.merge(Arrays.asList(
                     foscamTextDtoFlowable.ofType(VideoDataTextDto.class).map(DtoToEntity.videoDataTextEntity::apply),
-                    foscamTextDtoFlowable.ofType(AudioDataTextDto.class).map(DtoToEntity.audioDataTextEntity::apply)
+                    foscamTextDtoFlowable.ofType(AudioDataTextDto.class).map(DtoToEntity.audioDataTextEntity::apply),
+                    foscamTextDtoFlowable.ofType(TalkDataTextDto.class).map(DtoToEntity.talkDataTextEntity::apply)
             )));
         }
     }

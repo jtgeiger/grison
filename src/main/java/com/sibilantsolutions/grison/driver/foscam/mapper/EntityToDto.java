@@ -10,6 +10,7 @@ import com.sibilantsolutions.grison.driver.foscam.dto.AudioDataTextDto;
 import com.sibilantsolutions.grison.driver.foscam.dto.LoginReqAudioVideoTextDto;
 import com.sibilantsolutions.grison.driver.foscam.dto.LoginReqOperationTextDto;
 import com.sibilantsolutions.grison.driver.foscam.dto.LoginRespTextDto;
+import com.sibilantsolutions.grison.driver.foscam.dto.TalkDataTextDto;
 import com.sibilantsolutions.grison.driver.foscam.dto.Unk02TextDto;
 import com.sibilantsolutions.grison.driver.foscam.dto.VerifyReqTextDto;
 import com.sibilantsolutions.grison.driver.foscam.dto.VerifyRespTextDto;
@@ -21,6 +22,7 @@ import com.sibilantsolutions.grison.driver.foscam.entity.AudioDataTextEntity;
 import com.sibilantsolutions.grison.driver.foscam.entity.LoginReqAudioVideoTextEntity;
 import com.sibilantsolutions.grison.driver.foscam.entity.LoginReqOperationTextEntity;
 import com.sibilantsolutions.grison.driver.foscam.entity.LoginRespTextEntity;
+import com.sibilantsolutions.grison.driver.foscam.entity.TalkDataTextEntity;
 import com.sibilantsolutions.grison.driver.foscam.entity.Unk02TextEntity;
 import com.sibilantsolutions.grison.driver.foscam.entity.VerifyReqTextEntity;
 import com.sibilantsolutions.grison.driver.foscam.entity.VerifyRespTextEntity;
@@ -71,6 +73,10 @@ public final class EntityToDto {
         return builder.build();
     };
 
+    public static final Function<AlarmNotifyTextEntity, AlarmNotifyTextDto> alarmNotifyTextDto = entity -> AlarmNotifyTextDto.builder()
+            .type(entity.alarmType().value)
+            .build();
+
     public static final Function<LoginReqAudioVideoTextEntity, LoginReqAudioVideoTextDto> loginReqAudioVideoTextDto = entity -> LoginReqAudioVideoTextDto.builder()
             .dataConnectionId(entity.dataConnectionId())
             .build();
@@ -92,8 +98,13 @@ public final class EntityToDto {
             .data(entity.data())
             .build();
 
-    public static final Function<AlarmNotifyTextEntity, AlarmNotifyTextDto> alarmNotifyTextDto = entity -> AlarmNotifyTextDto.builder()
-            .type(entity.alarmType().value)
+    public static final Function<TalkDataTextEntity, TalkDataTextDto> talkDataTextDto = entity -> TalkDataTextDto.builder()
+            .timestampMs(FosInt32.create((int) entity.uptime().toMillis()))
+            .snOfPacket(FosInt32.create((int) entity.serialNumber()))
+            .gatherTimeSecs(FosInt32.create((int) entity.timestamp().getEpochSecond()))
+            .audioFormat(entity.audioFormat().value)
+            .dataLength(FosInt32.create(entity.data().length))
+            .data(entity.data())
             .build();
 
 }
