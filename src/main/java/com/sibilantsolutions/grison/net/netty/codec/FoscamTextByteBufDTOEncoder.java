@@ -20,6 +20,9 @@ public class FoscamTextByteBufDTOEncoder extends MessageToByteEncoder<FoscamText
         NettyFosTypeWriter.write(msg.encodedLength(), out); //4
         NettyFosTypeWriter.write(msg.encodedLength(), out); //4
         out.writeBytes(msg.textBuf());                      //N
+
+        // Each FoscamTextByteBufDTO has a ByteBuf that was allocated to hold the text; it is our job to release it.
+        msg.textBuf().release();
     }
 
     @Override
