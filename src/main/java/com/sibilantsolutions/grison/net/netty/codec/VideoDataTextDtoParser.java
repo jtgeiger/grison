@@ -21,7 +21,7 @@ public class VideoDataTextDtoParser implements Function<ByteBuf, VideoDataTextDt
         byte[] videoData = NettyByteBufHelper.readBytes(videoLength.value(), buf);
 
         return VideoDataTextDto.builder()
-                .timestamp(timestamp)
+                .timestampHundredths(timestamp)
                 .framePerSec(framePerSec)
                 .reserve(reserve)
                 .videoLength(videoLength)

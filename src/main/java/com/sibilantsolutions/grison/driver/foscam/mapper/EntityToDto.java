@@ -114,7 +114,7 @@ public final class EntityToDto {
             .build();
 
     public static final Function<VideoDataTextEntity, VideoDataTextDto> videoDataTextDto = entity -> VideoDataTextDto.builder()
-            .timestamp(FosInt32.create((int) (entity.uptime().toMillis() / 10)))
+            .timestampHundredths(FosInt32.create((int) (entity.uptime().toMillis() / 10)))
             .framePerSec(FosInt32.create((int) entity.timestamp().getEpochSecond()))
             .videoLength(FosInt32.create(entity.videoData().length))
             .videoData(entity.videoData())

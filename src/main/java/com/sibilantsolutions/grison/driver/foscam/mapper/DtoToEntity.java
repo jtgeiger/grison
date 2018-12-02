@@ -111,7 +111,7 @@ public final class DtoToEntity {
             .build();
 
     public static final Function<VideoDataTextDto, VideoDataTextEntity> videoDataTextEntity = dto -> VideoDataTextEntity.builder()
-            .uptime(Duration.ofMillis(dto.timestamp().value() * 10))
+            .uptime(Duration.ofMillis(dto.timestampHundredths().value() * 10))
             .timestamp(Instant.ofEpochSecond(dto.framePerSec().value()))
             .videoData(dto.videoData())
             .build();

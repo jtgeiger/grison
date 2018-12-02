@@ -17,7 +17,7 @@ public class VideoDataTextDtoEncoder extends MessageToMessageEncoder<VideoDataTe
 
         final ByteBuf textBuf = ctx.alloc().buffer(msg.encodedLength(), msg.encodedLength());
 
-        NettyFosTypeWriter.write(msg.timestamp(), textBuf);
+        NettyFosTypeWriter.write(msg.timestampHundredths(), textBuf);
         NettyFosTypeWriter.write(msg.framePerSec(), textBuf);
         NettyFosTypeWriter.write(msg.reserve(), textBuf);
         NettyFosTypeWriter.write(msg.videoLength(), textBuf);

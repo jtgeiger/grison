@@ -9,7 +9,7 @@ import com.sibilantsolutions.grison.driver.foscam.type.FosInt8;
 @AutoValue
 public abstract class VideoDataTextDto implements FoscamTextDto {
 
-    public abstract FosInt32 timestamp();
+    public abstract FosInt32 timestampHundredths();
 
     public abstract FosInt32 framePerSec();
 
@@ -35,7 +35,7 @@ public abstract class VideoDataTextDto implements FoscamTextDto {
 
     @AutoValue.Builder
     public abstract static class Builder {
-        public abstract Builder timestamp(FosInt32 timestamp);
+        public abstract Builder timestampHundredths(FosInt32 timestampHundredths);
 
         public abstract Builder framePerSec(FosInt32 framePerSec);
 
