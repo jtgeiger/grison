@@ -2,6 +2,8 @@ package com.sibilantsolutions.grison.driver.foscam.dto;
 
 import static com.google.common.base.Preconditions.checkArgument;
 
+import java.time.Instant;
+
 import com.google.auto.value.AutoValue;
 import com.sibilantsolutions.grison.driver.foscam.domain.ProtocolE;
 import com.sibilantsolutions.grison.driver.foscam.type.FosInt32;
@@ -29,6 +31,8 @@ public abstract class CommandDto {
 
     public abstract FoscamTextDto text();
 
+    public abstract Instant clientTimestamp();
+
     public static Builder builder() {
         return new AutoValue_CommandDto.Builder()
                 .reserve1(RESERVE1)
@@ -51,6 +55,8 @@ public abstract class CommandDto {
         public abstract Builder reserve3(FosInt32 reserve3);
 
         public abstract Builder text(FoscamTextDto text);
+
+        public abstract Builder clientTimestamp(Instant clientTimestamp);
 
         abstract CommandDto autoBuild();    //Not public.
 

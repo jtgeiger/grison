@@ -1,6 +1,7 @@
 package com.sibilantsolutions.grison.net.netty;
 
 import java.nio.ByteOrder;
+import java.time.Clock;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
@@ -58,7 +59,7 @@ public class SearchChannelInitializer extends ChannelInitializer {
                 //small enough to be sent in one indivisible chunk.  Here it's just used to validate
                 //the packet format and do a sanity check.
                 .addLast(new LengthFieldBasedFrameDecoder(ByteOrder.LITTLE_ENDIAN, 128, 0x0F, 4, 4, 0, true))
-                .addLast(new FoscamCommandDtoDecoder())
+                .addLast(new FoscamCommandDtoDecoder(Clock.systemUTC()))
                 //Only wait for responses for so long.  Fires ReadTimeoutException and closes the channel.
                 .addLast(new ReadTimeoutHandler(READ_TIMEOUT_SECONDS))
                 .addLast(new ChannelInboundHandlerAdapter() {

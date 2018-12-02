@@ -4,6 +4,7 @@ import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 
 import java.nio.charset.StandardCharsets;
+import java.time.Clock;
 
 import org.junit.Test;
 
@@ -23,7 +24,7 @@ public class NettyCommandDtoParserTest {
     @Test
     public void parse() {
         final ByteBuf buf = new ResourceToByteBuf().apply("/samples/login_resp.bin");
-        final CommandDto dto = new NettyCommandDtoParser().parse(buf);
+        final CommandDto dto = new NettyCommandDtoParser(Clock.systemUTC()).parse(buf);
         assertEquals(ProtocolE.OPERATION_PROTOCOL, dto.protocol());
         assertEquals(FoscamOpCode.Login_Resp, dto.operationCode());
         assertEquals(FosInt8.create(0), dto.reserve1());

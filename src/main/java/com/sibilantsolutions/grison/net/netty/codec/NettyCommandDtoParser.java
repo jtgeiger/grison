@@ -5,6 +5,9 @@ import static com.sibilantsolutions.grison.driver.foscam.dto.CommandDto.PROTOCOL
 import static com.sibilantsolutions.grison.driver.foscam.dto.CommandDto.RESERVE2;
 import static com.sibilantsolutions.grison.net.netty.codec.parse.NettyByteBufHelper.readBytes;
 
+import java.time.Clock;
+import java.time.Instant;
+
 import com.sibilantsolutions.grison.driver.foscam.domain.ProtocolE;
 import com.sibilantsolutions.grison.driver.foscam.dto.CommandDto;
 import com.sibilantsolutions.grison.driver.foscam.dto.FoscamOpCode;
@@ -17,7 +20,16 @@ import io.netty.buffer.ByteBuf;
 
 public class NettyCommandDtoParser {
 
+    private final Clock clock;
+
+    public NettyCommandDtoParser(Clock clock) {
+        this.clock = clock;
+    }
+
     public CommandDto parse(ByteBuf buf) {
+
+        // Record the local timestamp because the server's timestamp may be off by a little or a lot.
+        final Instant clientTimestamp = clock.instant();
 
         final byte[] protocolBytes = readBytes(PROTOCOL_LEN, buf);
         final FosInt16 operationCode = NettyFosTypeReader.fosInt16(buf);
@@ -42,6 +54,7 @@ public class NettyCommandDtoParser {
                 .textLength(textLength)
                 .reserve3(reserve3)
                 .text(foscamTextDto)
+                .clientTimestamp(clientTimestamp)
                 .build();
     }
 

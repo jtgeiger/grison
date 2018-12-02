@@ -1,6 +1,7 @@
 package com.sibilantsolutions.grison.net.netty;
 
 import java.nio.ByteOrder;
+import java.time.Clock;
 import java.util.concurrent.TimeUnit;
 
 import org.reactivestreams.Subscriber;
@@ -58,7 +59,7 @@ public class OperationChannelInitializer extends ChannelInitializer {
                 //Log lifecycle events AND datastream ("io.netty.handler.logging.LoggingHandler"; DEBUG level).
                 .addLast(new LoggingHandler())
                 .addLast(new LengthFieldBasedFrameDecoder(ByteOrder.LITTLE_ENDIAN, MAX_FRAME_LENGTH, 0x0F, 4, 4, 0, true))
-                .addLast(new FoscamCommandDtoDecoder())
+                .addLast(new FoscamCommandDtoDecoder(Clock.systemUTC()))
                 .addLast(new FoscamTextByteBufDTOEncoder())
                 .addLast(new KeepAliveOperationTextDtoEncoder())
                 .addLast(new LoginReqOperationTextDtoEncoder())
