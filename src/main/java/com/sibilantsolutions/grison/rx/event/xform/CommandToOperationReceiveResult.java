@@ -5,9 +5,11 @@ import java.util.Arrays;
 import org.reactivestreams.Publisher;
 
 import com.sibilantsolutions.grison.driver.foscam.dto.AlarmNotifyTextDto;
+import com.sibilantsolutions.grison.driver.foscam.dto.AudioStartRespTextDto;
 import com.sibilantsolutions.grison.driver.foscam.dto.CommandDto;
 import com.sibilantsolutions.grison.driver.foscam.dto.FoscamTextDto;
 import com.sibilantsolutions.grison.driver.foscam.dto.LoginRespTextDto;
+import com.sibilantsolutions.grison.driver.foscam.dto.TalkStartRespTextDto;
 import com.sibilantsolutions.grison.driver.foscam.dto.Unk02TextDto;
 import com.sibilantsolutions.grison.driver.foscam.dto.VerifyRespTextDto;
 import com.sibilantsolutions.grison.driver.foscam.dto.VideoStartRespTextDto;
@@ -36,6 +38,8 @@ public class CommandToOperationReceiveResult implements FlowableTransformer<Comm
                     foscamTextDtoFlowable.ofType(VerifyRespTextDto.class).map(DtoToEntity.verifyRespTextEntity::apply),
                     foscamTextDtoFlowable.ofType(Unk02TextDto.class).map(DtoToEntity.unk02TextEntity::apply),
                     foscamTextDtoFlowable.ofType(VideoStartRespTextDto.class).map(DtoToEntity.videoStartRespTextEntity::apply),
+                    foscamTextDtoFlowable.ofType(AudioStartRespTextDto.class).map(DtoToEntity.audioStartRespTextEntity::apply),
+                    foscamTextDtoFlowable.ofType(TalkStartRespTextDto.class).map(DtoToEntity.talkStartRespTextEntity::apply),
                     foscamTextDtoFlowable.ofType(AlarmNotifyTextDto.class).map(DtoToEntity.alarmNotifyTextEntity::apply)
             )));
         }

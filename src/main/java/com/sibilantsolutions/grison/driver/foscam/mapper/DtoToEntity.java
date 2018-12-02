@@ -10,10 +10,14 @@ import com.sibilantsolutions.grison.driver.foscam.domain.AudioFormatE;
 import com.sibilantsolutions.grison.driver.foscam.domain.ResultCodeE;
 import com.sibilantsolutions.grison.driver.foscam.dto.AlarmNotifyTextDto;
 import com.sibilantsolutions.grison.driver.foscam.dto.AudioDataTextDto;
+import com.sibilantsolutions.grison.driver.foscam.dto.AudioStartReqTextDto;
+import com.sibilantsolutions.grison.driver.foscam.dto.AudioStartRespTextDto;
 import com.sibilantsolutions.grison.driver.foscam.dto.LoginReqAudioVideoTextDto;
 import com.sibilantsolutions.grison.driver.foscam.dto.LoginReqOperationTextDto;
 import com.sibilantsolutions.grison.driver.foscam.dto.LoginRespTextDto;
 import com.sibilantsolutions.grison.driver.foscam.dto.TalkDataTextDto;
+import com.sibilantsolutions.grison.driver.foscam.dto.TalkStartReqTextDto;
+import com.sibilantsolutions.grison.driver.foscam.dto.TalkStartRespTextDto;
 import com.sibilantsolutions.grison.driver.foscam.dto.Unk02TextDto;
 import com.sibilantsolutions.grison.driver.foscam.dto.VerifyReqTextDto;
 import com.sibilantsolutions.grison.driver.foscam.dto.VerifyRespTextDto;
@@ -22,10 +26,14 @@ import com.sibilantsolutions.grison.driver.foscam.dto.VideoStartReqTextDto;
 import com.sibilantsolutions.grison.driver.foscam.dto.VideoStartRespTextDto;
 import com.sibilantsolutions.grison.driver.foscam.entity.AlarmNotifyTextEntity;
 import com.sibilantsolutions.grison.driver.foscam.entity.AudioDataTextEntity;
+import com.sibilantsolutions.grison.driver.foscam.entity.AudioStartReqTextEntity;
+import com.sibilantsolutions.grison.driver.foscam.entity.AudioStartRespTextEntity;
 import com.sibilantsolutions.grison.driver.foscam.entity.LoginReqAudioVideoTextEntity;
 import com.sibilantsolutions.grison.driver.foscam.entity.LoginReqOperationTextEntity;
 import com.sibilantsolutions.grison.driver.foscam.entity.LoginRespTextEntity;
 import com.sibilantsolutions.grison.driver.foscam.entity.TalkDataTextEntity;
+import com.sibilantsolutions.grison.driver.foscam.entity.TalkStartReqTextEntity;
+import com.sibilantsolutions.grison.driver.foscam.entity.TalkStartRespTextEntity;
 import com.sibilantsolutions.grison.driver.foscam.entity.Unk02TextEntity;
 import com.sibilantsolutions.grison.driver.foscam.entity.VerifyReqTextEntity;
 import com.sibilantsolutions.grison.driver.foscam.entity.VerifyRespTextEntity;
@@ -63,6 +71,30 @@ public final class DtoToEntity {
 
     public static final Function<VideoStartRespTextDto, VideoStartRespTextEntity> videoStartRespTextEntity = dto -> {
         final VideoStartRespTextEntity.Builder builder = VideoStartRespTextEntity.builder()
+                .result(ResultCodeE.fromValue(dto.result()));
+        if (dto.dataConnectionId().isPresent()) {
+            builder.dataConnectionId(dto.dataConnectionId().get());
+        }
+        return builder.build();
+    };
+
+    public static final Function<AudioStartReqTextDto, AudioStartReqTextEntity> audioStartReqTextEntity = dto -> AudioStartReqTextEntity.builder()
+            .build();
+
+    public static final Function<AudioStartRespTextDto, AudioStartRespTextEntity> audioStartRespTextEntity = dto -> {
+        final AudioStartRespTextEntity.Builder builder = AudioStartRespTextEntity.builder()
+                .result(ResultCodeE.fromValue(dto.result()));
+        if (dto.dataConnectionId().isPresent()) {
+            builder.dataConnectionId(dto.dataConnectionId().get());
+        }
+        return builder.build();
+    };
+
+    public static final Function<TalkStartReqTextDto, TalkStartReqTextEntity> talkStartReqTextEntity = dto -> TalkStartReqTextEntity.builder()
+            .build();
+
+    public static final Function<TalkStartRespTextDto, TalkStartRespTextEntity> talkStartRespTextEntity = dto -> {
+        final TalkStartRespTextEntity.Builder builder = TalkStartRespTextEntity.builder()
                 .result(ResultCodeE.fromValue(dto.result()));
         if (dto.dataConnectionId().isPresent()) {
             builder.dataConnectionId(dto.dataConnectionId().get());
