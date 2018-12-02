@@ -1,5 +1,6 @@
 package com.sibilantsolutions.grison.driver.foscam.entity;
 
+import java.time.Duration;
 import java.time.Instant;
 
 import com.google.auto.value.AutoValue;
@@ -7,7 +8,7 @@ import com.google.auto.value.AutoValue;
 @AutoValue
 public abstract class VideoDataTextEntity implements FoscamTextEntity {
 
-    public abstract long uptimeMs();
+    public abstract Duration uptime();
 
     public abstract Instant timestamp();
 
@@ -20,7 +21,7 @@ public abstract class VideoDataTextEntity implements FoscamTextEntity {
     @AutoValue.Builder
     public abstract static class Builder {
 
-        public abstract Builder uptimeMs(long uptimeMs);
+        public abstract Builder uptime(Duration uptime);
 
         public abstract Builder timestamp(Instant timestamp);
 

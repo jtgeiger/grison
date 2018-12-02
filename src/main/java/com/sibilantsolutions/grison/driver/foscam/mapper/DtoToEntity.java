@@ -1,6 +1,7 @@
 package com.sibilantsolutions.grison.driver.foscam.mapper;
 
 import java.nio.charset.StandardCharsets;
+import java.time.Duration;
 import java.time.Instant;
 import java.util.function.Function;
 
@@ -69,7 +70,7 @@ public final class DtoToEntity {
             .build();
 
     public static final Function<VideoDataTextDto, VideoDataTextEntity> videoDataTextEntity = dto -> VideoDataTextEntity.builder()
-            .uptimeMs(dto.timestamp().value() * 10)
+            .uptime(Duration.ofMillis(dto.timestamp().value() * 10))
             .timestamp(Instant.ofEpochSecond(dto.framePerSec().value()))
             .videoData(dto.videoData())
             .build();

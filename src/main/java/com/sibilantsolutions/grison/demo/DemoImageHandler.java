@@ -101,7 +101,7 @@ public class DemoImageHandler implements ImageHandlerI
         frameCounter.incrementAndGet();
         final ImageIcon icon = new ImageIcon(videoData.videoData());
 
-        final long uptimeMs = videoData.uptimeMs();
+        final long uptimeMs = videoData.uptime().toMillis();
         String uptimeDuration = String.format("%dd %02d:%02d:%02d", TimeUnit.MILLISECONDS.toDays(
                 uptimeMs), TimeUnit.MILLISECONDS.toHours(uptimeMs) - TimeUnit.DAYS.toHours(
                 TimeUnit.MILLISECONDS.toDays(uptimeMs)), TimeUnit.MILLISECONDS.toMinutes(

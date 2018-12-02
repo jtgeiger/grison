@@ -1,6 +1,7 @@
 package com.sibilantsolutions.grison.driver.foscam.net;
 
 import java.net.InetSocketAddress;
+import java.time.Duration;
 import java.time.Instant;
 import java.util.List;
 
@@ -148,7 +149,7 @@ public class FoscamSession
                 {
                     final VideoDataTextEntity videoDataTextEntity = VideoDataTextEntity.builder()
                             .videoData(videoDataText.getDataContent())
-                            .uptimeMs(videoDataText.getUptimeMs())
+                            .uptime(Duration.ofMillis(videoDataText.getUptimeMs()))
                             .timestamp(Instant.ofEpochMilli(videoDataText.getTimestampMs()))
                             .build();
                     imageHandler.onReceive(videoDataTextEntity);
