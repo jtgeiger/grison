@@ -5,6 +5,8 @@ import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
+import java.time.Duration;
+import java.time.ZoneId;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ThreadFactory;
@@ -100,20 +102,16 @@ public class DemoImageHandler implements ImageHandlerI
     {
         frameCounter.incrementAndGet();
         final ImageIcon icon = new ImageIcon(videoData.videoData());
+        final Duration uptime = videoData.uptime();
 
-        final long uptimeMs = videoData.uptime().toMillis();
-        String uptimeDuration = String.format("%dd %02d:%02d:%02d", TimeUnit.MILLISECONDS.toDays(
-                uptimeMs), TimeUnit.MILLISECONDS.toHours(uptimeMs) - TimeUnit.DAYS.toHours(
-                TimeUnit.MILLISECONDS.toDays(uptimeMs)), TimeUnit.MILLISECONDS.toMinutes(
-                uptimeMs) - TimeUnit.HOURS.toMinutes(TimeUnit.MILLISECONDS.toHours(
-                uptimeMs)), TimeUnit.MILLISECONDS.toSeconds(uptimeMs)
-                - TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS
-                .toMinutes(uptimeMs)));
+        final String uptimeDuration = String.format("%dd %02d:%02d:%02d.%03d",
+                uptime.toDays(),
+                uptime.minusHours(TimeUnit.DAYS.toHours(uptime.toDays())).toHours(),
+                uptime.minusMinutes(TimeUnit.HOURS.toMinutes(uptime.toHours())).toMinutes(),
+                uptime.minusSeconds(TimeUnit.MINUTES.toSeconds(uptime.toMinutes())).getSeconds(),
+                uptime.minusMillis(TimeUnit.SECONDS.toMillis(uptime.getSeconds())).toMillis());
 
-        final String uptimeStr = String.valueOf(uptimeMs) + " (" + uptimeDuration + ")";
-//        final String timestampStr = String.valueOf(videoData.getTimestampMs()) + " (" + new Date(
-//                videoData.getTimestampMs()) + ')';
-        final String timestampStr = videoData.timestamp().toString();
+        final String timestampStr = videoData.timestamp().atZone(ZoneId.systemDefault()).toString();
 
         Runnable r = new Runnable() {
 
@@ -121,7 +119,7 @@ public class DemoImageHandler implements ImageHandlerI
             public void run()
             {
                 imageLabel.setIcon(icon);
-                uptimeLabel.setText(uptimeStr);
+                uptimeLabel.setText(uptimeDuration);
                 timestampLabel.setText(timestampStr);
             }
         };

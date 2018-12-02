@@ -17,6 +17,7 @@ public class Grison
         log.info( "main() started." );
 
         new NettyDemo().go(args[0], Integer.parseInt(args[1]), args[2], args[3]);
+//        Demo.demo(args[0], Integer.parseInt(args[1]), args[2], args[3]);
 
 //        new DurationLoggingRunnable( new Runnable() {
 //
