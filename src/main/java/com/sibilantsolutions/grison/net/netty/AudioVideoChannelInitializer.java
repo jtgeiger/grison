@@ -31,7 +31,8 @@ public class AudioVideoChannelInitializer extends ChannelInitializer {
 
     private static final String EXCEPTION_TRAPPER = "exceptionTrapper";
 
-    private static final int MAX_FRAME_LENGTH = 65_536;
+    // Occasionally receive images as large as 69k.
+    private static final int MAX_FRAME_LENGTH = 70_000;
 
     private static final int READ_TIMEOUT_SECS = 65;
     private static final int KEEPALIVE_SEND_TIMEOUT_SECS = 73;
