@@ -14,4 +14,6 @@ public interface OpClient {
 
     Flowable<ChannelSendEvent> videoEnd();
 
+    Flowable<ChannelSendEvent> audioStart();
+
 }

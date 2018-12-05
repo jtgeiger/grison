@@ -1,5 +1,6 @@
 package com.sibilantsolutions.grison.rx;
 
+import com.sibilantsolutions.grison.driver.foscam.dto.AudioStartReqTextDto;
 import com.sibilantsolutions.grison.driver.foscam.dto.KeepAliveOperationTextDto;
 import com.sibilantsolutions.grison.driver.foscam.dto.LoginReqOperationTextDto;
 import com.sibilantsolutions.grison.driver.foscam.dto.VerifyReqTextDto;
@@ -56,6 +57,13 @@ public class OpClientImpl implements OpClient {
     public Flowable<ChannelSendEvent> videoEnd() {
 
         final VideoEndTextDto text = VideoEndTextDto.builder().build();
+
+        return channelSender.doSend(text);
+    }
+
+    @Override
+    public Flowable<ChannelSendEvent> audioStart() {
+        final AudioStartReqTextDto text = AudioStartReqTextDto.builder().build();
 
         return channelSender.doSend(text);
     }

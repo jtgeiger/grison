@@ -7,6 +7,7 @@ import org.reactivestreams.Subscriber;
 
 import com.sibilantsolutions.grison.driver.foscam.dto.CommandDto;
 import com.sibilantsolutions.grison.rx.event.action.AbstractAction;
+import com.sibilantsolutions.grison.rx.event.action.AudioStartAction;
 import com.sibilantsolutions.grison.rx.event.action.AudioVideoConnectAction;
 import com.sibilantsolutions.grison.rx.event.action.AudioVideoLoginAction;
 import com.sibilantsolutions.grison.rx.event.action.LoginAction;
@@ -37,6 +38,7 @@ public class AbstractActionToAbstractResult implements FlowableTransformer<Abstr
                         abstractActionFlowable.ofType(VerifyAction.class).compose(new VerifyActionToVerifySendResult()),
                         abstractActionFlowable.ofType(VideoStartAction.class).compose(new VideoStartActionToVideoStartSendResult()),
                         abstractActionFlowable.ofType(VideoEndAction.class).compose(new VideoEndActionToVideoEndSendResult()),
+                        abstractActionFlowable.ofType(AudioStartAction.class).compose(new AudioStartActionToAudioStartSendResult()),
                         abstractActionFlowable.ofType(AudioVideoConnectAction.class).compose(new AudioVideoConnectActionToAudioVideoConnectResult(audioVideoDatastream)),
                         abstractActionFlowable.ofType(AudioVideoLoginAction.class).compose(new AudioVideoLoginActionToAudioVideoLoginSendResult())
                 )));

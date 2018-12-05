@@ -2,10 +2,12 @@ package com.sibilantsolutions.grison.rx.event.xform;
 
 import java.net.InetSocketAddress;
 import java.net.SocketAddress;
+import java.util.Optional;
 
 import org.reactivestreams.Publisher;
 
 import com.google.common.base.VerifyException;
+import com.sibilantsolutions.grison.driver.foscam.type.FosInt32;
 import com.sibilantsolutions.grison.rx.State;
 import com.sibilantsolutions.grison.rx.event.action.AbstractAction;
 import com.sibilantsolutions.grison.rx.event.action.AudioVideoConnectAction;
@@ -46,6 +48,7 @@ public class StateToState implements FlowableTransformer<State, State> {
 
                         case UNK02_RECEIVED:
                             dynamicActions.onNext(new VideoStartAction(state.operationChannel));
+//                            dynamicActions.onNext(new AudioStartAction(state.operationChannel));
                             break;
 
                         case VIDEO_START_RESPONDED:
@@ -59,7 +62,12 @@ public class StateToState implements FlowableTransformer<State, State> {
                             break;
 
                         case AUDIO_VIDEO_CONNECTED:
-                            final AudioVideoLoginAction audioVideoLoginAction = new AudioVideoLoginAction(state.audioVideoChannel, state.videoStartRespText.dataConnectionId().orElseThrow(VerifyException::new));
+                            Optional<FosInt32> o = (state.videoStartRespText != null
+                                    ? state.videoStartRespText.dataConnectionId()
+                                    : state.audioStartRespText.dataConnectionId());
+                            final FosInt32 dataConnectionId = o.orElseThrow(VerifyException::new);
+
+                            final AudioVideoLoginAction audioVideoLoginAction = new AudioVideoLoginAction(state.audioVideoChannel, dataConnectionId);
                             dynamicActions.onNext(audioVideoLoginAction);
                             break;
                     }

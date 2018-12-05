@@ -10,6 +10,7 @@ import org.slf4j.LoggerFactory;
 
 import com.sibilantsolutions.grison.driver.foscam.dto.CommandDto;
 import com.sibilantsolutions.grison.driver.foscam.dto.FoscamOpCode;
+import com.sibilantsolutions.grison.net.netty.codec.AudioStartReqTextDtoEncoder;
 import com.sibilantsolutions.grison.net.netty.codec.FoscamCommandDtoDecoder;
 import com.sibilantsolutions.grison.net.netty.codec.FoscamTextByteBufDTOEncoder;
 import com.sibilantsolutions.grison.net.netty.codec.KeepAliveOperationTextDtoEncoder;
@@ -66,6 +67,7 @@ public class OperationChannelInitializer extends ChannelInitializer {
                 .addLast(new VerifyReqTextDtoEncoder())
                 .addLast(new VideoStartReqTextDtoEncoder())
                 .addLast(new VideoEndTextDtoEncoder())
+                .addLast(new AudioStartReqTextDtoEncoder())
                 .addLast(new IdleStateHandler(READ_TIMEOUT_SECS, WRITE_TIMEOUT_SECS, 0))
                 .addLast(new IdleStateEventHandler())
                 //Receive and drop inbound pings.  We don't respond to these.  We send outbound

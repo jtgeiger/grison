@@ -3,6 +3,8 @@ package com.sibilantsolutions.grison.rx.event.xform;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.sibilantsolutions.grison.driver.foscam.entity.AudioDataTextEntity;
+import com.sibilantsolutions.grison.driver.foscam.entity.AudioStartRespTextEntity;
 import com.sibilantsolutions.grison.driver.foscam.entity.LoginRespTextEntity;
 import com.sibilantsolutions.grison.driver.foscam.entity.Unk02TextEntity;
 import com.sibilantsolutions.grison.driver.foscam.entity.VerifyRespTextEntity;
@@ -10,6 +12,7 @@ import com.sibilantsolutions.grison.driver.foscam.entity.VideoDataTextEntity;
 import com.sibilantsolutions.grison.driver.foscam.entity.VideoStartRespTextEntity;
 import com.sibilantsolutions.grison.rx.State;
 import com.sibilantsolutions.grison.rx.event.result.AbstractResult;
+import com.sibilantsolutions.grison.rx.event.result.AudioStartSendResult;
 import com.sibilantsolutions.grison.rx.event.result.AudioVideoConnectResult;
 import com.sibilantsolutions.grison.rx.event.result.AudioVideoLoginSendResult;
 import com.sibilantsolutions.grison.rx.event.result.AudioVideoReceiveResult;
@@ -65,6 +68,15 @@ public class StateAndResultToStateBiFunction implements BiFunction<State, Abstra
             } else {
                 return State.fail(vsr.failureCause, state);
             }
+        } else if (state.operationChannel != null && result instanceof AudioStartSendResult) {
+            AudioStartSendResult asr = (AudioStartSendResult) result;
+            if (asr == AudioStartSendResult.IN_FLIGHT) {
+                return State.audioStartSending(state);
+            } else if (asr == AudioStartSendResult.SENT) {
+                return State.audioStartSent(state);
+            } else {
+                return State.fail(asr.failureCause, state);
+            }
         } else if (result instanceof AudioVideoConnectResult) {
             AudioVideoConnectResult r = (AudioVideoConnectResult) result;
             LOG.info("AudioVideoConnectResult={}.", r);
@@ -105,6 +117,9 @@ public class StateAndResultToStateBiFunction implements BiFunction<State, Abstra
                 case VIDEO_START_SENT:
                     return State.videoStartResp((VideoStartRespTextEntity) r.text(), state);
 
+                case AUDIO_START_SENT:
+                    return State.audioStartResp((AudioStartRespTextEntity) r.text(), state);
+
                 default:
                     throw new IllegalArgumentException("Unexpected handshake state=" + state.handshakeState);
             }
@@ -114,6 +129,9 @@ public class StateAndResultToStateBiFunction implements BiFunction<State, Abstra
             if (r.text() instanceof VideoDataTextEntity) {
                 VideoDataTextEntity t = (VideoDataTextEntity) r.text();
                 return State.videoDataText(t, state);
+            } else if (r.text() instanceof AudioDataTextEntity) {
+                AudioDataTextEntity t = (AudioDataTextEntity) r.text();
+                return State.audioDataText(t, state);
             }
 
             throw new UnsupportedOperationException("TODO");
