@@ -46,6 +46,7 @@ import io.reactivex.SingleObserver;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.processors.FlowableProcessor;
 import io.reactivex.processors.PublishProcessor;
+import io.reactivex.schedulers.Schedulers;
 import okhttp3.OkHttpClient;
 import okhttp3.logging.HttpLoggingInterceptor;
 import retrofit2.Retrofit;
@@ -89,9 +90,11 @@ public class NettyDemo {
         final FlowableProcessor<CommandDto> audioVideoDatastream = PublishProcessor.<CommandDto>create().toSerialized();
 
         final Flowable<OperationReceiveResult> operationReceiveResults = operationDatastream
+                .observeOn(Schedulers.io())
                 .compose(new CommandToOperationReceiveResult());
 
         final Flowable<AudioVideoReceiveResult> audioVideoReceiveResults = audioVideoDatastream
+                .observeOn(Schedulers.io())
                 .compose(new CommandToAudioVideoReceiveResult());
 
         final Flowable<AbstractResult> actionResults = actions
