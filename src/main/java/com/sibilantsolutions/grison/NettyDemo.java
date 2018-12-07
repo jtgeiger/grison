@@ -67,7 +67,7 @@ public class NettyDemo {
                 .subscribe(new LogSubscriber<>());
 
 //        search();
-//        cgi(host, port, username, password);
+//        cgi(cgiRetrofitService(retrofit(host, port, username, password)));
     }
 
     public static Flowable<State> go11(String host, int port, String username, String password) {
@@ -169,29 +169,7 @@ public class NettyDemo {
 //        }
     }
 
-    private void cgi(String host, int port, String username, String password) {
-
-        //TODO: Dedicated HTTP logger; use Markers; use Trace level.
-        HttpLoggingInterceptor logging = new HttpLoggingInterceptor(LOG::debug);
-// set your desired log level
-        logging.setLevel(HttpLoggingInterceptor.Level.BODY);
-
-        OkHttpClient.Builder httpClient = new OkHttpClient.Builder();
-// add your other interceptors …
-
-        httpClient.addInterceptor(new FoscamInsecureAuthInterceptor(username, password));
-
-// add logging as last interceptor
-        httpClient.addInterceptor(logging);
-
-        final Retrofit retrofit = new Retrofit.Builder()
-                .addCallAdapterFactory(RxJava2CallAdapterFactory.createAsync())
-                .addConverterFactory(ScalarsConverterFactory.create())
-                .baseUrl(String.format("http://%s:%d", host, port))
-                .client(httpClient.build())
-                .build();
-
-        final CgiRetrofitService cgiRetrofitService = retrofit.create(CgiRetrofitService.class);
+    private void cgi(CgiRetrofitService cgiRetrofitService) {
 
 //        final Flowable<Response<String>> resultSingle = cgiRetrofitService.checkUser(username, password);
 //        final Single<Result<String>> resultSingle = cgiRetrofitService.irOff();
@@ -221,6 +199,32 @@ public class NettyDemo {
         httpResultFlowable
                 .subscribe(new LogSubscriber<>());
 
+    }
+
+    public static CgiRetrofitService cgiRetrofitService(Retrofit retrofit) {
+        return retrofit.create(CgiRetrofitService.class);
+    }
+
+    public static Retrofit retrofit(String host, int port, String username, String password) {
+        //TODO: Dedicated HTTP logger; use Markers; use Trace level.
+        HttpLoggingInterceptor logging = new HttpLoggingInterceptor(LOG::debug);
+// set your desired log level
+        logging.setLevel(HttpLoggingInterceptor.Level.BODY);
+
+        OkHttpClient.Builder httpClient = new OkHttpClient.Builder();
+// add your other interceptors …
+
+        httpClient.addInterceptor(new FoscamInsecureAuthInterceptor(username, password));
+
+// add logging as last interceptor
+        httpClient.addInterceptor(logging);
+
+        return new Retrofit.Builder()
+                .addCallAdapterFactory(RxJava2CallAdapterFactory.createAsync())
+                .addConverterFactory(ScalarsConverterFactory.create())
+                .baseUrl(String.format("http://%s:%d", host, port))
+                .client(httpClient.build())
+                .build();
     }
 
     private static class LogSingleObserver<T> implements SingleObserver<T> {
