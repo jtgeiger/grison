@@ -1,5 +1,6 @@
 package com.sibilantsolutions.grison.driver.foscam.mapper;
 
+import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
 import java.util.function.Function;
 
@@ -12,6 +13,8 @@ import com.sibilantsolutions.grison.driver.foscam.dto.AudioStartRespTextDto;
 import com.sibilantsolutions.grison.driver.foscam.dto.LoginReqAudioVideoTextDto;
 import com.sibilantsolutions.grison.driver.foscam.dto.LoginReqOperationTextDto;
 import com.sibilantsolutions.grison.driver.foscam.dto.LoginRespTextDto;
+import com.sibilantsolutions.grison.driver.foscam.dto.SearchReqTextDto;
+import com.sibilantsolutions.grison.driver.foscam.dto.SearchRespTextDto;
 import com.sibilantsolutions.grison.driver.foscam.dto.TalkDataTextDto;
 import com.sibilantsolutions.grison.driver.foscam.dto.TalkStartReqTextDto;
 import com.sibilantsolutions.grison.driver.foscam.dto.TalkStartRespTextDto;
@@ -28,6 +31,8 @@ import com.sibilantsolutions.grison.driver.foscam.entity.AudioStartRespTextEntit
 import com.sibilantsolutions.grison.driver.foscam.entity.LoginReqAudioVideoTextEntity;
 import com.sibilantsolutions.grison.driver.foscam.entity.LoginReqOperationTextEntity;
 import com.sibilantsolutions.grison.driver.foscam.entity.LoginRespTextEntity;
+import com.sibilantsolutions.grison.driver.foscam.entity.SearchReqTextEntity;
+import com.sibilantsolutions.grison.driver.foscam.entity.SearchRespTextEntity;
 import com.sibilantsolutions.grison.driver.foscam.entity.TalkDataTextEntity;
 import com.sibilantsolutions.grison.driver.foscam.entity.TalkStartReqTextEntity;
 import com.sibilantsolutions.grison.driver.foscam.entity.TalkStartRespTextEntity;
@@ -37,7 +42,9 @@ import com.sibilantsolutions.grison.driver.foscam.entity.VerifyRespTextEntity;
 import com.sibilantsolutions.grison.driver.foscam.entity.VideoDataTextEntity;
 import com.sibilantsolutions.grison.driver.foscam.entity.VideoStartReqTextEntity;
 import com.sibilantsolutions.grison.driver.foscam.entity.VideoStartRespTextEntity;
+import com.sibilantsolutions.grison.driver.foscam.type.FosInt16R;
 import com.sibilantsolutions.grison.driver.foscam.type.FosInt32;
+import com.sibilantsolutions.grison.driver.foscam.type.FosInt32R;
 import com.sibilantsolutions.grison.driver.foscam.type.FosInt8;
 
 public final class EntityToDto {
@@ -137,6 +144,19 @@ public final class EntityToDto {
             .audioFormat(entity.audioFormat().value)
             .dataLength(FosInt32.create(entity.data().length))
             .data(entity.data())
+            .build();
+
+    public static final Function<SearchReqTextEntity, SearchReqTextDto> searchReqTextDto = entity -> SearchReqTextDto.builder().build();
+
+    public static final Function<SearchRespTextEntity, SearchRespTextDto> searchRespTextDto = entity -> SearchRespTextDto.builder()
+            .cameraId(Strings.padEnd(entity.cameraId(), SearchRespTextDto.CAMERA_ID_LEN, '\0').getBytes(StandardCharsets.ISO_8859_1))
+            .cameraName(Strings.padEnd(entity.cameraName(), SearchRespTextDto.CAMERA_NAME_LEN, '\0').getBytes(StandardCharsets.ISO_8859_1))
+            .ip(FosInt32R.create(ByteBuffer.wrap(entity.address().getAddress().getAddress()).getInt()))
+            .mask(FosInt32R.create(ByteBuffer.wrap(entity.mask().getAddress()).getInt()))
+            .gateway(FosInt32R.create(ByteBuffer.wrap(entity.gateway().getAddress()).getInt()))
+            .dns(FosInt32R.create(ByteBuffer.wrap(entity.dns().getAddress()).getInt()))
+            .cameraPort(FosInt16R.create(entity.address().getPort()))
+            .dhcpEnabled(FosInt8.create(entity.isDhcpEnabled() ? 1 : 0))
             .build();
 
 }

@@ -1,10 +1,15 @@
 package com.sibilantsolutions.grison.driver.foscam.mapper;
 
+import java.net.InetAddress;
+import java.net.InetSocketAddress;
+import java.net.UnknownHostException;
+import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
 import java.time.Duration;
 import java.time.Instant;
 import java.util.function.Function;
 
+import com.google.common.primitives.Ints;
 import com.sibilantsolutions.grison.driver.foscam.domain.AlarmTypeE;
 import com.sibilantsolutions.grison.driver.foscam.domain.AudioFormatE;
 import com.sibilantsolutions.grison.driver.foscam.domain.ResultCodeE;
@@ -15,6 +20,8 @@ import com.sibilantsolutions.grison.driver.foscam.dto.AudioStartRespTextDto;
 import com.sibilantsolutions.grison.driver.foscam.dto.LoginReqAudioVideoTextDto;
 import com.sibilantsolutions.grison.driver.foscam.dto.LoginReqOperationTextDto;
 import com.sibilantsolutions.grison.driver.foscam.dto.LoginRespTextDto;
+import com.sibilantsolutions.grison.driver.foscam.dto.SearchReqTextDto;
+import com.sibilantsolutions.grison.driver.foscam.dto.SearchRespTextDto;
 import com.sibilantsolutions.grison.driver.foscam.dto.TalkDataTextDto;
 import com.sibilantsolutions.grison.driver.foscam.dto.TalkStartReqTextDto;
 import com.sibilantsolutions.grison.driver.foscam.dto.TalkStartRespTextDto;
@@ -31,12 +38,15 @@ import com.sibilantsolutions.grison.driver.foscam.entity.AudioStartRespTextEntit
 import com.sibilantsolutions.grison.driver.foscam.entity.LoginReqAudioVideoTextEntity;
 import com.sibilantsolutions.grison.driver.foscam.entity.LoginReqOperationTextEntity;
 import com.sibilantsolutions.grison.driver.foscam.entity.LoginRespTextEntity;
+import com.sibilantsolutions.grison.driver.foscam.entity.SearchReqTextEntity;
+import com.sibilantsolutions.grison.driver.foscam.entity.SearchRespTextEntity;
 import com.sibilantsolutions.grison.driver.foscam.entity.TalkDataTextEntity;
 import com.sibilantsolutions.grison.driver.foscam.entity.TalkStartReqTextEntity;
 import com.sibilantsolutions.grison.driver.foscam.entity.TalkStartRespTextEntity;
 import com.sibilantsolutions.grison.driver.foscam.entity.Unk02TextEntity;
 import com.sibilantsolutions.grison.driver.foscam.entity.VerifyReqTextEntity;
 import com.sibilantsolutions.grison.driver.foscam.entity.VerifyRespTextEntity;
+import com.sibilantsolutions.grison.driver.foscam.entity.VersionEntity;
 import com.sibilantsolutions.grison.driver.foscam.entity.VideoDataTextEntity;
 import com.sibilantsolutions.grison.driver.foscam.entity.VideoStartReqTextEntity;
 import com.sibilantsolutions.grison.driver.foscam.entity.VideoStartRespTextEntity;
@@ -131,5 +141,57 @@ public final class DtoToEntity {
             .audioFormat(AudioFormatE.fromValue(dto.audioFormat()))
             .data(dto.data())
             .build();
+
+    public static final Function<SearchReqTextDto, SearchReqTextEntity> searchReqTextEntity = dto -> SearchReqTextEntity.builder()
+            .build();
+
+    public static final Function<SearchRespTextDto, SearchRespTextEntity> searchRespTextEntity = dto -> {
+        final String cameraId = new String(dto.cameraId(), StandardCharsets.ISO_8859_1);
+        final String cameraName = new String(dto.cameraName(), StandardCharsets.ISO_8859_1);
+
+        ByteBuffer sysSoftwareVersionBuf = ByteBuffer.wrap(dto.sysSoftwareVersion());
+
+        VersionEntity sysSoftwareVersion = VersionEntity.builder()
+                .major(sysSoftwareVersionBuf.get())
+                .minor(sysSoftwareVersionBuf.get())
+                .patch(sysSoftwareVersionBuf.get())
+                .buildNum(sysSoftwareVersionBuf.get())
+                .build();
+
+        ByteBuffer appSoftwareVersionBuf = ByteBuffer.wrap(dto.appSoftwareVersion());
+
+        VersionEntity appSoftwareVersion = VersionEntity.builder()
+                .major(appSoftwareVersionBuf.get())
+                .minor(appSoftwareVersionBuf.get())
+                .patch(appSoftwareVersionBuf.get())
+                .buildNum(appSoftwareVersionBuf.get())
+                .build();
+
+        final InetSocketAddress address;
+        final InetAddress mask;
+        final InetAddress gateway;
+        final InetAddress dns;
+
+        try {
+            address = new InetSocketAddress(InetAddress.getByAddress(Ints.toByteArray(dto.ip().value())), dto.cameraPort().value());
+            mask = InetAddress.getByAddress(Ints.toByteArray(dto.mask().value()));
+            gateway = InetAddress.getByAddress(Ints.toByteArray(dto.gateway().value()));
+            dns = InetAddress.getByAddress(Ints.toByteArray(dto.dns().value()));
+        } catch (UnknownHostException e) {
+            throw new UnsupportedOperationException("TODO (CSB)", e);
+        }
+
+        return SearchRespTextEntity.builder()
+                .cameraId(cameraId.substring(0, cameraId.indexOf(0)))
+                .cameraName(cameraName.substring(0, cameraName.indexOf(0)))
+                .address(address)
+                .mask(mask)
+                .gateway(gateway)
+                .dns(dns)
+                .sysSoftwareVersion(sysSoftwareVersion)
+                .appSoftwareVersion(appSoftwareVersion)
+                .isDhcpEnabled(dto.dhcpEnabled().value() == 1)
+                .build();
+    };
 
 }

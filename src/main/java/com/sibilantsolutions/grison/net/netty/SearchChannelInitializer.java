@@ -5,11 +5,14 @@ import java.time.Clock;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
+import org.reactivestreams.Subscriber;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.sibilantsolutions.grison.driver.foscam.dto.CommandDto;
 import com.sibilantsolutions.grison.net.netty.codec.FoscamCommandDtoDecoder;
+import com.sibilantsolutions.grison.net.netty.codec.FoscamTextByteBufDTOToDatagramPacketEncoder;
+import com.sibilantsolutions.grison.net.netty.codec.SearchReqTextDtoEncoder;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelFutureListener;
@@ -30,6 +33,12 @@ public class SearchChannelInitializer extends ChannelInitializer {
     private static final Logger LOG = LoggerFactory.getLogger(SearchChannelInitializer.class);
 
     private static final int READ_TIMEOUT_SECONDS = 13;
+
+    private final Subscriber<CommandDto> searchDataStream;
+
+    public SearchChannelInitializer(Subscriber<CommandDto> searchDatastream) {
+        this.searchDataStream = searchDatastream;
+    }
 
     @Override
     protected void initChannel(Channel ch) {
@@ -54,6 +63,9 @@ public class SearchChannelInitializer extends ChannelInitializer {
                 //the packet format and do a sanity check.
                 .addLast(new LengthFieldBasedFrameDecoder(ByteOrder.LITTLE_ENDIAN, 128, 0x0F, 4, 4, 0, true))
                 .addLast(new FoscamCommandDtoDecoder(Clock.systemUTC()))
+                .addLast(new FoscamTextByteBufDTOToDatagramPacketEncoder())
+                .addLast(new SearchReqTextDtoEncoder())
+
                 //Only wait for responses for so long.  Fires ReadTimeoutException and closes the channel.
                 .addLast(new ReadTimeoutHandler(READ_TIMEOUT_SECONDS))
                 .addLast(new ChannelInboundHandlerAdapter() {
@@ -69,8 +81,13 @@ public class SearchChannelInitializer extends ChannelInitializer {
                 .addLast(new SimpleChannelInboundHandler<CommandDto>() {
                     @Override
                     protected void channelRead0(ChannelHandlerContext ctx, CommandDto msg) {
-                        LOG.info("Got msg={}.", msg);
-                        //TODO: Fire to subscriber.
+//                        LOG.info("Got msg={}.", msg);
+                        searchDataStream.onNext(msg);
+                    }
+
+                    @Override
+                    public void channelInactive(ChannelHandlerContext ctx) {
+                        searchDataStream.onComplete();
                     }
                 })
                 .addLast(new ChannelInboundHandlerAdapter() {
@@ -89,4 +106,5 @@ public class SearchChannelInitializer extends ChannelInitializer {
             group.shutdownGracefully(0, 2, TimeUnit.SECONDS);
         });
     }
+
 }

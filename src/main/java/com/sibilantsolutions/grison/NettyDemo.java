@@ -1,45 +1,41 @@
 package com.sibilantsolutions.grison;
 
-import static com.google.common.base.Verify.verify;
-
-import java.net.InetSocketAddress;
-
 import org.reactivestreams.Subscription;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.common.collect.ImmutableList;
 import com.sibilantsolutions.grison.driver.foscam.dto.CommandDto;
-import com.sibilantsolutions.grison.driver.foscam.dto.SearchReqTextDto;
-import com.sibilantsolutions.grison.net.netty.SearchChannelInitializer;
-import com.sibilantsolutions.grison.net.netty.codec.FoscamTextByteBufDTOEncoder;
-import com.sibilantsolutions.grison.net.netty.codec.SearchReqTextDtoEncoder;
-import com.sibilantsolutions.grison.net.netty.codec.dto.FoscamTextByteBufDTO;
+import com.sibilantsolutions.grison.driver.foscam.entity.SearchRespTextEntity;
 import com.sibilantsolutions.grison.net.retrofit.CgiRetrofitService;
 import com.sibilantsolutions.grison.net.retrofit.FoscamInsecureAuthInterceptor;
 import com.sibilantsolutions.grison.net.retrofit.HttpResult;
 import com.sibilantsolutions.grison.net.retrofit.RetrofitResultToHttpResult;
 import com.sibilantsolutions.grison.rx.State;
 import com.sibilantsolutions.grison.rx.event.action.AbstractAction;
+import com.sibilantsolutions.grison.rx.event.action.SearchAction;
+import com.sibilantsolutions.grison.rx.event.action.SearchBindAction;
 import com.sibilantsolutions.grison.rx.event.result.AbstractResult;
 import com.sibilantsolutions.grison.rx.event.result.AudioVideoReceiveResult;
 import com.sibilantsolutions.grison.rx.event.result.OperationReceiveResult;
+import com.sibilantsolutions.grison.rx.event.result.SearchReceiveResult;
+import com.sibilantsolutions.grison.rx.event.result.SearchSendResult;
 import com.sibilantsolutions.grison.rx.event.ui.ConnectUiEvent;
 import com.sibilantsolutions.grison.rx.event.ui.UiEvent;
 import com.sibilantsolutions.grison.rx.event.xform.AbstractActionToAbstractResult;
 import com.sibilantsolutions.grison.rx.event.xform.CommandToAudioVideoReceiveResult;
 import com.sibilantsolutions.grison.rx.event.xform.CommandToOperationReceiveResult;
+import com.sibilantsolutions.grison.rx.event.xform.CommandToSearchReceiveResult;
+import com.sibilantsolutions.grison.rx.event.xform.SearchActionToSearchSendResult;
+import com.sibilantsolutions.grison.rx.event.xform.SearchBindActionToSearchBindResult;
 import com.sibilantsolutions.grison.rx.event.xform.StateAndResultToStateBiFunction;
 import com.sibilantsolutions.grison.rx.event.xform.StateToState;
 import com.sibilantsolutions.grison.rx.event.xform.UiEventToAbstractAction;
 import io.netty.bootstrap.Bootstrap;
-import io.netty.buffer.ByteBuf;
-import io.netty.channel.Channel;
-import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelOption;
 import io.netty.channel.EventLoopGroup;
 import io.netty.channel.nio.NioEventLoopGroup;
-import io.netty.channel.socket.DatagramPacket;
 import io.netty.channel.socket.nio.NioDatagramChannel;
 import io.reactivex.Flowable;
 import io.reactivex.FlowableSubscriber;
@@ -69,7 +65,8 @@ public class NettyDemo {
         go11(host, port, username, password)
                 .subscribe(new LogSubscriber<>());
 
-//        search();
+//        search()
+//                .subscribe(new LogSubscriber<>());
 //        cgi(cgiRetrofitService(retrofit(host, port, username, password)));
     }
 
@@ -124,50 +121,46 @@ public class NettyDemo {
         return states;
     }
 
-    private void search() {
+    public static Flowable<ImmutableList<SearchRespTextEntity>> search() {
 
-        final ChannelHandler handler = new SearchChannelInitializer();
-        final Bootstrap bootstrap = broadcastBootstrap(handler);
+        final FlowableProcessor<CommandDto> searchDatastream = PublishProcessor.<CommandDto>create().toSerialized();
 
-        bootstrap
-                .bind(50_080)   //TODO Use 0 for a random port; but firewall needs to be open to receive response.
-                .addListener((ChannelFuture future) -> {
-                    if (future.isDone() && future.isSuccess()) {
-                        final Channel channel = future.channel();
+        //TODO: Convert into a State that will indicate the bind/send results as well as the receive results.
 
-                        LOG.info("{} got channel.", channel);
+        return Flowable
+                .just(new SearchBindAction())
 
-                        final SearchReqTextDto searchReqTextDto = SearchReqTextDto.builder().build();
-                        final ByteBuf searchReqTextBuf = channel.alloc().buffer(searchReqTextDto.encodedLength(), searchReqTextDto.encodedLength());
-                        SearchReqTextDtoEncoder.encode(searchReqTextDto, searchReqTextBuf);
-                        final FoscamTextByteBufDTO foscamTextByteBufDTO = FoscamTextByteBufDTO.create(searchReqTextDto.opCode(),
-                                searchReqTextBuf);
+                .compose(new SearchBindActionToSearchBindResult(searchDatastream))
 
-                        int len = CommandDto.COMMAND_PREFIX_LENGTH + searchReqTextDto.encodedLength();
-                        final ByteBuf buffer = channel.alloc().buffer(len, len);
-                        new FoscamTextByteBufDTOEncoder().encode(null, foscamTextByteBufDTO, buffer);
-
-                        verify(searchReqTextBuf.refCnt() == 0);
-
-                        channel
-                                .writeAndFlush(
-                                        new DatagramPacket(
-                                                buffer,
-                                                new InetSocketAddress(BROADCAST_ADDRESS, BROADCAST_PORT)))
-                                .addListener((ChannelFuture writeFuture) -> {
-                                    if (future.isSuccess()) {
-                                        LOG.info("{} Wrote the msg.", writeFuture.channel());
-                                    } else {
-                                        LOG.error("Trouble: ", writeFuture.cause());
-                                    }
-
-                                    verify(buffer.refCnt() == 0);
-                                });
+                .flatMap(searchBindResult -> {
+                    if (searchBindResult.channel != null) {
+                        return Flowable.just(new SearchAction(searchBindResult.channel));
                     } else {
-                        throw new RuntimeException(future.cause());
+                        return Flowable.empty();    //TODO: Can't ignore inflight/fail results.
                     }
-                });
+                })
 
+                .compose(new SearchActionToSearchSendResult())
+
+                .flatMap(searchSendResult -> {
+                    if (searchSendResult == SearchSendResult.SENT) {
+                        return searchDatastream
+                                .observeOn(Schedulers.io())
+                                .compose(new CommandToSearchReceiveResult());
+                    } else {
+                        return Flowable.empty();    //TODO: Can't ignore inflight/fail results.
+                    }
+                })
+
+                .map(SearchReceiveResult::text)
+
+                .ofType(SearchRespTextEntity.class)
+
+                .scan(ImmutableList.of(),
+                        (searchResultState, searchRespTextEntity) -> new ImmutableList.Builder<SearchRespTextEntity>()
+                                .addAll(searchResultState)
+                                .add(searchRespTextEntity)
+                                .build());
     }
 
     public static Bootstrap broadcastBootstrap(ChannelHandler handler) {
@@ -177,6 +170,7 @@ public class NettyDemo {
                 .group(group)
                 .channel(NioDatagramChannel.class)
                 .option(ChannelOption.SO_BROADCAST, true)
+                .localAddress(50_080)   //TODO Use 0 for a random port; but firewall needs to be open to receive response.
                 .handler(handler);
         return bootstrap;
     }

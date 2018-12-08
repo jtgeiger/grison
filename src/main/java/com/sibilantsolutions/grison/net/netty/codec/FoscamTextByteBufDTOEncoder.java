@@ -27,6 +27,10 @@ public class FoscamTextByteBufDTOEncoder extends MessageToByteEncoder<FoscamText
 
     @Override
     protected ByteBuf allocateBuffer(ChannelHandlerContext ctx, FoscamTextByteBufDTO msg, boolean preferDirect) {
+        return allocateBuf(ctx, msg);
+    }
+
+    public static ByteBuf allocateBuf(ChannelHandlerContext ctx, FoscamTextByteBufDTO msg) {
         return ctx.alloc().buffer(CommandDto.COMMAND_PREFIX_LENGTH + msg.encodedLength().value());
     }
 }
