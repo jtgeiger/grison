@@ -6,8 +6,6 @@ public interface OpClient {
 
     Flowable<ChannelSendEvent> login();
 
-    Flowable<ChannelSendEvent> ping();
-
     Flowable<ChannelSendEvent> verify(String username, String password);
 
     Flowable<ChannelSendEvent> videoStart();

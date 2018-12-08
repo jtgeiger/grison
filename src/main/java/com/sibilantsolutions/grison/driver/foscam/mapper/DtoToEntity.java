@@ -29,6 +29,7 @@ import com.sibilantsolutions.grison.driver.foscam.dto.Unk02TextDto;
 import com.sibilantsolutions.grison.driver.foscam.dto.VerifyReqTextDto;
 import com.sibilantsolutions.grison.driver.foscam.dto.VerifyRespTextDto;
 import com.sibilantsolutions.grison.driver.foscam.dto.VideoDataTextDto;
+import com.sibilantsolutions.grison.driver.foscam.dto.VideoEndTextDto;
 import com.sibilantsolutions.grison.driver.foscam.dto.VideoStartReqTextDto;
 import com.sibilantsolutions.grison.driver.foscam.dto.VideoStartRespTextDto;
 import com.sibilantsolutions.grison.driver.foscam.entity.AlarmNotifyTextEntity;
@@ -48,6 +49,7 @@ import com.sibilantsolutions.grison.driver.foscam.entity.VerifyReqTextEntity;
 import com.sibilantsolutions.grison.driver.foscam.entity.VerifyRespTextEntity;
 import com.sibilantsolutions.grison.driver.foscam.entity.VersionEntity;
 import com.sibilantsolutions.grison.driver.foscam.entity.VideoDataTextEntity;
+import com.sibilantsolutions.grison.driver.foscam.entity.VideoEndTextEntity;
 import com.sibilantsolutions.grison.driver.foscam.entity.VideoStartReqTextEntity;
 import com.sibilantsolutions.grison.driver.foscam.entity.VideoStartRespTextEntity;
 
@@ -87,6 +89,8 @@ public final class DtoToEntity {
         }
         return builder.build();
     };
+
+    public static final Function<VideoEndTextDto, VideoEndTextEntity> videoEndTextEntity = dto -> VideoEndTextEntity.builder().build();
 
     public static final Function<AudioStartReqTextDto, AudioStartReqTextEntity> audioStartReqTextEntity = dto -> AudioStartReqTextEntity.builder()
             .build();
