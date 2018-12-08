@@ -2,6 +2,7 @@ package com.sibilantsolutions.grison.net.netty;
 
 import java.nio.ByteOrder;
 import java.time.Clock;
+import java.time.Duration;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
@@ -36,8 +37,15 @@ public class SearchChannelInitializer extends ChannelInitializer {
 
     private final Subscriber<CommandDto> searchDataStream;
 
+    private final Duration timeoutDuration;
+
     public SearchChannelInitializer(Subscriber<CommandDto> searchDatastream) {
+        this(searchDatastream, Duration.ofSeconds(READ_TIMEOUT_SECONDS));
+    }
+
+    public SearchChannelInitializer(Subscriber<CommandDto> searchDatastream, Duration timeoutDuration) {
         this.searchDataStream = searchDatastream;
+        this.timeoutDuration = timeoutDuration;
     }
 
     @Override
@@ -67,12 +75,12 @@ public class SearchChannelInitializer extends ChannelInitializer {
                 .addLast(new SearchReqTextDtoEncoder())
 
                 //Only wait for responses for so long.  Fires ReadTimeoutException and closes the channel.
-                .addLast(new ReadTimeoutHandler(READ_TIMEOUT_SECONDS))
+                .addLast(new ReadTimeoutHandler(timeoutDuration.toMillis(), TimeUnit.MILLISECONDS))
                 .addLast(new ChannelInboundHandlerAdapter() {
                     @Override
                     public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
                         if (cause instanceof ReadTimeoutException) {
-                            LOG.info("{} Read timeout={}secs; channel will be closed.", ctx.channel(), READ_TIMEOUT_SECONDS);
+                            LOG.info("{} Read timeout={}; channel will be closed.", ctx.channel(), timeoutDuration);
                         } else {
                             super.exceptionCaught(ctx, cause);
                         }
