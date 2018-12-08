@@ -19,8 +19,8 @@ import io.netty.channel.ChannelFutureListener;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
 import io.netty.channel.ChannelInitializer;
+import io.netty.channel.EventLoopGroup;
 import io.netty.channel.SimpleChannelInboundHandler;
-import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.handler.codec.LengthFieldBasedFrameDecoder;
 import io.netty.handler.logging.LoggingHandler;
 import io.netty.handler.timeout.IdleStateHandler;
@@ -39,11 +39,9 @@ public class AudioVideoChannelInitializer extends ChannelInitializer {
     private static final int WRITE_TIMEOUT_SECS = KEEPALIVE_SEND_TIMEOUT_SECS + 5;
 
     private final Subscriber<CommandDto> audioVideoDatastream;
-    private final NioEventLoopGroup group;
 
-    public AudioVideoChannelInitializer(Subscriber<CommandDto> audioVideoDatastream, NioEventLoopGroup group) {
+    public AudioVideoChannelInitializer(Subscriber<CommandDto> audioVideoDatastream) {
         this.audioVideoDatastream = audioVideoDatastream;
-        this.group = group;
     }
 
     @Override
@@ -91,6 +89,7 @@ public class AudioVideoChannelInitializer extends ChannelInitializer {
         ;
 
         ch.closeFuture().addListener((ChannelFutureListener) future -> {
+            final EventLoopGroup group = future.channel().eventLoop().parent();
             LOG.info("{} Channel closed, shutting down group={}.", future.channel(), group);
             group.shutdownGracefully(0, 2, TimeUnit.SECONDS);
         });

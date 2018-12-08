@@ -31,12 +31,6 @@ public class SearchChannelInitializer extends ChannelInitializer {
 
     private static final int READ_TIMEOUT_SECONDS = 13;
 
-    private final EventLoopGroup group;
-
-    public SearchChannelInitializer(EventLoopGroup group) {
-        this.group = group;
-    }
-
     @Override
     protected void initChannel(Channel ch) {
         LOG.info("{} initChannel.", ch);
@@ -90,6 +84,7 @@ public class SearchChannelInitializer extends ChannelInitializer {
         ;
 
         ch.closeFuture().addListener((ChannelFutureListener) future -> {
+            final EventLoopGroup group = future.channel().eventLoop().parent();
             LOG.info("{} Channel closed, shutting down group={}.", future.channel(), group);
             group.shutdownGracefully(0, 2, TimeUnit.SECONDS);
         });

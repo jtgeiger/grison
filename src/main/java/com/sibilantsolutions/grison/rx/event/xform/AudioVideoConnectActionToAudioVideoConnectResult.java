@@ -6,8 +6,9 @@ import org.reactivestreams.Publisher;
 import org.reactivestreams.Subscriber;
 
 import com.sibilantsolutions.grison.driver.foscam.dto.CommandDto;
-import com.sibilantsolutions.grison.net.netty.AudioVideoConnectionBootstrap;
+import com.sibilantsolutions.grison.net.netty.AudioVideoChannelInitializer;
 import com.sibilantsolutions.grison.net.netty.BootstrapConnector;
+import com.sibilantsolutions.grison.net.netty.NioSocketConnectionBootstrap;
 import com.sibilantsolutions.grison.rx.ChannelConnectEvent;
 import com.sibilantsolutions.grison.rx.ConnectionRequestEvent;
 import com.sibilantsolutions.grison.rx.event.action.AudioVideoConnectAction;
@@ -32,8 +33,9 @@ public class AudioVideoConnectActionToAudioVideoConnectResult implements Flowabl
 
         final Flowable<Bootstrap> bootstrapFlowable =
                 connectionRequestEventFlowable
-                        .flatMapSingle(connectionRequestEvent -> new AudioVideoConnectionBootstrap()
-                                .bootstrap(connectionRequestEvent, audioVideoDatastream));
+                        .flatMapSingle(connectionRequestEvent -> new NioSocketConnectionBootstrap()
+                                .bootstrap(connectionRequestEvent, audioVideoDatastream,
+                                        new AudioVideoChannelInitializer(audioVideoDatastream)));
 
         final Flowable<ChannelConnectEvent> channelConnectEventFlowable = bootstrapFlowable
                 .flatMap(new BootstrapConnector()::connect);

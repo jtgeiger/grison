@@ -132,7 +132,7 @@ public class NettyDemo {
                 .group(group)
                 .channel(NioDatagramChannel.class)
                 .option(ChannelOption.SO_BROADCAST, true)
-                .handler(new SearchChannelInitializer(group));
+                .handler(new SearchChannelInitializer());
 
         try {
             final Channel channel = bootstrap

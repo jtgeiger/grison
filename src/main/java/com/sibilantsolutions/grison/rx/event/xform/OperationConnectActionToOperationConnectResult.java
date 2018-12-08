@@ -7,7 +7,8 @@ import org.reactivestreams.Subscriber;
 
 import com.sibilantsolutions.grison.driver.foscam.dto.CommandDto;
 import com.sibilantsolutions.grison.net.netty.BootstrapConnector;
-import com.sibilantsolutions.grison.net.netty.OperationConnectionBootstrap;
+import com.sibilantsolutions.grison.net.netty.NioSocketConnectionBootstrap;
+import com.sibilantsolutions.grison.net.netty.OperationChannelInitializer;
 import com.sibilantsolutions.grison.rx.ChannelConnectEvent;
 import com.sibilantsolutions.grison.rx.ConnectionRequestEvent;
 import com.sibilantsolutions.grison.rx.event.action.OperationConnectAction;
@@ -33,8 +34,9 @@ public class OperationConnectActionToOperationConnectResult implements FlowableT
 
         final Flowable<Bootstrap> bootstrapFlowable =
                 connectionRequestEventFlowable
-                        .flatMapSingle(connectionRequestEvent -> new OperationConnectionBootstrap()
-                                .bootstrap(connectionRequestEvent, operationDatastream));
+                        .flatMapSingle(connectionRequestEvent -> new NioSocketConnectionBootstrap()
+                                .bootstrap(connectionRequestEvent, operationDatastream,
+                                        new OperationChannelInitializer(operationDatastream)));
 
         final Flowable<ChannelConnectEvent> channelConnectEventFlowable = bootstrapFlowable
 //                    .doOnNext(bootstrap -> LOG.info("onNext bootstrap={}", bootstrap))
