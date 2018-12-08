@@ -65,8 +65,8 @@ public class NettyDemo {
 
     void go(String host, int port, String username, String password) {
 
-//        go11(host, port, username, password)
-//                .subscribe(new LogSubscriber<>());
+        go11(host, port, username, password)
+                .subscribe(new LogSubscriber<>());
 
         final FlowableProcessor<CommandDto> searchDatastream = PublishProcessor.<CommandDto>create().toSerialized();
         final Bootstrap bootstrap = datagramBroadcastBootstrap(new SearchChannelInitializer(searchDatastream))
