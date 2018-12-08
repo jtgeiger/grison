@@ -1,5 +1,7 @@
 package com.sibilantsolutions.grison;
 
+import java.net.InetSocketAddress;
+
 import org.reactivestreams.Subscription;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -7,6 +9,7 @@ import org.slf4j.LoggerFactory;
 import com.google.common.collect.ImmutableList;
 import com.sibilantsolutions.grison.driver.foscam.dto.CommandDto;
 import com.sibilantsolutions.grison.driver.foscam.entity.SearchRespTextEntity;
+import com.sibilantsolutions.grison.net.netty.SearchChannelInitializer;
 import com.sibilantsolutions.grison.net.retrofit.CgiRetrofitService;
 import com.sibilantsolutions.grison.net.retrofit.FoscamInsecureAuthInterceptor;
 import com.sibilantsolutions.grison.net.retrofit.HttpResult;
@@ -62,11 +65,14 @@ public class NettyDemo {
 
     void go(String host, int port, String username, String password) {
 
-        go11(host, port, username, password)
-                .subscribe(new LogSubscriber<>());
-
-//        search()
+//        go11(host, port, username, password)
 //                .subscribe(new LogSubscriber<>());
+
+        final FlowableProcessor<CommandDto> searchDatastream = PublishProcessor.<CommandDto>create().toSerialized();
+        final Bootstrap bootstrap = datagramBroadcastBootstrap(new SearchChannelInitializer(searchDatastream))
+                .localAddress(50_080);
+        search(bootstrap, searchDatastream)
+                .subscribe(new LogSubscriber<>());
 //        cgi(cgiRetrofitService(retrofit(host, port, username, password)));
     }
 
@@ -123,14 +129,23 @@ public class NettyDemo {
 
     public static Flowable<ImmutableList<SearchRespTextEntity>> search() {
 
+        //TODO: SearchBuilder.
+
         final FlowableProcessor<CommandDto> searchDatastream = PublishProcessor.<CommandDto>create().toSerialized();
+
+        final Bootstrap bootstrap = datagramBroadcastBootstrap(new SearchChannelInitializer(searchDatastream));
+
+        return search(bootstrap, searchDatastream);
+    }
+
+    public static Flowable<ImmutableList<SearchRespTextEntity>> search(Bootstrap bootstrap, Flowable<CommandDto> searchDatastream) {
 
         //TODO: Convert into a State that will indicate the bind/send results as well as the receive results.
 
         return Flowable
-                .just(new SearchBindAction())
+                .just(new SearchBindAction(bootstrap))
 
-                .compose(new SearchBindActionToSearchBindResult(searchDatastream))
+                .compose(new SearchBindActionToSearchBindResult())
 
                 .flatMap(searchBindResult -> {
                     if (searchBindResult.channel != null) {
@@ -163,16 +178,26 @@ public class NettyDemo {
                                 .build());
     }
 
-    public static Bootstrap broadcastBootstrap(ChannelHandler handler) {
+    /**
+     * Returns a Bootstrap that will be initialized with the given handler, and which uses a NioDatagramChannel and
+     * enables ChannelOption.SO_BROADCAST.
+     * <p>
+     * The channels will listen on a random, ephemeral port.  This means that if a firewall is being used, the
+     * inbound port must allow UDP traffic but it can't be known in advance what port will be used.  In this case the
+     * returned Bootstrap can be modified with the localAddress() method to hardcode a port and the firewall can be
+     * opened in advance.
+     *
+     * @param handler The handler used to initialize the channel.
+     * @return A new Bootstrap.
+     */
+    public static Bootstrap datagramBroadcastBootstrap(ChannelHandler handler) {
         EventLoopGroup group = new NioEventLoopGroup();
-        final Bootstrap bootstrap = new Bootstrap();
-        bootstrap
+        return new Bootstrap()
                 .group(group)
                 .channel(NioDatagramChannel.class)
                 .option(ChannelOption.SO_BROADCAST, true)
-                .localAddress(50_080)   //TODO Use 0 for a random port; but firewall needs to be open to receive response.
+                .localAddress(new InetSocketAddress(0))   //0 means a random port; but firewall needs to be open to receive response.
                 .handler(handler);
-        return bootstrap;
     }
 
     private void cgi(CgiRetrofitService cgiRetrofitService) {
