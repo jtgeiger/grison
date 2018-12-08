@@ -1,5 +1,7 @@
 package com.sibilantsolutions.grison;
 
+import static com.google.common.base.Verify.verify;
+
 import java.net.InetSocketAddress;
 
 import org.reactivestreams.Subscription;
@@ -141,12 +143,16 @@ public class NettyDemo {
             LOG.info("{} got channel.", channel);
 
             final SearchReqTextDto searchReqTextDto = SearchReqTextDto.builder().build();
+            final ByteBuf searchReqTextBuf = channel.alloc().buffer(searchReqTextDto.encodedLength(), searchReqTextDto.encodedLength());
+            SearchReqTextDtoEncoder.encode(searchReqTextDto, searchReqTextBuf);
             final FoscamTextByteBufDTO foscamTextByteBufDTO = FoscamTextByteBufDTO.create(searchReqTextDto.opCode(),
-                    SearchReqTextDtoEncoder.encode(searchReqTextDto, channel.alloc().buffer(searchReqTextDto.encodedLength(), searchReqTextDto.encodedLength())));
+                    searchReqTextBuf);
 
             int len = CommandDto.COMMAND_PREFIX_LENGTH + searchReqTextDto.encodedLength();
             final ByteBuf buffer = channel.alloc().buffer(len, len);
             new FoscamTextByteBufDTOEncoder().encode(null, foscamTextByteBufDTO, buffer);
+
+            verify(searchReqTextBuf.refCnt() == 0);
 
             channel
                     .writeAndFlush(
@@ -159,6 +165,8 @@ public class NettyDemo {
                         } else {
                             LOG.error("Trouble: ", future.cause());
                         }
+
+                        verify(buffer.refCnt() == 0);
                     });
         } catch (InterruptedException e) {
             throw new UnsupportedOperationException("TODO (CSB)", e);

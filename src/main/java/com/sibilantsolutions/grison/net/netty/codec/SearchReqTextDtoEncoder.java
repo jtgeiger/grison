@@ -15,18 +15,18 @@ public class SearchReqTextDtoEncoder extends MessageToMessageEncoder<SearchReqTe
     @Override
     protected void encode(ChannelHandlerContext ctx, SearchReqTextDto msg, List<Object> out) {
 
-        final ByteBuf textBuf = encode(msg, ctx.alloc().buffer(msg.encodedLength(), msg.encodedLength()));
+        final ByteBuf textBuf = ctx.alloc().buffer(msg.encodedLength(), msg.encodedLength());
+        encode(msg, textBuf);
 
         out.add(FoscamTextByteBufDTO.create(msg.opCode(), textBuf));
 
     }
 
-    public static ByteBuf encode(SearchReqTextDto msg, ByteBuf textBuf) {
+    public static void encode(SearchReqTextDto msg, ByteBuf textBuf) {
         NettyFosTypeWriter.write(msg.reserve1(), textBuf);
         NettyFosTypeWriter.write(msg.reserve2(), textBuf);
         NettyFosTypeWriter.write(msg.reserve3(), textBuf);
         NettyFosTypeWriter.write(msg.reserve4(), textBuf);
-        return textBuf;
     }
 
 }
