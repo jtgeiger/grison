@@ -34,7 +34,8 @@ import com.sibilantsolutions.grison.rx.event.xform.UiEventToAbstractAction;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.Channel;
-import io.netty.channel.ChannelFutureListener;
+import io.netty.channel.ChannelFuture;
+import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelOption;
 import io.netty.channel.EventLoopGroup;
 import io.netty.channel.nio.NioEventLoopGroup;
@@ -125,56 +126,59 @@ public class NettyDemo {
 
     private void search() {
 
-        EventLoopGroup group = new NioEventLoopGroup();
+        final ChannelHandler handler = new SearchChannelInitializer();
+        final Bootstrap bootstrap = broadcastBootstrap(handler);
 
+        bootstrap
+                .bind(50_080)   //TODO Use 0 for a random port; but firewall needs to be open to receive response.
+                .addListener((ChannelFuture future) -> {
+                    if (future.isDone() && future.isSuccess()) {
+                        final Channel channel = future.channel();
+
+                        LOG.info("{} got channel.", channel);
+
+                        final SearchReqTextDto searchReqTextDto = SearchReqTextDto.builder().build();
+                        final ByteBuf searchReqTextBuf = channel.alloc().buffer(searchReqTextDto.encodedLength(), searchReqTextDto.encodedLength());
+                        SearchReqTextDtoEncoder.encode(searchReqTextDto, searchReqTextBuf);
+                        final FoscamTextByteBufDTO foscamTextByteBufDTO = FoscamTextByteBufDTO.create(searchReqTextDto.opCode(),
+                                searchReqTextBuf);
+
+                        int len = CommandDto.COMMAND_PREFIX_LENGTH + searchReqTextDto.encodedLength();
+                        final ByteBuf buffer = channel.alloc().buffer(len, len);
+                        new FoscamTextByteBufDTOEncoder().encode(null, foscamTextByteBufDTO, buffer);
+
+                        verify(searchReqTextBuf.refCnt() == 0);
+
+                        channel
+                                .writeAndFlush(
+                                        new DatagramPacket(
+                                                buffer,
+                                                new InetSocketAddress(BROADCAST_ADDRESS, BROADCAST_PORT)))
+                                .addListener((ChannelFuture writeFuture) -> {
+                                    if (future.isSuccess()) {
+                                        LOG.info("{} Wrote the msg.", writeFuture.channel());
+                                    } else {
+                                        LOG.error("Trouble: ", writeFuture.cause());
+                                    }
+
+                                    verify(buffer.refCnt() == 0);
+                                });
+                    } else {
+                        throw new RuntimeException(future.cause());
+                    }
+                });
+
+    }
+
+    public static Bootstrap broadcastBootstrap(ChannelHandler handler) {
+        EventLoopGroup group = new NioEventLoopGroup();
         final Bootstrap bootstrap = new Bootstrap();
         bootstrap
                 .group(group)
                 .channel(NioDatagramChannel.class)
                 .option(ChannelOption.SO_BROADCAST, true)
-                .handler(new SearchChannelInitializer());
-
-        try {
-            final Channel channel = bootstrap
-                    .bind(50_080)   //TODO Use 0 for a random port; but firewall needs to be open to receive response.
-                    .sync()
-                    .channel();
-
-            LOG.info("{} got channel.", channel);
-
-            final SearchReqTextDto searchReqTextDto = SearchReqTextDto.builder().build();
-            final ByteBuf searchReqTextBuf = channel.alloc().buffer(searchReqTextDto.encodedLength(), searchReqTextDto.encodedLength());
-            SearchReqTextDtoEncoder.encode(searchReqTextDto, searchReqTextBuf);
-            final FoscamTextByteBufDTO foscamTextByteBufDTO = FoscamTextByteBufDTO.create(searchReqTextDto.opCode(),
-                    searchReqTextBuf);
-
-            int len = CommandDto.COMMAND_PREFIX_LENGTH + searchReqTextDto.encodedLength();
-            final ByteBuf buffer = channel.alloc().buffer(len, len);
-            new FoscamTextByteBufDTOEncoder().encode(null, foscamTextByteBufDTO, buffer);
-
-            verify(searchReqTextBuf.refCnt() == 0);
-
-            channel
-                    .writeAndFlush(
-                            new DatagramPacket(
-                                    buffer,
-                                    new InetSocketAddress(BROADCAST_ADDRESS, BROADCAST_PORT)))
-                    .addListener((ChannelFutureListener) future -> {
-                        if (future.isSuccess()) {
-                            LOG.info("{} Wrote the msg.", future.channel());
-                        } else {
-                            LOG.error("Trouble: ", future.cause());
-                        }
-
-                        verify(buffer.refCnt() == 0);
-                    });
-        } catch (InterruptedException e) {
-            throw new UnsupportedOperationException("TODO (CSB)", e);
-        }
-//        } finally {
-//            LOG.info("{} Shutting down.", group);
-//            group.shutdownGracefully();
-//        }
+                .handler(handler);
+        return bootstrap;
     }
 
     private void cgi(CgiRetrofitService cgiRetrofitService) {
