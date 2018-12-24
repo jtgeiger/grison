@@ -4,12 +4,12 @@ import org.reactivestreams.Publisher;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.sibilantsolutions.grison.rx.AvClient;
-import com.sibilantsolutions.grison.rx.AvClientImpl;
-import com.sibilantsolutions.grison.rx.ChannelSendEvent;
-import com.sibilantsolutions.grison.rx.ChannelSender;
+import com.sibilantsolutions.grison.rx.client.AvClient;
+import com.sibilantsolutions.grison.rx.client.AvClientImpl;
 import com.sibilantsolutions.grison.rx.event.action.AudioVideoLoginAction;
 import com.sibilantsolutions.grison.rx.event.result.AudioVideoLoginSendResult;
+import com.sibilantsolutions.grison.rx.net.ChannelSendEvent;
+import com.sibilantsolutions.grison.rx.net.ChannelSender;
 import io.netty.handler.logging.LogLevel;
 import io.netty.handler.logging.LoggingHandler;
 import io.reactivex.Flowable;

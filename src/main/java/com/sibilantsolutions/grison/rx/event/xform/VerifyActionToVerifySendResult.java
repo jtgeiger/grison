@@ -2,12 +2,12 @@ package com.sibilantsolutions.grison.rx.event.xform;
 
 import org.reactivestreams.Publisher;
 
-import com.sibilantsolutions.grison.rx.ChannelSendEvent;
-import com.sibilantsolutions.grison.rx.ChannelSender;
-import com.sibilantsolutions.grison.rx.OpClient;
-import com.sibilantsolutions.grison.rx.OpClientImpl;
+import com.sibilantsolutions.grison.rx.client.OpClient;
+import com.sibilantsolutions.grison.rx.client.OpClientImpl;
 import com.sibilantsolutions.grison.rx.event.action.VerifyAction;
 import com.sibilantsolutions.grison.rx.event.result.VerifySendResult;
+import com.sibilantsolutions.grison.rx.net.ChannelSendEvent;
+import com.sibilantsolutions.grison.rx.net.ChannelSender;
 import io.reactivex.Flowable;
 import io.reactivex.FlowableTransformer;
 

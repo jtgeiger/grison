@@ -3,7 +3,7 @@ package com.sibilantsolutions.grison.net.netty;
 import org.reactivestreams.Subscriber;
 
 import com.sibilantsolutions.grison.driver.foscam.dto.CommandDto;
-import com.sibilantsolutions.grison.rx.ConnectionRequestEvent;
+import com.sibilantsolutions.grison.rx.net.ConnectionRequestEvent;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.ChannelHandler;
 import io.netty.channel.nio.NioEventLoopGroup;

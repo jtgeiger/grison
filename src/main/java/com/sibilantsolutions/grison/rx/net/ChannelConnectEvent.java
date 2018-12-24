@@ -1,4 +1,4 @@
-package com.sibilantsolutions.grison.rx;
+package com.sibilantsolutions.grison.rx.net;
 
 import io.netty.channel.Channel;
 

@@ -3,9 +3,9 @@ package com.sibilantsolutions.grison.rx.event.xform;
 import org.reactivestreams.Publisher;
 
 import com.sibilantsolutions.grison.net.netty.BootstrapBinder;
-import com.sibilantsolutions.grison.rx.ChannelConnectEvent;
 import com.sibilantsolutions.grison.rx.event.action.SearchBindAction;
 import com.sibilantsolutions.grison.rx.event.result.SearchBindResult;
+import com.sibilantsolutions.grison.rx.net.ChannelConnectEvent;
 import io.reactivex.Flowable;
 import io.reactivex.FlowableTransformer;
 

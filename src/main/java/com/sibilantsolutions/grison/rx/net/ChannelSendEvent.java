@@ -1,4 +1,4 @@
-package com.sibilantsolutions.grison.rx;
+package com.sibilantsolutions.grison.rx.net;
 
 public class ChannelSendEvent {
 

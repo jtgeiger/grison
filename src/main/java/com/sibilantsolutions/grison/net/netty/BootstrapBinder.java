@@ -3,7 +3,7 @@ package com.sibilantsolutions.grison.net.netty;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.sibilantsolutions.grison.rx.ChannelConnectEvent;
+import com.sibilantsolutions.grison.rx.net.ChannelConnectEvent;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelFutureListener;
