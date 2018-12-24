@@ -4,7 +4,6 @@ import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 
 import com.sibilantsolutions.grison.driver.foscam.type.FosInt16;
-import com.sibilantsolutions.utils.util.Convert;
 
 public class LoginRespText implements DatastreamI
 {

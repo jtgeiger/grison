@@ -1,13 +1,11 @@
 package com.sibilantsolutions.grison.ui;
 
-import com.sibilantsolutions.utils.util.DurationLoggingRunnable;
-
+import java.awt.FlowLayout;
+import java.lang.reflect.InvocationTargetException;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.SwingUtilities;
 import javax.swing.WindowConstants;
-import java.awt.FlowLayout;
-import java.lang.reflect.InvocationTargetException;
 
 public class Ui
 {
@@ -29,7 +27,7 @@ public class Ui
 
         };
 
-        r = new DurationLoggingRunnable( r, "build ui" );
+//        r = new DurationLoggingRunnable( r, "build ui" );
 
         try
         {

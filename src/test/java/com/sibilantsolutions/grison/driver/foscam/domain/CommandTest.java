@@ -6,18 +6,26 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
-import org.junit.Test;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 
-import com.sibilantsolutions.utils.util.Convert;
-import com.sibilantsolutions.utils.util.ResourceReader;
+import org.junit.Test;
 
 public class CommandTest
 {
 
+    public static byte[] readFile(String filename) {
+        try {
+            return Files.readAllBytes(Paths.get(CommandTest.class.getResource(filename).toURI()));
+        } catch (Exception e) {
+            throw new UnsupportedOperationException("TODO (CSB)", e);
+        }
+    }
+
     @Test
     public void testParse01()
     {
-        byte[] bin = ResourceReader.readResourceAsBytes( "/samples/verify_resp.bin" );
+        byte[] bin = readFile("/samples/verify_resp.bin");
 
         Command c = Command.parse( bin, 0, bin.length );
         assertEquals( ProtocolE.OPERATION_PROTOCOL, c.getProtocol() );
@@ -31,7 +39,7 @@ public class CommandTest
     @Test
     public void testParse02()
     {
-        byte[] bin = ResourceReader.readResourceAsBytes( "/samples/alarm_notify.bin" );
+        byte[] bin = readFile("/samples/alarm_notify.bin");
 
         Command c = Command.parse( bin, 0, bin.length );
         assertEquals( ProtocolE.OPERATION_PROTOCOL, c.getProtocol() );
@@ -45,7 +53,7 @@ public class CommandTest
     @Test
     public void testParse03()
     {
-        byte[] bin = ResourceReader.readResourceAsBytes( "/samples/UNK02.bin" );
+        byte[] bin = readFile("/samples/UNK02.bin");
 
         Command c = Command.parse( bin, 0, bin.length );
         assertEquals( ProtocolE.OPERATION_PROTOCOL, c.getProtocol() );
@@ -64,7 +72,7 @@ public class CommandTest
     @Test
     public void testParse04()
     {
-        byte[] bin = ResourceReader.readResourceAsBytes( "/samples/keep_alive.bin" );
+        byte[] bin = readFile("/samples/keep_alive.bin");
 
         Command c = Command.parse( bin, 0, bin.length );
         assertEquals( ProtocolE.OPERATION_PROTOCOL, c.getProtocol() );
@@ -78,7 +86,7 @@ public class CommandTest
     @Test
     public void testParse05()
     {
-        byte[] bin = ResourceReader.readResourceAsBytes( "/samples/video_start_req.bin" );
+        byte[] bin = readFile("/samples/video_start_req.bin");
 
         Command c = Command.parse( bin, 0, bin.length );
         assertEquals( ProtocolE.OPERATION_PROTOCOL, c.getProtocol() );
@@ -92,7 +100,7 @@ public class CommandTest
     @Test
     public void testParse06()
     {
-        byte[] bin = ResourceReader.readResourceAsBytes( "/samples/video_start_resp.bin" );
+        byte[] bin = readFile("/samples/video_start_resp.bin");
 
         Command c = Command.parse( bin, 0, bin.length );
         assertEquals( ProtocolE.OPERATION_PROTOCOL, c.getProtocol() );
@@ -107,7 +115,7 @@ public class CommandTest
     @Test
     public void testParse07()
     {
-        byte[] bin = ResourceReader.readResourceAsBytes( "/samples/talk_start_req.bin" );
+        byte[] bin = readFile("/samples/talk_start_req.bin");
 
         Command c = Command.parse( bin, 0, bin.length );
         assertEquals( ProtocolE.OPERATION_PROTOCOL, c.getProtocol() );
@@ -121,7 +129,7 @@ public class CommandTest
     @Test
     public void testParse08()
     {
-        byte[] bin = ResourceReader.readResourceAsBytes( "/samples/talk_start_resp.bin" );
+        byte[] bin = readFile("/samples/talk_start_resp.bin");
 
         Command c = Command.parse( bin, 0, bin.length );
         assertEquals( ProtocolE.OPERATION_PROTOCOL, c.getProtocol() );
@@ -136,7 +144,7 @@ public class CommandTest
     @Test
     public void testParse09()
     {
-        byte[] bin = ResourceReader.readResourceAsBytes( "/samples/video_data.bin" );
+        byte[] bin = readFile("/samples/video_data.bin");
 
         Command c = Command.parse( bin, 0, bin.length );
         assertEquals( ProtocolE.AUDIO_VIDEO_PROTOCOL, c.getProtocol() );
@@ -152,7 +160,7 @@ public class CommandTest
     @Test
     public void testParse10()
     {
-        byte[] bin = ResourceReader.readResourceAsBytes( "/samples/search_resp.bin" );
+        byte[] bin = readFile("/samples/search_resp.bin");
 
         Command c = Command.parse( bin, 0, bin.length );
         assertEquals( ProtocolE.SEARCH_PROTOCOL, c.getProtocol() );
@@ -175,7 +183,7 @@ public class CommandTest
     @Test
     public void testParse11()
     {
-        byte[] bin = ResourceReader.readResourceAsBytes( "/samples/init_resp-pri_error.bin" );
+        byte[] bin = readFile("/samples/init_resp-pri_error.bin");
 
         Command c = Command.parse( bin, 0, bin.length );
         assertEquals( ProtocolE.SEARCH_PROTOCOL, c.getProtocol() );
@@ -189,7 +197,7 @@ public class CommandTest
     @Test
     public void testParse12()
     {
-        byte[] bin = ResourceReader.readResourceAsBytes( "/samples/init_resp-user_wrong.bin" );
+        byte[] bin = readFile("/samples/init_resp-user_wrong.bin");
 
         Command c = Command.parse( bin, 0, bin.length );
         assertEquals( ProtocolE.SEARCH_PROTOCOL, c.getProtocol() );
@@ -203,7 +211,7 @@ public class CommandTest
     @Test
     public void testParse13()
     {
-        byte[] bin = ResourceReader.readResourceAsBytes( "/samples/init_resp-succeed.bin" );
+        byte[] bin = readFile("/samples/init_resp-succeed.bin");
 
         Command c = Command.parse( bin, 0, bin.length );
         assertEquals( ProtocolE.SEARCH_PROTOCOL, c.getProtocol() );
@@ -217,7 +225,7 @@ public class CommandTest
     @Test
     public void testParse14()
     {
-        byte[] bin = ResourceReader.readResourceAsBytes( "/samples/video_start_resp-no_data_conn_id.bin" );
+        byte[] bin = readFile("/samples/video_start_resp-no_data_conn_id.bin");
 
         Command c = Command.parse( bin, 0, bin.length );
         assertEquals( ProtocolE.OPERATION_PROTOCOL, c.getProtocol() );
@@ -232,7 +240,7 @@ public class CommandTest
     @Test
     public void testParse15()
     {
-        byte[] bin = ResourceReader.readResourceAsBytes( "/samples/search_resp02.bin" );
+        byte[] bin = readFile("/samples/search_resp02.bin");
 
 //        System.out.println( HexDump.prettyDump( bin ) );
 
@@ -257,7 +265,7 @@ public class CommandTest
     @Test
     public void testParse16()
     {
-        byte[] bin = ResourceReader.readResourceAsBytes( "/samples/init_req02.bin" );
+        byte[] bin = readFile("/samples/init_req02.bin");
 
 //        System.out.println( HexDump.prettyDump( bin ) );
 
@@ -280,7 +288,7 @@ public class CommandTest
     @Test
     public void testParse17()
     {
-        byte[] bin = ResourceReader.readResourceAsBytes( "/samples/login_resp.bin" );
+        byte[] bin = readFile("/samples/login_resp.bin");
 
 //        System.out.println( HexDump.prettyDump( bin ) );
 
@@ -300,7 +308,7 @@ public class CommandTest
 
     @Test
     public void testParse18() {
-        byte[] bin = ResourceReader.readResourceAsBytes("/samples/verify_resp_USER_WRONG.bin");
+        byte[] bin = readFile("/samples/verify_resp_USER_WRONG.bin");
 
         Command c = Command.parse(bin, 0, bin.length);
         assertEquals(ProtocolE.OPERATION_PROTOCOL, c.getProtocol());
@@ -322,7 +330,7 @@ public class CommandTest
         c.setCommandText( text );
         text.setDataConnectionId(new byte[0]);
 
-        byte[] expected = ResourceReader.readResourceAsBytes( "/samples/login_req.bin" );
+        byte[] expected = readFile("/samples/login_req.bin");
         byte[] ds = c.toDatastream();
 
         assertArrayEquals( expected, ds );
@@ -341,7 +349,7 @@ public class CommandTest
         lrt.setCameraId( "00626E4E72BF" );
         lrt.setFirmwareVersion( new Version( 11, 37, 2, 56 ) );
 
-        byte[] expected = ResourceReader.readResourceAsBytes( "/samples/login_resp.bin" );
+        byte[] expected = readFile("/samples/login_resp.bin");
         byte[] ds = c.toDatastream();
 
 //        System.out.println( HexDump.prettyDump( expected ) );
@@ -362,7 +370,7 @@ public class CommandTest
         text.setUsername( "camvis" );
         text.setPassword( "vis,FOSbuy1v" );
 
-        byte[] expected = ResourceReader.readResourceAsBytes( "/samples/verify_req.bin" );
+        byte[] expected = readFile("/samples/verify_req.bin");
         byte[] ds = c.toDatastream();
 
 //        System.out.println( HexDump.prettyDump( expected ) );
@@ -382,7 +390,7 @@ public class CommandTest
         c.setCommandText( text );
         text.setResultCode( ResultCodeE.CORRECT );
 
-        byte[] expected = ResourceReader.readResourceAsBytes( "/samples/verify_resp.bin" );
+        byte[] expected = readFile("/samples/verify_resp.bin");
         byte[] ds = c.toDatastream();
 
 //        System.out.println( HexDump.prettyDump( expected ) );
@@ -400,7 +408,7 @@ public class CommandTest
         c.setOpCode( OperationProtocolOpCodeE.UNK01 );
         c.setCommandText( new EmptyText() );
 
-        byte[] expected = ResourceReader.readResourceAsBytes( "/samples/UNK01.bin" );
+        byte[] expected = readFile("/samples/UNK01.bin");
         byte[] ds = c.toDatastream();
 
 //        System.out.println( HexDump.prettyDump( expected ) );
@@ -424,7 +432,7 @@ public class CommandTest
             d[i] = 0;
         text.setData( d );
 
-        byte[] expected = ResourceReader.readResourceAsBytes( "/samples/UNK02.bin" );
+        byte[] expected = readFile("/samples/UNK02.bin");
         byte[] ds = c.toDatastream();
 
 //        System.out.println( HexDump.prettyDump( expected ) );
@@ -447,7 +455,7 @@ public class CommandTest
                 (char)0x00 + (char)0x00 + (char)0x00 );
         text.setData( buf.toString() );
 
-        byte[] expected = ResourceReader.readResourceAsBytes( "/samples/UNK03.bin" );
+        byte[] expected = readFile("/samples/UNK03.bin");
         byte[] ds = c.toDatastream();
 
 //        System.out.println( HexDump.prettyDump( expected ) );
@@ -467,7 +475,7 @@ public class CommandTest
         c.setCommandText( text );
         text.setData( 2 );
 
-        byte[] expected = ResourceReader.readResourceAsBytes( "/samples/audio_start_req.bin" );
+        byte[] expected = readFile("/samples/audio_start_req.bin");
         byte[] ds = c.toDatastream();
 
 //        System.out.println( HexDump.prettyDump( expected ) );
@@ -488,7 +496,7 @@ public class CommandTest
         text.setResultCode( ResultCodeE.CORRECT );
         text.setDataConnectionId(new byte[]{0x00, 0x58, (byte) 0xEA, 0x58});
 
-        byte[] expected = ResourceReader.readResourceAsBytes( "/samples/audio_start_resp.bin" );
+        byte[] expected = readFile("/samples/audio_start_resp.bin");
         byte[] ds = c.toDatastream();
 
 //        System.out.println( HexDump.prettyDump( expected ) );
@@ -508,7 +516,7 @@ public class CommandTest
         c.setCommandText( text );
         text.setDataConnectionId(new byte[]{0x00, 0x58, (byte) 0xEA, 0x58});
 
-        byte[] expected = ResourceReader.readResourceAsBytes( "/samples/audio_login_req.bin" );
+        byte[] expected = readFile("/samples/audio_login_req.bin");
         byte[] ds = c.toDatastream();
 
 //        System.out.println( HexDump.prettyDump( expected ) );
@@ -536,7 +544,7 @@ public class CommandTest
             data[i] = (byte)( i + 1 );
         text.setDataContent( data );
 
-        byte[] expected = ResourceReader.readResourceAsBytes( "/samples/audio_data-scrubbed.bin" );
+        byte[] expected = readFile("/samples/audio_data-scrubbed.bin");
         byte[] ds = c.toDatastream();
 
 //        System.out.println( HexDump.prettyDump( expected ) );
@@ -553,7 +561,7 @@ public class CommandTest
         c.setProtocol( ProtocolE.OPERATION_PROTOCOL );
         c.setOpCode( OperationProtocolOpCodeE.Keep_Alive );
 
-        byte[] expected = ResourceReader.readResourceAsBytes( "/samples/keep_alive.bin" );
+        byte[] expected = readFile("/samples/keep_alive.bin");
         byte[] ds = c.toDatastream();
 
 //        System.out.println( HexDump.prettyDump( expected ) );
@@ -573,7 +581,7 @@ public class CommandTest
         c.setCommandText( text );
         text.setData( 1 );
 
-        byte[] expected = ResourceReader.readResourceAsBytes( "/samples/video_start_req.bin" );
+        byte[] expected = readFile("/samples/video_start_req.bin");
         byte[] ds = c.toDatastream();
 
 //        System.out.println( HexDump.prettyDump( expected ) );
@@ -594,7 +602,7 @@ public class CommandTest
         text.setResultCode( ResultCodeE.CORRECT );
         text.setDataConnectionId(new byte[]{0x40, 0x1B, 0x25, 0x60});
 
-        byte[] expected = ResourceReader.readResourceAsBytes( "/samples/video_start_resp.bin" );
+        byte[] expected = readFile("/samples/video_start_resp.bin");
         byte[] ds = c.toDatastream();
 
 //        System.out.println( HexDump.prettyDump( expected ) );
@@ -614,7 +622,7 @@ public class CommandTest
         c.setCommandText( text );
         text.setData( 1 );
 
-        byte[] expected = ResourceReader.readResourceAsBytes( "/samples/talk_start_req.bin" );
+        byte[] expected = readFile("/samples/talk_start_req.bin");
         byte[] ds = c.toDatastream();
 
 //        System.out.println( HexDump.prettyDump( expected ) );
@@ -635,7 +643,7 @@ public class CommandTest
         text.setResultCode( ResultCodeE.CORRECT );
         text.setDataConnectionId(new byte[]{0x7D, 0x26, (byte) 0xF6, 0x38});
 
-        byte[] expected = ResourceReader.readResourceAsBytes( "/samples/talk_start_resp.bin" );
+        byte[] expected = readFile("/samples/talk_start_resp.bin");
         byte[] ds = c.toDatastream();
 
 //        System.out.println( HexDump.prettyDump( expected ) );
@@ -656,7 +664,7 @@ public class CommandTest
         text.setUptimeMs( 0x0000E6E4 * 10 );
         text.setTimestampMs( 0x537CCE75L * 1000 );
 
-        byte[] expected = ResourceReader.readResourceAsBytes( "/samples/video_data.bin" );
+        byte[] expected = readFile("/samples/video_data.bin");
 
         byte[] data = new byte[expected.length - 0x24];
         System.arraycopy( expected, 0x24, data, 0, data.length );   //Cheating to create the data.
@@ -680,7 +688,7 @@ public class CommandTest
         SearchReqText text = new SearchReqText();
         c.setCommandText( text );
 
-        byte[] expected = ResourceReader.readResourceAsBytes( "/samples/search_req.bin" );
+        byte[] expected = readFile("/samples/search_req.bin");
 
         byte[] ds = c.toDatastream();
 
@@ -711,7 +719,7 @@ public class CommandTest
         text.setCameraPort( 80 );
         text.setDhcpEnabled( true );
 
-        byte[] expected = ResourceReader.readResourceAsBytes( "/samples/search_resp.bin" );
+        byte[] expected = readFile("/samples/search_resp.bin");
 
         byte[] ds = c.toDatastream();
 
@@ -740,7 +748,7 @@ public class CommandTest
         text.setDnsIP( SearchRespText.getByAddress( new byte[]{ (byte)192, (byte)168, 69, 1 }  ) );
         text.setCameraPort( 80 );
 
-        byte[] expected = ResourceReader.readResourceAsBytes( "/samples/init_req.bin" );
+        byte[] expected = readFile("/samples/init_req.bin");
 
         byte[] ds = c.toDatastream();
 
@@ -769,7 +777,7 @@ public class CommandTest
         text.setDnsIP( SearchRespText.getByAddress( new byte[]{ (byte)192, (byte)168, 69, 1 }  ) );
         text.setCameraPort( 61234 );
 
-        byte[] expected = ResourceReader.readResourceAsBytes( "/samples/init_req02.bin" );
+        byte[] expected = readFile("/samples/init_req02.bin");
 
         byte[] ds = c.toDatastream();
 
@@ -789,7 +797,7 @@ public class CommandTest
         c.setCommandText(text);
         text.setResultCode(ResultCodeE.USER_WRONG);
 
-        byte[] expected = ResourceReader.readResourceAsBytes("/samples/verify_resp_USER_WRONG.bin");
+        byte[] expected = readFile("/samples/verify_resp_USER_WRONG.bin");
         byte[] ds = c.toDatastream();
 
 //        System.out.println( HexDump.prettyDump( expected ) );

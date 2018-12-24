@@ -1,33 +1,7 @@
 package com.sibilantsolutions.grison.driver.foscam.net;
 
-import com.sibilantsolutions.grison.driver.foscam.domain.AlarmNotifyText;
-import com.sibilantsolutions.grison.driver.foscam.domain.AudioDataText;
-import com.sibilantsolutions.grison.driver.foscam.domain.AudioVideoProtocolOpCodeE;
-import com.sibilantsolutions.grison.driver.foscam.domain.Command;
-import com.sibilantsolutions.grison.driver.foscam.domain.KeepAliveText;
-import com.sibilantsolutions.grison.driver.foscam.domain.OpCodeI;
-import com.sibilantsolutions.grison.driver.foscam.domain.OperationProtocolOpCodeE;
-import com.sibilantsolutions.grison.driver.foscam.domain.ProtocolE;
-import com.sibilantsolutions.grison.driver.foscam.domain.SearchProtocolOpCodeE;
-import com.sibilantsolutions.grison.driver.foscam.domain.Unk02Text;
-import com.sibilantsolutions.grison.driver.foscam.domain.VideoDataText;
-import com.sibilantsolutions.iptools.event.LostConnectionEvt;
-import com.sibilantsolutions.iptools.event.ReceiveEvt;
-import com.sibilantsolutions.iptools.event.SocketListenerI;
-import com.sibilantsolutions.iptools.net.LengthByteBuffer;
-import com.sibilantsolutions.iptools.net.LengthByteBuffer.LengthByteType;
-import com.sibilantsolutions.iptools.net.ReceiveQueue;
-import com.sibilantsolutions.iptools.net.SocketUtils;
-import com.sibilantsolutions.utils.util.DurationLoggingCallable;
-import com.sibilantsolutions.utils.util.DurationLoggingRunnable;
-import com.sibilantsolutions.utils.util.HexUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.io.IOException;
-import java.net.InetSocketAddress;
 import java.net.Socket;
-import java.nio.ByteOrder;
 import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.BlockingQueue;
@@ -41,6 +15,17 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.sibilantsolutions.grison.driver.foscam.domain.AudioVideoProtocolOpCodeE;
+import com.sibilantsolutions.grison.driver.foscam.domain.Command;
+import com.sibilantsolutions.grison.driver.foscam.domain.KeepAliveText;
+import com.sibilantsolutions.grison.driver.foscam.domain.OpCodeI;
+import com.sibilantsolutions.grison.driver.foscam.domain.OperationProtocolOpCodeE;
+import com.sibilantsolutions.grison.driver.foscam.domain.ProtocolE;
+import com.sibilantsolutions.grison.driver.foscam.domain.SearchProtocolOpCodeE;
 
 public class FoscamConnection
 {
@@ -63,7 +48,7 @@ public class FoscamConnection
     final private BlockingQueue<Command> q = new LinkedBlockingQueue<Command>();
 
     final private FoscamSessionI owner;
-    private final ReceiveQueue receiveQueue;
+//    private final ReceiveQueue receiveQueue;
 
     private FoscamConnection( Socket socket, ProtocolE protocol, FoscamSessionI owner )
     {
@@ -74,7 +59,7 @@ public class FoscamConnection
 
         this.keepAliveService = createScheduledExecutorService( "keepAlive " + this.socket );
         scheduleKeepAlive( protocol, this.keepAliveService );
-
+/*
         SocketListenerI dest = new ReceiverProducer( q );
 
         dest = new LengthByteBuffer( 0x0F, 4, LengthByteType.LENGTH_OF_PAYLOAD,
@@ -83,17 +68,19 @@ public class FoscamConnection
         receiveQueue = new ReceiveQueue(dest, "recvQ " + socket);
 
         SocketUtils.readLoopThread(0xFFFF, this.socket, receiveQueue);
+        */
     }
 
-    static public FoscamConnection connect( InetSocketAddress address, ProtocolE protocol, FoscamSessionI owner )
-    {
-        Socket socket = SocketUtils.connect( address );
+    /*
+        static public FoscamConnection connect( InetSocketAddress address, ProtocolE protocol, FoscamSessionI owner )
+        {
+            Socket socket = SocketUtils.connect( address );
 
-        FoscamConnection connection = new FoscamConnection( socket, protocol, owner );
+            FoscamConnection connection = new FoscamConnection( socket, protocol, owner );
 
-        return connection;
-    }
-
+            return connection;
+        }
+    */
     static private ExecutorService createExecutorService( final String threadName )
     {
         ExecutorService es = Executors.newSingleThreadExecutor( new ThreadFactory() {
@@ -154,12 +141,12 @@ public class FoscamConnection
             {
                 log.info( "Send async: p={}, o={}.", request.getProtocol(), request.getOpCode() );
 
-                SocketUtils.send( request.toDatastream(), socket );
+//                SocketUtils.send( request.toDatastream(), socket );
             }
         };
 
-        task = new DurationLoggingRunnable( task,
-                "sendAsync p=" + request.getProtocol() + ", o=" + request.getOpCode() );
+//        task = new DurationLoggingRunnable( task,
+//                "sendAsync p=" + request.getProtocol() + ", o=" + request.getOpCode() );
 
         execute( Executors.callable( task ) );
     }
@@ -173,7 +160,7 @@ public class FoscamConnection
             {
                 log.info( "Send request: p={}, o={}.", request.getProtocol(), request.getOpCode() );
 
-                SocketUtils.send( request.toDatastream(), socket );
+//                SocketUtils.send( request.toDatastream(), socket );
 
                 Command response = q.take();
 
@@ -183,8 +170,8 @@ public class FoscamConnection
             }
         };
 
-        task = new DurationLoggingCallable<Command>( task,
-                "sendReceive p=" + request.getProtocol() + ", o=" + request.getOpCode() );
+//        task = new DurationLoggingCallable<Command>( task,
+//                "sendReceive p=" + request.getProtocol() + ", o=" + request.getOpCode() );
 
         return execute( task );
     }
@@ -231,7 +218,7 @@ public class FoscamConnection
         keepAliveService.shutdownNow();
         executorService.shutdownNow();
         q.clear();
-        receiveQueue.shutdownNow();
+//        receiveQueue.shutdownNow();
 
         try {
             socket.close();
@@ -239,7 +226,7 @@ public class FoscamConnection
             log.error("Exception in close: ", e);
         }
     }
-
+/*
     private class ReceiverProducer implements SocketListenerI
     {
         private final BlockingQueue<Command> queue;
@@ -353,5 +340,5 @@ public class FoscamConnection
         }
 
     }
-
+*/
 }

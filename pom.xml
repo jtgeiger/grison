@@ -94,12 +94,6 @@
     	<scope>runtime</scope>
 	<optional>true</optional>
     </dependency>
-      <!-- TODO Remove iptools. -->
-    <dependency>
-    	<groupId>com.sibilantsolutions.iptools</groupId>
-    	<artifactId>iptools</artifactId>
-        <version>0.0.5</version>
-    </dependency>
       <dependency>
           <groupId>io.netty</groupId>
           <artifactId>netty-all</artifactId>

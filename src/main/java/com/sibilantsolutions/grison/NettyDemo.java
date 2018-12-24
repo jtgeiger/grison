@@ -60,6 +60,7 @@ public class NettyDemo {
 
     private static final Logger LOG = LoggerFactory.getLogger(NettyDemo.class);
 
+    //This address:port is defined in the Foscam docs.
     private static final String BROADCAST_ADDRESS = "255.255.255.255";
     private static final int BROADCAST_PORT = 10_000;
 
