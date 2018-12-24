@@ -11,4 +11,16 @@ public class SearchSendResult extends AbstractResult {
         this.failureCause = failureCause;
     }
 
+    @Override
+    public String toString() {
+        if (this == IN_FLIGHT) {
+            return "SearchSendResult{IN_FLIGHT}";
+        }
+        if (this == SENT) {
+            return "SearchSendResult{SENT}";
+        }
+        return "SearchSendResult{" +
+                "failureCause=" + failureCause +
+                '}';
+    }
 }

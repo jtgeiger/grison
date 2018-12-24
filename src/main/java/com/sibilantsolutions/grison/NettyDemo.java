@@ -151,6 +151,7 @@ public class NettyDemo {
                     if (searchBindResult.channel != null) {
                         return Flowable.just(new SearchAction(searchBindResult.channel));
                     } else {
+                        LOG.info("searchBindResult={}.", searchBindResult);
                         return Flowable.empty();    //TODO: Can't ignore inflight/fail results.
                     }
                 })
@@ -163,6 +164,8 @@ public class NettyDemo {
                                 .observeOn(Schedulers.io())
                                 .compose(new CommandToSearchReceiveResult());
                     } else {
+                        LOG.info("searchSendResult={}.", searchSendResult);
+
                         return Flowable.empty();    //TODO: Can't ignore inflight/fail results.
                     }
                 })
