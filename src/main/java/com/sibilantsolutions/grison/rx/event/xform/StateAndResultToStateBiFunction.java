@@ -3,6 +3,7 @@ package com.sibilantsolutions.grison.rx.event.xform;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.sibilantsolutions.grison.driver.foscam.entity.AlarmNotifyTextEntity;
 import com.sibilantsolutions.grison.driver.foscam.entity.AudioDataTextEntity;
 import com.sibilantsolutions.grison.driver.foscam.entity.AudioStartRespTextEntity;
 import com.sibilantsolutions.grison.driver.foscam.entity.LoginRespTextEntity;
@@ -37,7 +38,7 @@ public class StateAndResultToStateBiFunction implements BiFunction<State, Abstra
         } else if (state == State.OP_CONNECT_IN_FLIGHT && result instanceof OperationConnectResult) {
             OperationConnectResult cr = (OperationConnectResult) result;
             if (cr.channel != null) {
-                return State.operationConnected(cr.channel);
+                return State.operationConnected(cr.channel, state);
             } else {
                 return State.fail(new RuntimeException(cr.failureCause), state);
             }
@@ -104,6 +105,10 @@ public class StateAndResultToStateBiFunction implements BiFunction<State, Abstra
         } else if (state.operationChannel != null && result instanceof OperationReceiveResult) {
             OperationReceiveResult r = (OperationReceiveResult) result;
 
+            if (r.text() instanceof AlarmNotifyTextEntity) {
+                return State.alarmNotify((AlarmNotifyTextEntity) r.text(), state);
+            }
+
             switch (state.handshakeState) {
                 case LOGIN_SENT:
                     return State.loginRespText((LoginRespTextEntity) r.text(), state);
@@ -121,7 +126,7 @@ public class StateAndResultToStateBiFunction implements BiFunction<State, Abstra
                     return State.audioStartResp((AudioStartRespTextEntity) r.text(), state);
 
                 default:
-                    throw new IllegalArgumentException("Unexpected handshake state=" + state.handshakeState);
+                    throw new IllegalArgumentException("Unexpected handshake state=" + state + ", result=" + result);
             }
         } else if (state.handshakeState == State.HandshakeState.AUDIO_VIDEO_LOGIN_SENT && result instanceof AudioVideoReceiveResult) {
             AudioVideoReceiveResult r = (AudioVideoReceiveResult) result;
@@ -134,7 +139,7 @@ public class StateAndResultToStateBiFunction implements BiFunction<State, Abstra
                 return State.audioDataText(t, state);
             }
 
-            throw new UnsupportedOperationException("TODO");
+            throw new IllegalArgumentException("Unexpected result=" + result + " with state=" + state);
 
         }
 
