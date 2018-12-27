@@ -14,7 +14,7 @@ public class AudioStartRespTextDtoParser implements Function<ByteBuf, AudioStart
         final FosInt16 result = NettyFosTypeReader.fosInt16(buf);
         final AudioStartRespTextDto.Builder builder = AudioStartRespTextDto.builder()
                 .result(result);
-        if (ResultCodeE.fromValue(result) == ResultCodeE.CORRECT) {
+        if (ResultCodeE.fromValue(result) == ResultCodeE.CORRECT && buf.readableBytes() >= 4) {
             builder.dataConnectionId(NettyFosTypeReader.fosInt32(buf));
         }
         return builder.build();

@@ -14,7 +14,7 @@ public class VideoStartRespTextDtoParser implements Function<ByteBuf, VideoStart
         final FosInt16 result = NettyFosTypeReader.fosInt16(buf);
         final com.sibilantsolutions.grison.driver.foscam.dto.VideoStartRespTextDto.Builder builder = VideoStartRespTextDto.builder()
                 .result(result);
-        if (ResultCodeE.fromValue(result) == ResultCodeE.CORRECT) {
+        if (ResultCodeE.fromValue(result) == ResultCodeE.CORRECT && buf.readableBytes() >= 4) {
             builder.dataConnectionId(NettyFosTypeReader.fosInt32(buf));
         }
         return builder.build();

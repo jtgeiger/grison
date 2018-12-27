@@ -187,7 +187,7 @@ public class State {
             throw new RuntimeException("Invalid result=" + videoStartRespText.result());
         }
 
-        return new State(state.operationChannel, null, HandshakeState.VIDEO_START_RESPONDED, state.loginRespText, state.verifyRespText, Objects.requireNonNull(videoStartRespText), null, state.audioVideoChannel, state.videoDataText, state.audioDataText, state.alarmType);
+        return new State(state.operationChannel, null, HandshakeState.VIDEO_START_RESPONDED, state.loginRespText, state.verifyRespText, Objects.requireNonNull(videoStartRespText), state.audioStartRespText, state.audioVideoChannel, state.videoDataText, state.audioDataText, state.alarmType);
     }
 
     public static State audioStartSending(State state) {
@@ -215,7 +215,7 @@ public class State {
             throw new RuntimeException("Invalid result=" + audioStartRespText.result());
         }
 
-        return new State(state.operationChannel, null, HandshakeState.VIDEO_START_RESPONDED, state.loginRespText, state.verifyRespText, null, Objects.requireNonNull(audioStartRespText), state.audioVideoChannel, state.videoDataText, state.audioDataText, state.alarmType);
+        return new State(state.operationChannel, null, HandshakeState.VIDEO_START_RESPONDED, state.loginRespText, state.verifyRespText, state.videoStartRespText, Objects.requireNonNull(audioStartRespText), state.audioVideoChannel, state.videoDataText, state.audioDataText, state.alarmType);
     }
 
     public static State operationConnected(Channel operationChannel, State state) {

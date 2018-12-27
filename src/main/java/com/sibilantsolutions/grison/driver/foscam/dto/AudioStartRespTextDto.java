@@ -41,9 +41,9 @@ public abstract class AudioStartRespTextDto implements FoscamTextDto {
         public AudioStartRespTextDto build() {
             final AudioStartRespTextDto dto = autoBuild();
 
-            if (ResultCodeE.fromValue(dto.result()) == ResultCodeE.CORRECT) {
-                checkArgument(dto.dataConnectionId().isPresent(), "dataConnectionId missing");
-            } else {
+            //If ResultCodeE.CORRECT the data connection id may be present, or not if it has already been sent in this
+            // session.  If it's not ResultCodeE.CORRECT then it should never be present.
+            if (ResultCodeE.fromValue(dto.result()) != ResultCodeE.CORRECT) {
                 checkArgument(!dto.dataConnectionId().isPresent(), "expected dataConnectionId to be absent");
             }
 
