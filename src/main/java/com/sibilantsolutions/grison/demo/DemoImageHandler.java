@@ -9,7 +9,6 @@ import java.time.Duration;
 import java.time.ZoneId;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 import javax.swing.Icon;
@@ -22,6 +21,8 @@ import com.sibilantsolutions.grison.evt.ImageHandlerI;
 
 public class DemoImageHandler implements ImageHandlerI
 {
+
+    private static final String KEY = DemoImageHandler.class.getName();
 
     private JLabel imageLabel;
     private JLabel uptimeLabel;
@@ -36,35 +37,24 @@ public class DemoImageHandler implements ImageHandlerI
 
     public DemoImageHandler() {
         ScheduledExecutorService scheduledExecutorService = Executors
-                .newSingleThreadScheduledExecutor(new ThreadFactory() {
-                    @Override
-                    public Thread newThread(Runnable r) {
-                        Thread thread = new Thread(r, "fpsCalculator");
-                        thread.setDaemon(true);
-                        return thread;
-                    }
+                .newSingleThreadScheduledExecutor(r -> {
+                    Thread thread = new Thread(r, "fpsCalculator");
+                    thread.setDaemon(true);
+                    return thread;
                 });
-        Runnable updater = new Runnable() {
-            @Override
-            public void run() {
-                long now = System.currentTimeMillis();
-                long msDiff = now - lastFpsMs;
-                int frameCount = frameCounter.getAndSet(0);
-                lastFpsMs = now;
-                double seconds = msDiff / 1000.0;
-                double fps = frameCount / seconds;
-                NumberFormat format = DecimalFormat.getInstance();
-                format.setMinimumFractionDigits(2);
-                format.setMaximumFractionDigits(2);
-                final String fpsStr = format.format(fps);
-                Runnable r = new Runnable() {
-                    @Override
-                    public void run() {
-                        fpsLabel.setText(fpsStr);
-                    }
-                };
-                swingThreadInvoke(r);
-            }
+        Runnable updater = () -> {
+            long now = System.currentTimeMillis();
+            long msDiff = now - lastFpsMs;
+            int frameCount = frameCounter.getAndSet(0);
+            lastFpsMs = now;
+            double seconds = msDiff / 1000.0;
+            double fps = frameCount / seconds;
+            NumberFormat format = DecimalFormat.getInstance();
+            format.setMinimumFractionDigits(2);
+            format.setMaximumFractionDigits(2);
+            final String fpsStr = format.format(fps);
+            Runnable r = () -> fpsLabel.setText(fpsStr);
+            swingThreadInvoke(r);
         };
         scheduledExecutorService.scheduleWithFixedDelay(updater, 0, 1500, TimeUnit.MILLISECONDS);
     }
@@ -100,6 +90,14 @@ public class DemoImageHandler implements ImageHandlerI
     @Override
     public void onReceive(VideoDataTextEntity videoData)
     {
+        //We'll get invoked for every state change (including audio), but only process if the image changed.
+        final Object clientProperty = imageLabel.getClientProperty(KEY);
+        if (videoData.equals(clientProperty)) {
+            return;
+        }
+
+        imageLabel.putClientProperty(KEY, videoData);
+
         frameCounter.incrementAndGet();
         final ImageIcon icon = new ImageIcon(videoData.videoData());
         final Duration uptime = videoData.uptime();
@@ -113,15 +111,10 @@ public class DemoImageHandler implements ImageHandlerI
 
         final String timestampStr = videoData.timestamp().atZone(ZoneId.systemDefault()).toString();
 
-        Runnable r = new Runnable() {
-
-            @Override
-            public void run()
-            {
-                imageLabel.setIcon(icon);
-                uptimeLabel.setText(uptimeDuration);
-                timestampLabel.setText(timestampStr);
-            }
+        Runnable r = () -> {
+            imageLabel.setIcon(icon);
+            uptimeLabel.setText(uptimeDuration);
+            timestampLabel.setText(timestampStr);
         };
 
         swingThreadInvoke(r);
@@ -140,14 +133,10 @@ public class DemoImageHandler implements ImageHandlerI
     public void showNoSignalImage() {
         final BufferedImage lostConnectionImage = createLostConnectionImage();
 
-        Runnable r = new Runnable() {
-
-            @Override
-            public void run() {
-                imageLabel.setIcon(new ImageIcon(lostConnectionImage));
-                uptimeLabel.setText("");
-                timestampLabel.setText("");
-            }
+        Runnable r = () -> {
+            imageLabel.setIcon(new ImageIcon(lostConnectionImage));
+            uptimeLabel.setText("");
+            timestampLabel.setText("");
         };
 
         swingThreadInvoke(r);
