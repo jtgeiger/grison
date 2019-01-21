@@ -1,8 +1,14 @@
 package com.sibilantsolutions.grison.rx.event.xform;
 
+import java.net.InetSocketAddress;
+import java.net.SocketAddress;
+import java.util.Optional;
+
+import org.reactivestreams.Subscriber;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.common.base.VerifyException;
 import com.sibilantsolutions.grison.driver.foscam.entity.AlarmNotifyTextEntity;
 import com.sibilantsolutions.grison.driver.foscam.entity.AudioDataTextEntity;
 import com.sibilantsolutions.grison.driver.foscam.entity.AudioStartRespTextEntity;
@@ -11,7 +17,15 @@ import com.sibilantsolutions.grison.driver.foscam.entity.Unk02TextEntity;
 import com.sibilantsolutions.grison.driver.foscam.entity.VerifyRespTextEntity;
 import com.sibilantsolutions.grison.driver.foscam.entity.VideoDataTextEntity;
 import com.sibilantsolutions.grison.driver.foscam.entity.VideoStartRespTextEntity;
+import com.sibilantsolutions.grison.driver.foscam.type.FosInt32;
 import com.sibilantsolutions.grison.rx.State;
+import com.sibilantsolutions.grison.rx.event.action.AbstractAction;
+import com.sibilantsolutions.grison.rx.event.action.AudioStartAction;
+import com.sibilantsolutions.grison.rx.event.action.AudioVideoConnectAction;
+import com.sibilantsolutions.grison.rx.event.action.AudioVideoLoginAction;
+import com.sibilantsolutions.grison.rx.event.action.LoginAction;
+import com.sibilantsolutions.grison.rx.event.action.VerifyAction;
+import com.sibilantsolutions.grison.rx.event.action.VideoStartAction;
 import com.sibilantsolutions.grison.rx.event.result.AbstractResult;
 import com.sibilantsolutions.grison.rx.event.result.AudioStartSendResult;
 import com.sibilantsolutions.grison.rx.event.result.AudioVideoConnectResult;
@@ -31,18 +45,35 @@ public class StateAndResultToStateBiFunction implements BiFunction<State, Abstra
 
     private static final Logger LOG = LoggerFactory.getLogger(StateAndResultToStateBiFunction.class);
 
+    private final Subscriber<AbstractAction> dynamicActions;
+    private final String username;
+    private final String password;
+
+    public StateAndResultToStateBiFunction(Subscriber<AbstractAction> dynamicActions, String username, String password) {
+        this.dynamicActions = dynamicActions;
+        this.username = username;
+        this.password = password;
+    }
+
     @Override
     public State apply(State state, AbstractResult result) {
-        if (state == State.INITIAL && result == OperationConnectResult.IN_FLIGHT) {
-            return State.OP_CONNECT_IN_FLIGHT;
-        } else if (state == State.OP_CONNECT_IN_FLIGHT && result instanceof OperationConnectResult) {
+
+        if (result == OperationConnectResult.IN_FLIGHT) {
+            return State.operationConnectInFlight(state);
+        }
+
+        if (result instanceof OperationConnectResult) {
             OperationConnectResult cr = (OperationConnectResult) result;
             if (cr.channel != null) {
+                dynamicActions.onNext(new LoginAction(cr.channel));
+
                 return State.operationConnected(cr.channel, state);
             } else {
                 return State.fail(new RuntimeException(cr.failureCause), state);
             }
-        } else if (state.operationChannel != null && result instanceof LoginSendResult) {
+        }
+
+        if (result instanceof LoginSendResult) {
             LoginSendResult lsr = (LoginSendResult) result;
             if (lsr == LoginSendResult.IN_FLIGHT) {
                 return State.loginSending(state);
@@ -51,7 +82,9 @@ public class StateAndResultToStateBiFunction implements BiFunction<State, Abstra
             } else {
                 return State.fail(lsr.failureCause, state);
             }
-        } else if (state.operationChannel != null && result instanceof VerifySendResult) {
+        }
+
+        if (result instanceof VerifySendResult) {
             VerifySendResult vsr = (VerifySendResult) result;
             if (vsr == VerifySendResult.IN_FLIGHT) {
                 return State.verifySending(state);
@@ -60,7 +93,9 @@ public class StateAndResultToStateBiFunction implements BiFunction<State, Abstra
             } else {
                 return State.fail(vsr.failureCause, state);
             }
-        } else if (state.operationChannel != null && result instanceof VideoStartSendResult) {
+        }
+
+        if (result instanceof VideoStartSendResult) {
             VideoStartSendResult vsr = (VideoStartSendResult) result;
             if (vsr == VideoStartSendResult.IN_FLIGHT) {
                 return State.videoStartSending(state);
@@ -69,7 +104,9 @@ public class StateAndResultToStateBiFunction implements BiFunction<State, Abstra
             } else {
                 return State.fail(vsr.failureCause, state);
             }
-        } else if (state.operationChannel != null && result instanceof AudioStartSendResult) {
+        }
+
+        if (result instanceof AudioStartSendResult) {
             AudioStartSendResult asr = (AudioStartSendResult) result;
             if (asr == AudioStartSendResult.IN_FLIGHT) {
                 return State.audioStartSending(state);
@@ -78,7 +115,46 @@ public class StateAndResultToStateBiFunction implements BiFunction<State, Abstra
             } else {
                 return State.fail(asr.failureCause, state);
             }
-        } else if (result instanceof AudioVideoConnectResult) {
+        }
+
+        if (result instanceof OperationReceiveResult) {
+            OperationReceiveResult r = (OperationReceiveResult) result;
+
+            if (r.text() instanceof LoginRespTextEntity) {
+                final State state1 = State.loginRespText((LoginRespTextEntity) r.text(), state);
+                dynamicActions.onNext(new VerifyAction(state1.operationChannel, username, password));
+                return state1;
+            }
+
+            if (r.text() instanceof VerifyRespTextEntity) {
+                return State.verifyRespText((VerifyRespTextEntity) r.text(), state);
+            }
+
+            if (r.text() instanceof Unk02TextEntity) {
+                final State state1 = State.unk02((Unk02TextEntity) r.text(), state);
+                dynamicActions.onNext(new VideoStartAction(state1.operationChannel));
+                dynamicActions.onNext(new AudioStartAction(state1.operationChannel));
+                return state1;
+            }
+
+            if (r.text() instanceof VideoStartRespTextEntity) {
+                final State state1 = State.videoStartResp((VideoStartRespTextEntity) r.text(), state);
+                return maybeConnect(state1.videoStartRespText.dataConnectionId(), state1, dynamicActions);
+            }
+
+            if (r.text() instanceof AudioStartRespTextEntity) {
+                final State state1 = State.audioStartResp((AudioStartRespTextEntity) r.text(), state);
+                return maybeConnect(state1.audioStartRespText.dataConnectionId(), state1, dynamicActions);
+            }
+
+            if (r.text() instanceof AlarmNotifyTextEntity) {
+                return State.alarmNotify((AlarmNotifyTextEntity) r.text(), state);
+            }
+
+            throw new IllegalArgumentException("Unexpected handshake state=" + state + ", result=" + result);
+        }
+
+        if (result instanceof AudioVideoConnectResult) {
             AudioVideoConnectResult r = (AudioVideoConnectResult) result;
             LOG.info("AudioVideoConnectResult={}.", r);
             if (r == AudioVideoConnectResult.IN_FLIGHT) {
@@ -87,11 +163,22 @@ public class StateAndResultToStateBiFunction implements BiFunction<State, Abstra
             final State state1;
             if (r.channel != null) {
                 state1 = State.audioVideoConnected(r.channel, state);
+
+                Optional<FosInt32> o = (state1.videoStartRespText != null
+                        ? state1.videoStartRespText.dataConnectionId()
+                        : state1.audioStartRespText.dataConnectionId());
+                final FosInt32 dataConnectionId = o.orElseThrow(VerifyException::new);
+
+                final AudioVideoLoginAction audioVideoLoginAction = new AudioVideoLoginAction(state1.audioVideoChannel, dataConnectionId);
+                dynamicActions.onNext(audioVideoLoginAction);
+
             } else {
                 state1 = State.fail(r.failureCause, state);
             }
             return state1;
-        } else if (result instanceof AudioVideoLoginSendResult) {
+        }
+
+        if (result instanceof AudioVideoLoginSendResult) {
             AudioVideoLoginSendResult r = (AudioVideoLoginSendResult) result;
             LOG.info("AudioVideoLoginSendResult={}.", r);
 
@@ -102,39 +189,17 @@ public class StateAndResultToStateBiFunction implements BiFunction<State, Abstra
             } else {
                 return State.fail(new RuntimeException(r.failureCause), state);
             }
-        } else if (state.operationChannel != null && result instanceof OperationReceiveResult) {
-            OperationReceiveResult r = (OperationReceiveResult) result;
+        }
 
-            if (r.text() instanceof AlarmNotifyTextEntity) {
-                return State.alarmNotify((AlarmNotifyTextEntity) r.text(), state);
-            }
-
-            switch (state.handshakeState) {
-                case LOGIN_SENT:
-                    return State.loginRespText((LoginRespTextEntity) r.text(), state);
-
-                case VERIFY_SENT:
-                    return State.verifyRespText((VerifyRespTextEntity) r.text(), state);
-
-                case VERIFY_RESPONDED:
-                    return State.unk02((Unk02TextEntity) r.text(), state);
-
-                case VIDEO_START_SENT:
-                    return State.videoStartResp((VideoStartRespTextEntity) r.text(), state);
-
-                case AUDIO_START_SENT:
-                    return State.audioStartResp((AudioStartRespTextEntity) r.text(), state);
-
-                default:
-                    throw new IllegalArgumentException("Unexpected handshake state=" + state + ", result=" + result);
-            }
-        } else if (state.handshakeState == State.HandshakeState.AUDIO_VIDEO_LOGIN_SENT && result instanceof AudioVideoReceiveResult) {
+        if (result instanceof AudioVideoReceiveResult) {
             AudioVideoReceiveResult r = (AudioVideoReceiveResult) result;
 
             if (r.text() instanceof VideoDataTextEntity) {
                 VideoDataTextEntity t = (VideoDataTextEntity) r.text();
                 return State.videoDataText(t, state);
-            } else if (r.text() instanceof AudioDataTextEntity) {
+            }
+
+            if (r.text() instanceof AudioDataTextEntity) {
                 AudioDataTextEntity t = (AudioDataTextEntity) r.text();
                 return State.audioDataText(t, state);
             }
@@ -145,4 +210,28 @@ public class StateAndResultToStateBiFunction implements BiFunction<State, Abstra
 
         throw new IllegalArgumentException("Unexpected result=" + result + " with state=" + state);
     }
+
+    /**
+     * Fire the AudioVideoConnectAction if a dataConnectionId is present.  If not that means that the audio/video connection is already established.
+     *
+     * @param dataConnectionId Optional dataConnectionId that came with videoStartRespText or audioStartRespText, if any.
+     * @param state1           State to return after the action has (maybe) been fired.
+     * @param dynamicActions   Subscriber to which to fire the action.
+     * @return The new state.
+     */
+    private static State maybeConnect(Optional<FosInt32> dataConnectionId, State state1, Subscriber<AbstractAction> dynamicActions) {
+        return dataConnectionId
+                .map(ignored -> {
+                    final SocketAddress socketAddress = state1.operationChannel.remoteAddress();
+                    if (socketAddress instanceof InetSocketAddress) {
+                        InetSocketAddress inetSocketAddress = (InetSocketAddress) socketAddress;
+                        dynamicActions.onNext(new AudioVideoConnectAction(inetSocketAddress.getHostString(), inetSocketAddress.getPort()));
+                        return state1;
+                    } else {
+                        return State.fail(new RuntimeException("Expected " + InetSocketAddress.class.getSimpleName() + " but got=" + socketAddress), state1);
+                    }
+                })
+                .orElse(state1);
+    }
+
 }

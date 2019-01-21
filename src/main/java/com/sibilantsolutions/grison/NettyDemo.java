@@ -32,7 +32,6 @@ import com.sibilantsolutions.grison.rx.event.xform.CommandToSearchReceiveResult;
 import com.sibilantsolutions.grison.rx.event.xform.SearchActionToSearchSendResult;
 import com.sibilantsolutions.grison.rx.event.xform.SearchBindActionToSearchBindResult;
 import com.sibilantsolutions.grison.rx.event.xform.StateAndResultToStateBiFunction;
-import com.sibilantsolutions.grison.rx.event.xform.StateToState;
 import com.sibilantsolutions.grison.rx.event.xform.UiEventToAbstractAction;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.ChannelHandler;
@@ -107,25 +106,15 @@ public class NettyDemo {
         final Flowable<AbstractResult> actionResults = actions
                 .compose(new AbstractActionToAbstractResult(operationDatastream, audioVideoDatastream));
 
-        Flowable<AbstractResult> results = Flowable.merge(
+        final Flowable<AbstractResult> results = Flowable.merge(
                 actionResults,
                 operationReceiveResults,
                 audioVideoReceiveResults);
 
-        Flowable<State> states = results
+        return results
                 .scanWith(
-                        () -> State.INITIAL,
-                        new StateAndResultToStateBiFunction());
-
-        states = states
-                .compose(new StateToState(dynamicActions, username, password));
-
-//        states
-//                //TODO: Pretend UI disabled video, but only if it was validly connected, after some period of time.
-////                .observeOn(Schedulers.io())
-//                .subscribe(new LogSubscriber<>());
-
-        return states;
+                        State::init,
+                        new StateAndResultToStateBiFunction(dynamicActions, username, password));
     }
 
     public static Flowable<ImmutableList<SearchRespTextEntity>> search() {
