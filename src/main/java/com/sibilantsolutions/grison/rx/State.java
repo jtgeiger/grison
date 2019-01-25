@@ -46,7 +46,7 @@ public class State {
         AUDIO_VIDEO_LOGIN_SENT,
     }
 
-    private static final State INITIAL = new State(null, null, ImmutableSet.of(), null, null, null, null, null, null, null, AlarmTypeE.ALARM_STOP);
+    private static final State INITIAL = new State(null, null, ImmutableSet.of(), null, null, null, null, null, null, null, AlarmState.NONE);
 
     public final Channel operationChannel;
     public final Throwable failureCause;
@@ -64,9 +64,9 @@ public class State {
     public final VideoDataTextEntity videoDataText;
     public final AudioDataTextEntity audioDataText;
 
-    public final AlarmTypeE alarmType;
+    public final AlarmState alarmState;
 
-    private State(Channel operationChannel, Throwable failureCause, ImmutableSet<HandshakeState> handshakeState, LoginRespTextEntity loginRespText, VerifyRespTextEntity verifyRespText, VideoStartRespTextEntity videoStartRespText, AudioStartRespTextEntity audioStartRespText, Channel audioVideoChannel, VideoDataTextEntity videoDataText, AudioDataTextEntity audioDataText, AlarmTypeE alarmType) {
+    private State(Channel operationChannel, Throwable failureCause, ImmutableSet<HandshakeState> handshakeState, LoginRespTextEntity loginRespText, VerifyRespTextEntity verifyRespText, VideoStartRespTextEntity videoStartRespText, AudioStartRespTextEntity audioStartRespText, Channel audioVideoChannel, VideoDataTextEntity videoDataText, AudioDataTextEntity audioDataText, AlarmState alarmState) {
         this.operationChannel = operationChannel;
         this.failureCause = failureCause;
         this.handshakeState = Objects.requireNonNull(handshakeState);
@@ -77,7 +77,7 @@ public class State {
         this.audioVideoChannel = audioVideoChannel;
         this.videoDataText = videoDataText;
         this.audioDataText = audioDataText;
-        this.alarmType = Objects.requireNonNull(alarmType);
+        this.alarmState = Objects.requireNonNull(alarmState);
     }
 
     @Override
@@ -94,13 +94,13 @@ public class State {
                 ", audioVideoChannel=" + audioVideoChannel +
                 ", videoDataText=" + videoDataText +
                 ", audioDataText=" + audioDataText +
-                ", alarmType=" + alarmType +
+                ", alarmState=" + alarmState +
                 '}';
     }
 
     public static State fail(Throwable failureCause, State state) {
         LOG.error("State fail={}:", state, failureCause);
-        return new State(state.operationChannel, Objects.requireNonNull(failureCause), state.handshakeState, state.loginRespText, state.verifyRespText, state.videoStartRespText, state.audioStartRespText, state.audioVideoChannel, state.videoDataText, state.audioDataText, state.alarmType);
+        return new State(state.operationChannel, Objects.requireNonNull(failureCause), state.handshakeState, state.loginRespText, state.verifyRespText, state.videoStartRespText, state.audioStartRespText, state.audioVideoChannel, state.videoDataText, state.audioDataText, state.alarmState);
     }
 
     public static State init() {
@@ -118,11 +118,11 @@ public class State {
             throw new IllegalStateException(String.format("handshakeState=%s", state.handshakeState));
         }
 
-        return new State(null, null, add(HandshakeState.OPERATION_CONNECT_IN_FLIGHT, state.handshakeState), null, null, null, null, null, null, null, state.alarmType);
+        return new State(null, null, add(HandshakeState.OPERATION_CONNECT_IN_FLIGHT, state.handshakeState), null, null, null, null, null, null, null, state.alarmState);
     }
 
     public static State operationConnected(Channel operationChannel, State state) {
-        return new State(Objects.requireNonNull(operationChannel), null, add(HandshakeState.OPERATION_CONNECTED, state.handshakeState), null, null, null, null, null, null, null, state.alarmType);
+        return new State(Objects.requireNonNull(operationChannel), null, add(HandshakeState.OPERATION_CONNECTED, state.handshakeState), null, null, null, null, null, null, null, state.alarmState);
     }
 
     public static State loginSending(State state) {
@@ -130,7 +130,7 @@ public class State {
             throw new IllegalStateException(String.format("handshakeState=%s", state.handshakeState));
         }
 
-        return new State(Objects.requireNonNull(state.operationChannel), null, add(HandshakeState.LOGIN_SENDING, state.handshakeState), null, null, null, null, null, null, null, state.alarmType);
+        return new State(Objects.requireNonNull(state.operationChannel), null, add(HandshakeState.LOGIN_SENDING, state.handshakeState), null, null, null, null, null, null, null, state.alarmState);
     }
 
     public static State loginSent(State state) {
@@ -138,7 +138,7 @@ public class State {
             throw new IllegalStateException(String.format("handshakeState=%s", state.handshakeState));
         }
 
-        return new State(Objects.requireNonNull(state.operationChannel), null, add(HandshakeState.LOGIN_SENT, state.handshakeState), null, null, null, null, null, null, null, state.alarmType);
+        return new State(Objects.requireNonNull(state.operationChannel), null, add(HandshakeState.LOGIN_SENT, state.handshakeState), null, null, null, null, null, null, null, state.alarmState);
     }
 
     public static State loginRespText(LoginRespTextEntity loginRespText, State state) {
@@ -150,7 +150,7 @@ public class State {
             throw new RuntimeException("Invalid result=" + loginRespText.resultCode());
         }
 
-        return new State(Objects.requireNonNull(state.operationChannel), null, add(HandshakeState.LOGIN_RESPONDED, state.handshakeState), Objects.requireNonNull(loginRespText), null, null, null, null, null, null, state.alarmType);
+        return new State(Objects.requireNonNull(state.operationChannel), null, add(HandshakeState.LOGIN_RESPONDED, state.handshakeState), Objects.requireNonNull(loginRespText), null, null, null, null, null, null, state.alarmState);
     }
 
     public static State verifySending(State state) {
@@ -158,7 +158,7 @@ public class State {
             throw new IllegalStateException(String.format("handshakeState=%s", state.handshakeState));
         }
 
-        return new State(Objects.requireNonNull(state.operationChannel), null, add(HandshakeState.VERIFY_SENDING, state.handshakeState), state.loginRespText, null, null, null, null, null, null, state.alarmType);
+        return new State(Objects.requireNonNull(state.operationChannel), null, add(HandshakeState.VERIFY_SENDING, state.handshakeState), state.loginRespText, null, null, null, null, null, null, state.alarmState);
     }
 
     public static State verifySent(State state) {
@@ -166,7 +166,7 @@ public class State {
             throw new IllegalStateException(String.format("handshakeState=%s", state.handshakeState));
         }
 
-        return new State(Objects.requireNonNull(state.operationChannel), null, add(HandshakeState.VERIFY_SENT, state.handshakeState), state.loginRespText, null, null, null, null, null, null, state.alarmType);
+        return new State(Objects.requireNonNull(state.operationChannel), null, add(HandshakeState.VERIFY_SENT, state.handshakeState), state.loginRespText, null, null, null, null, null, null, state.alarmState);
     }
 
     public static State verifyRespText(VerifyRespTextEntity verifyRespText, State state) {
@@ -178,7 +178,7 @@ public class State {
             throw new RuntimeException("Invalid result=" + verifyRespText.resultCode());
         }
 
-        return new State(Objects.requireNonNull(state.operationChannel), null, add(HandshakeState.VERIFY_RESPONDED, state.handshakeState), state.loginRespText, Objects.requireNonNull(verifyRespText), null, null, null, null, null, state.alarmType);
+        return new State(Objects.requireNonNull(state.operationChannel), null, add(HandshakeState.VERIFY_RESPONDED, state.handshakeState), state.loginRespText, Objects.requireNonNull(verifyRespText), null, null, null, null, null, state.alarmState);
     }
 
     public static State unk02(Unk02TextEntity unk02Text, State state) {
@@ -188,7 +188,7 @@ public class State {
 
         LOG.info("{} Handshake completed successfully.", state.operationChannel);
 
-        return new State(Objects.requireNonNull(state.operationChannel), null, add(HandshakeState.UNK02_RECEIVED, state.handshakeState), state.loginRespText, state.verifyRespText, null, null, null, null, null, state.alarmType);
+        return new State(Objects.requireNonNull(state.operationChannel), null, add(HandshakeState.UNK02_RECEIVED, state.handshakeState), state.loginRespText, state.verifyRespText, null, null, null, null, null, state.alarmState);
     }
 
     public static State videoStartSending(State state) {
@@ -196,7 +196,7 @@ public class State {
             throw new IllegalStateException(String.format("handshakeState=%s", state.handshakeState));
         }
 
-        return new State(Objects.requireNonNull(state.operationChannel), null, add(HandshakeState.VIDEO_START_SENDING, state.handshakeState), state.loginRespText, state.verifyRespText, null, null, state.audioVideoChannel, state.videoDataText, state.audioDataText, state.alarmType);
+        return new State(Objects.requireNonNull(state.operationChannel), null, add(HandshakeState.VIDEO_START_SENDING, state.handshakeState), state.loginRespText, state.verifyRespText, null, null, state.audioVideoChannel, state.videoDataText, state.audioDataText, state.alarmState);
     }
 
     public static State videoStartSent(State state) {
@@ -204,7 +204,7 @@ public class State {
             throw new IllegalStateException(String.format("handshakeState=%s", state.handshakeState));
         }
 
-        return new State(state.operationChannel, null, add(HandshakeState.VIDEO_START_SENT, state.handshakeState), state.loginRespText, state.verifyRespText, null, null, state.audioVideoChannel, state.videoDataText, state.audioDataText, state.alarmType);
+        return new State(state.operationChannel, null, add(HandshakeState.VIDEO_START_SENT, state.handshakeState), state.loginRespText, state.verifyRespText, null, null, state.audioVideoChannel, state.videoDataText, state.audioDataText, state.alarmState);
     }
 
     public static State videoStartResp(VideoStartRespTextEntity videoStartRespText, State state) {
@@ -216,7 +216,7 @@ public class State {
             throw new RuntimeException("Invalid result=" + videoStartRespText.result());
         }
 
-        return new State(Objects.requireNonNull(state.operationChannel), null, add(HandshakeState.VIDEO_START_RESPONDED, state.handshakeState), state.loginRespText, state.verifyRespText, Objects.requireNonNull(videoStartRespText), state.audioStartRespText, state.audioVideoChannel, state.videoDataText, state.audioDataText, state.alarmType);
+        return new State(Objects.requireNonNull(state.operationChannel), null, add(HandshakeState.VIDEO_START_RESPONDED, state.handshakeState), state.loginRespText, state.verifyRespText, Objects.requireNonNull(videoStartRespText), state.audioStartRespText, state.audioVideoChannel, state.videoDataText, state.audioDataText, state.alarmState);
     }
 
     public static State audioStartSending(State state) {
@@ -224,7 +224,7 @@ public class State {
             throw new IllegalStateException(String.format("handshakeState=%s", state.handshakeState));
         }
 
-        return new State(Objects.requireNonNull(state.operationChannel), null, add(HandshakeState.AUDIO_START_SENDING, state.handshakeState), state.loginRespText, state.verifyRespText, null, null, state.audioVideoChannel, state.videoDataText, state.audioDataText, state.alarmType);
+        return new State(Objects.requireNonNull(state.operationChannel), null, add(HandshakeState.AUDIO_START_SENDING, state.handshakeState), state.loginRespText, state.verifyRespText, null, null, state.audioVideoChannel, state.videoDataText, state.audioDataText, state.alarmState);
     }
 
     public static State audioStartSent(State state) {
@@ -232,7 +232,7 @@ public class State {
             throw new IllegalStateException(String.format("handshakeState=%s", state.handshakeState));
         }
 
-        return new State(Objects.requireNonNull(state.operationChannel), null, add(HandshakeState.AUDIO_START_SENT, state.handshakeState), state.loginRespText, state.verifyRespText, null, null, state.audioVideoChannel, state.videoDataText, state.audioDataText, state.alarmType);
+        return new State(Objects.requireNonNull(state.operationChannel), null, add(HandshakeState.AUDIO_START_SENT, state.handshakeState), state.loginRespText, state.verifyRespText, null, null, state.audioVideoChannel, state.videoDataText, state.audioDataText, state.alarmState);
     }
 
     public static State audioStartResp(AudioStartRespTextEntity audioStartRespText, State state) {
@@ -244,7 +244,7 @@ public class State {
             throw new RuntimeException("Invalid result=" + audioStartRespText.result());
         }
 
-        return new State(Objects.requireNonNull(state.operationChannel), null, add(HandshakeState.AUDIO_START_RESPONDED, state.handshakeState), state.loginRespText, state.verifyRespText, state.videoStartRespText, Objects.requireNonNull(audioStartRespText), state.audioVideoChannel, state.videoDataText, state.audioDataText, state.alarmType);
+        return new State(Objects.requireNonNull(state.operationChannel), null, add(HandshakeState.AUDIO_START_RESPONDED, state.handshakeState), state.loginRespText, state.verifyRespText, state.videoStartRespText, Objects.requireNonNull(audioStartRespText), state.audioVideoChannel, state.videoDataText, state.audioDataText, state.alarmState);
     }
 
     public static State audioVideoConnectInFlight(State state) {
@@ -252,7 +252,7 @@ public class State {
             throw new IllegalStateException(String.format("handshakeState=%s", state.handshakeState));
         }
 
-        return new State(Objects.requireNonNull(state.operationChannel), null, add(HandshakeState.AUDIO_VIDEO_CONNECT_IN_FLIGHT, state.handshakeState), state.loginRespText, state.verifyRespText, state.videoStartRespText, state.audioStartRespText, null, null, null, state.alarmType);
+        return new State(Objects.requireNonNull(state.operationChannel), null, add(HandshakeState.AUDIO_VIDEO_CONNECT_IN_FLIGHT, state.handshakeState), state.loginRespText, state.verifyRespText, state.videoStartRespText, state.audioStartRespText, null, null, null, state.alarmState);
     }
 
     public static State audioVideoConnected(Channel audioVideoChannel, State state) {
@@ -272,7 +272,7 @@ public class State {
                 Objects.requireNonNull(audioVideoChannel),
                 null,
                 null,
-                state.alarmType);
+                state.alarmState);
     }
 
     public static State audioVideoLoginSending(State state) {
@@ -280,7 +280,7 @@ public class State {
             throw new IllegalStateException(String.format("handshakeState=%s", state.handshakeState));
         }
 
-        return new State(Objects.requireNonNull(state.operationChannel), null, add(HandshakeState.AUDIO_VIDEO_LOGIN_SENDING, state.handshakeState), state.loginRespText, state.verifyRespText, state.videoStartRespText, state.audioStartRespText, Objects.requireNonNull(state.audioVideoChannel), null, null, state.alarmType);
+        return new State(Objects.requireNonNull(state.operationChannel), null, add(HandshakeState.AUDIO_VIDEO_LOGIN_SENDING, state.handshakeState), state.loginRespText, state.verifyRespText, state.videoStartRespText, state.audioStartRespText, Objects.requireNonNull(state.audioVideoChannel), null, null, state.alarmState);
     }
 
     public static State audioVideoLoginSent(State state) {
@@ -288,7 +288,7 @@ public class State {
             throw new IllegalStateException(String.format("handshakeState=%s", state.handshakeState));
         }
 
-        return new State(Objects.requireNonNull(state.operationChannel), null, add(HandshakeState.AUDIO_VIDEO_LOGIN_SENT, state.handshakeState), state.loginRespText, state.verifyRespText, state.videoStartRespText, state.audioStartRespText, Objects.requireNonNull(state.audioVideoChannel), null, null, state.alarmType);
+        return new State(Objects.requireNonNull(state.operationChannel), null, add(HandshakeState.AUDIO_VIDEO_LOGIN_SENT, state.handshakeState), state.loginRespText, state.verifyRespText, state.videoStartRespText, state.audioStartRespText, Objects.requireNonNull(state.audioVideoChannel), null, null, state.alarmState);
     }
 
     public static State videoDataText(VideoDataTextEntity videoDataText, State state) {
@@ -296,7 +296,7 @@ public class State {
             throw new IllegalStateException(String.format("handshakeState=%s", state.handshakeState));
         }
 
-        return new State(Objects.requireNonNull(state.operationChannel), null, add(HandshakeState.AUDIO_VIDEO_LOGIN_SENT, state.handshakeState), state.loginRespText, state.verifyRespText, state.videoStartRespText, state.audioStartRespText, Objects.requireNonNull(state.audioVideoChannel), Objects.requireNonNull(videoDataText), state.audioDataText, state.alarmType);
+        return new State(Objects.requireNonNull(state.operationChannel), null, add(HandshakeState.AUDIO_VIDEO_LOGIN_SENT, state.handshakeState), state.loginRespText, state.verifyRespText, state.videoStartRespText, state.audioStartRespText, Objects.requireNonNull(state.audioVideoChannel), Objects.requireNonNull(videoDataText), state.audioDataText, state.alarmState);
     }
 
     public static State audioDataText(AudioDataTextEntity audioDataText, State state) {
@@ -304,7 +304,7 @@ public class State {
             throw new IllegalStateException(String.format("handshakeState=%s", state.handshakeState));
         }
 
-        return new State(Objects.requireNonNull(state.operationChannel), null, add(HandshakeState.AUDIO_VIDEO_LOGIN_SENT, state.handshakeState), state.loginRespText, state.verifyRespText, state.videoStartRespText, state.audioStartRespText, Objects.requireNonNull(state.audioVideoChannel), state.videoDataText, Objects.requireNonNull(audioDataText), state.alarmType);
+        return new State(Objects.requireNonNull(state.operationChannel), null, add(HandshakeState.AUDIO_VIDEO_LOGIN_SENT, state.handshakeState), state.loginRespText, state.verifyRespText, state.videoStartRespText, state.audioStartRespText, Objects.requireNonNull(state.audioVideoChannel), state.videoDataText, Objects.requireNonNull(audioDataText), state.alarmState);
     }
 
     public static State alarmNotify(AlarmNotifyTextEntity alarmNotifyText, State state) {
@@ -312,7 +312,28 @@ public class State {
             throw new IllegalStateException(String.format("handshakeState=%s", state.handshakeState));
         }
 
-        return new State(Objects.requireNonNull(state.operationChannel), null, state.handshakeState, state.loginRespText, state.verifyRespText, state.videoStartRespText, state.audioStartRespText, state.audioVideoChannel, state.videoDataText, state.audioDataText, alarmNotifyText.alarmType());
+        final AlarmState alarmState = alarmState(alarmNotifyText.alarmType());
+
+        return new State(Objects.requireNonNull(state.operationChannel), null, state.handshakeState, state.loginRespText, state.verifyRespText, state.videoStartRespText, state.audioStartRespText, state.audioVideoChannel, state.videoDataText, state.audioDataText, alarmState);
+    }
+
+    private static AlarmState alarmState(AlarmTypeE alarmType) {
+        switch (alarmType) {
+            case ALARM_STOP:
+                return AlarmState.ALARM_STOP;
+
+            case MOTION_DETECTION:
+                return AlarmState.MOTION_DETECTION;
+
+            case OUTSIDE_ALARM:
+                return AlarmState.OUTSIDE_ALARM;
+
+            case SOUND_DETECTION:
+                return AlarmState.SOUND_DETECTION;
+
+            default:
+                throw new IllegalArgumentException(String.format("Unexpected alarm type=%s", alarmType));
+        }
     }
 
 }
