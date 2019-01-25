@@ -1,5 +1,7 @@
 package com.sibilantsolutions.grison.sound.adpcm;
 
+import java.nio.ByteOrder;
+
 //TODO: Check out javax.sound.sampled.spi.FormatConversionProvider
 public class AdpcmDecoder
 {
@@ -21,7 +23,7 @@ public class AdpcmDecoder
     public static final int CHANNELS = 1;
     public static final int FRAME_SIZE = 2;
     public static final float FRAME_RATE = 8000;
-    public static final boolean BIG_ENDIAN = true;
+    public static final ByteOrder BYTE_ORDER = ByteOrder.BIG_ENDIAN;
 
     private int predictedSample = 0;
     private int index = 0;

@@ -3,7 +3,7 @@ package com.sibilantsolutions.grison.driver.foscam.net;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.sibilantsolutions.grison.driver.foscam.domain.AudioDataText;
+import com.sibilantsolutions.grison.driver.foscam.entity.AudioDataTextEntity;
 import com.sibilantsolutions.grison.evt.AudioHandlerI;
 import com.sibilantsolutions.grison.evt.AudioStoppedEvt;
 
@@ -19,7 +19,7 @@ import com.sibilantsolutions.grison.evt.AudioStoppedEvt;
     }
 
     @Override
-    public void onReceive( AudioDataText audioData )
+    public void onReceive(AudioDataTextEntity audioData)
     {
         log.info( "Ignoring audio data." );
     }

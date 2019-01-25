@@ -51,6 +51,10 @@ public class Demo
                             if (state.videoDataText != null) {
                                 imageHandler.onReceive(state.videoDataText);
                             }
+
+                            if (state.audioDataText != null) {
+                                audioHandler.onReceive(state.audioDataText);
+                            }
                         },
                         throwable -> {
                             LOG.error("Trouble: ", throwable);

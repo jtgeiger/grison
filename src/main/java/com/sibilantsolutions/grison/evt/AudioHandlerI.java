@@ -1,11 +1,12 @@
 package com.sibilantsolutions.grison.evt;
 
-import com.sibilantsolutions.grison.driver.foscam.domain.AudioDataText;
+import com.sibilantsolutions.grison.driver.foscam.entity.AudioDataTextEntity;
 
 public interface AudioHandlerI
 {
 
     public void onAudioStopped( AudioStoppedEvt audioStoppedEvt );
-    public void onReceive( AudioDataText audioData );
+
+    public void onReceive(AudioDataTextEntity audioData);
 
 }
