@@ -14,8 +14,12 @@ public abstract class CommandDto {
 
     public static final int PROTOCOL_LEN = 4;
     public static final FosInt8 RESERVE1 = FosInt8.create(0);
-    public static final byte[] RESERVE2 = new byte[]{0, 0, 0, 0, 0, 0, 0, 0};
-    public static final int COMMAND_PREFIX_LENGTH = PROTOCOL_LEN + 2 + 1 + RESERVE2.length + 4 + 4;
+    public static final int RESERVE2_LEN = 8;
+    public static final byte[] RESERVE2 = new byte[RESERVE2_LEN];
+    /**
+     * protocol(4) + opcode(2) + reserve1(1) + reserve2(8) + textLength(4) + reserve3(4) = 23
+     */
+    public static final int COMMAND_PREFIX_LENGTH = PROTOCOL_LEN + 2 + 1 + RESERVE2_LEN + 4 + 4;
 
     public abstract ProtocolE protocol();
 
