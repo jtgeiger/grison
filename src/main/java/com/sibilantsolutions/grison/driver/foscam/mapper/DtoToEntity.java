@@ -125,23 +125,23 @@ public final class DtoToEntity {
             .build();
 
     public static final Function<VideoDataTextDto, VideoDataTextEntity> videoDataTextEntity = dto -> VideoDataTextEntity.builder()
-            .uptime(Duration.ofMillis(dto.timestampHundredths().value() * 10))
-            .timestamp(Instant.ofEpochSecond(dto.framePerSec().value()))
+            .uptime(Duration.ofMillis(Integer.toUnsignedLong(dto.timestampHundredths().value()) * 10))
+            .timestamp(Instant.ofEpochSecond(Integer.toUnsignedLong(dto.framePerSec().value())))
             .videoData(dto.videoData())
             .build();
 
     public static final Function<AudioDataTextDto, AudioDataTextEntity> audioDataTextEntity = dto -> AudioDataTextEntity.builder()
-            .uptime(Duration.ofMillis(dto.timestampHundredths().value() * 10))
-            .serialNumber(dto.snOfPacket().value())
-            .timestamp(Instant.ofEpochSecond(dto.gatherTimeSecs().value()))
+            .uptime(Duration.ofMillis(Integer.toUnsignedLong(dto.timestampHundredths().value()) * 10))
+            .serialNumber(Integer.toUnsignedLong(dto.snOfPacket().value()))
+            .timestamp(Instant.ofEpochSecond(Integer.toUnsignedLong(dto.gatherTimeSecs().value())))
             .audioFormat(AudioFormatE.fromValue(dto.audioFormat()))
             .data(dto.data())
             .build();
 
     public static final Function<TalkDataTextDto, TalkDataTextEntity> talkDataTextEntity = dto -> TalkDataTextEntity.builder()
-            .uptime(Duration.ofMillis(dto.timestampMs().value()))
-            .serialNumber(dto.snOfPacket().value())
-            .timestamp(Instant.ofEpochSecond(dto.gatherTimeSecs().value()))
+            .uptime(Duration.ofMillis(Integer.toUnsignedLong(dto.timestampMs().value())))
+            .serialNumber(Integer.toUnsignedLong(dto.snOfPacket().value()))
+            .timestamp(Instant.ofEpochSecond(Integer.toUnsignedLong(dto.gatherTimeSecs().value())))
             .audioFormat(AudioFormatE.fromValue(dto.audioFormat()))
             .data(dto.data())
             .build();

@@ -2,6 +2,8 @@ package com.sibilantsolutions.grison.driver.foscam.mapper;
 
 import static org.junit.Assert.assertEquals;
 
+import java.time.Duration;
+import java.time.Instant;
 import java.util.function.Function;
 import java.util.function.UnaryOperator;
 
@@ -12,6 +14,9 @@ import com.sibilantsolutions.grison.driver.foscam.dto.CommandDto;
 import com.sibilantsolutions.grison.driver.foscam.dto.VerifyRespTextDto;
 import com.sibilantsolutions.grison.driver.foscam.dto.VideoDataTextDto;
 import com.sibilantsolutions.grison.driver.foscam.entity.VerifyRespTextEntity;
+import com.sibilantsolutions.grison.driver.foscam.entity.VideoDataTextEntity;
+import com.sibilantsolutions.grison.driver.foscam.type.FosInt32;
+import com.sibilantsolutions.grison.driver.foscam.type.FosInt8;
 import com.sibilantsolutions.grison.net.netty.codec.VerifyRespTextDtoParser;
 import com.sibilantsolutions.grison.net.netty.codec.VideoDataTextDtoParser;
 import com.sibilantsolutions.grison.net.netty.codec.parse.ResourceToByteBuf;
@@ -73,6 +78,13 @@ public class DtoToEntityTest {
         assertEquals(0x537CCE75, text.framePerSec().value());   //1_400_688_245
         assertEquals(0xAE38, text.videoLength().value());   //44_600
         assertEquals(text.videoLength().value(), text.videoData().length);
+
+        final VideoDataTextEntity actual = DtoToEntity.videoDataTextEntity.apply(text);
+
+        assertEquals(Duration.ofMillis(591_080), actual.uptime());
+        assertEquals(Instant.ofEpochMilli(1_400_688_245_000L), actual.timestamp());
+        assertEquals(44_600, actual.videoData().length);
+
     }
 
     @Test
@@ -87,6 +99,36 @@ public class DtoToEntityTest {
         assertEquals(0x5D62B484, text.framePerSec().value());   //1_566_749_828
         assertEquals(0x9A0C, text.videoLength().value());   //39_436
         assertEquals(text.videoLength().value(), text.videoData().length);
+
+        final VideoDataTextEntity actual = DtoToEntity.videoDataTextEntity.apply(text);
+
+        assertEquals(Duration.ofMillis(4230881480L), actual.uptime());
+        assertEquals(Instant.ofEpochMilli(1_566_749_828_000L), actual.timestamp());
+        assertEquals(39_436, actual.videoData().length);
+    }
+
+    @Test
+    public void videoDataText_large() {
+
+        final VideoDataTextDto text = VideoDataTextDto
+                .builder()
+                .timestampHundredths(FosInt32.create(0x88776655))
+                .framePerSec(FosInt32.create(Integer.parseUnsignedInt("2566749828")))
+                .videoLength(FosInt32.create(0))
+                .videoData(new byte[0])
+                .reserve(FosInt8.create(0))
+                .build();
+
+        assertEquals(Integer.parseUnsignedInt("2289526357"), text.timestampHundredths().value());   //2_289_526_357
+        assertEquals(0x98FD7E84, text.framePerSec().value());   //2_566_749_828
+        assertEquals(0, text.videoLength().value());
+        assertEquals(text.videoLength().value(), text.videoData().length);
+
+        final VideoDataTextEntity actual = DtoToEntity.videoDataTextEntity.apply(text);
+
+        assertEquals(Duration.ofMillis(22_895_263_570L), actual.uptime());
+        assertEquals(Instant.parse("2051-05-03T18:03:48Z"), actual.timestamp());
+        assertEquals(0, actual.videoData().length);
     }
 
 }
