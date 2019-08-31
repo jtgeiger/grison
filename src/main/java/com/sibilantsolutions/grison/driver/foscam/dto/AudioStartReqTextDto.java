@@ -6,7 +6,7 @@ import com.sibilantsolutions.grison.driver.foscam.type.FosInt8;
 @AutoValue
 public abstract class AudioStartReqTextDto implements FoscamTextDto {
 
-    public static final FosInt8 RESERVE = FosInt8.create(1);
+    public static final FosInt8 RESERVE = FosInt8.ONE;
 
     public abstract FosInt8 reserve();
 

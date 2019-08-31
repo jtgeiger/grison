@@ -91,7 +91,7 @@ public final class EntityToDto {
         final VerifyRespTextDto.Builder builder = VerifyRespTextDto.builder()
                 .resultCode(entity.resultCode().value);
         if (entity.resultCode() == ResultCodeE.CORRECT) {
-            builder.reserve(FosInt8.create(0));
+            builder.reserve(FosInt8.ZERO);
         }
         return builder.build();
     };
@@ -151,7 +151,7 @@ public final class EntityToDto {
             .framePerSec(FosInt32.create(UnsignedInteger.valueOf(entity.timestamp().getEpochSecond())))
             .videoLength(FosInt32.create(UnsignedInteger.valueOf(entity.videoData().length)))
             .videoData(entity.videoData())
-            .reserve(FosInt8.create(0))
+            .reserve(FosInt8.ZERO)
             .build();
 
     public static final Function<AudioDataTextEntity, AudioDataTextDto> audioDataTextDto = entity -> AudioDataTextDto.builder()
@@ -182,7 +182,7 @@ public final class EntityToDto {
             .gateway(FosInt32R.create(UnsignedInteger.fromIntBits(ByteBuffer.wrap(entity.gateway().getAddress()).getInt())))
             .dns(FosInt32R.create(UnsignedInteger.fromIntBits(ByteBuffer.wrap(entity.dns().getAddress()).getInt())))
             .cameraPort(FosInt16R.create(entity.address().getPort()))
-            .dhcpEnabled(FosInt8.create(entity.isDhcpEnabled() ? 1 : 0))
+            .dhcpEnabled(entity.isDhcpEnabled() ? FosInt8.ONE : FosInt8.ZERO)
             .build();
 
 }

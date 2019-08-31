@@ -13,22 +13,22 @@ public enum AlarmTypeE
 
     private interface Values
     {
-        int ALARM_STOP = 0;
-        int MOTION_DETECTION = 1;
-        int OUTSIDE_ALARM = 2;
-        int SOUND_DETECTION = 3;
+        byte ALARM_STOP = 0;
+        byte MOTION_DETECTION = 1;
+        byte OUTSIDE_ALARM = 2;
+        byte SOUND_DETECTION = 3;
     }
 
     public final FosInt8 value;
 
-    AlarmTypeE(int value)
+    AlarmTypeE(byte value)
     {
         this.value = FosInt8.create(value);
     }
 
     public static AlarmTypeE fromValue(FosInt8 value)
     {
-        switch (value.value())
+        switch (value.toByte())
         {
             case Values.ALARM_STOP:
                 return ALARM_STOP;

@@ -28,7 +28,7 @@ public class NettyCommandDtoParserTest {
         final CommandDto dto = new NettyCommandDtoParser(Clock.systemUTC()).parse(buf);
         assertEquals(ProtocolE.OPERATION_PROTOCOL, dto.protocol());
         assertEquals(FoscamOpCode.Login_Resp, dto.operationCode());
-        assertEquals(FosInt8.create(0), dto.reserve1());
+        assertEquals(FosInt8.ZERO, dto.reserve1());
         assertArrayEquals(new byte[]{0, 0, 0, 0, 0, 0, 0, 0}, dto.reserve2());
         assertEquals(FosInt32.create(UnsignedInteger.valueOf(27)), dto.textLength());
         assertEquals(FosInt32.create(UnsignedInteger.valueOf(27)), dto.reserve3());

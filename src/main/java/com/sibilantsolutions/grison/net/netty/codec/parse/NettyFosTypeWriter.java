@@ -13,7 +13,7 @@ public final class NettyFosTypeWriter {
     }
 
     public static ByteBuf write(FosInt8 val, ByteBuf buf) {
-        return buf.writeByte(val.value());
+        return buf.writeByte(val.toByte());
     }
 
     public static ByteBuf write(FosInt16 val, ByteBuf buf) {

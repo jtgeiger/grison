@@ -81,7 +81,7 @@ abstract public class AbstractAudioDataText implements DatastreamI
         this.serialNumber = bb.getInt();
         this.timestampMs = ( (long)bb.getInt() ) * 1000;
 
-        this.audioFormat = AudioFormatE.fromValue(FosInt8.create((char) bb.get()));
+        this.audioFormat = AudioFormatE.fromValue(FosInt8.create(bb.get()));
 
         int dataLen = bb.getInt();
 
@@ -99,7 +99,7 @@ abstract public class AbstractAudioDataText implements DatastreamI
         bb.putInt( (int)( uptimeMs / uptimeScale ) );
         bb.putInt( (int)serialNumber );
         bb.putInt( (int)( timestampMs / 1000 ) );
-        bb.put((byte) audioFormat.value.value());
+        bb.put(audioFormat.value.toByte());
         bb.putInt( dataContent.length );
         bb.put( dataContent );
 

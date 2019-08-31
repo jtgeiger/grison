@@ -6,10 +6,10 @@ import com.sibilantsolutions.grison.driver.foscam.type.FosInt8;
 @AutoValue
 public abstract class SearchReqTextDto implements FoscamTextDto {
 
-    public static final FosInt8 reserve1 = FosInt8.create(0);
-    public static final FosInt8 reserve2 = FosInt8.create(0);
-    public static final FosInt8 reserve3 = FosInt8.create(0);
-    public static final FosInt8 reserve4 = FosInt8.create(1);
+    public static final FosInt8 reserve1 = FosInt8.ZERO;
+    public static final FosInt8 reserve2 = FosInt8.ZERO;
+    public static final FosInt8 reserve3 = FosInt8.ZERO;
+    public static final FosInt8 reserve4 = FosInt8.ONE;
 
     public abstract FosInt8 reserve1();
 

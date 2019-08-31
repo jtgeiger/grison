@@ -10,10 +10,10 @@ import com.sibilantsolutions.grison.driver.foscam.type.FosInt8;
 @AutoValue
 public abstract class InitReqTextDto implements FoscamTextDto {
 
-    public static final FosInt8 RESERVE1 = FosInt8.create(0);
-    public static final FosInt8 RESERVE2 = FosInt8.create(0);
-    public static final FosInt8 RESERVE3 = FosInt8.create(0);
-    public static final FosInt8 RESERVE4 = FosInt8.create(1);
+    public static final FosInt8 RESERVE1 = FosInt8.ZERO;
+    public static final FosInt8 RESERVE2 = FosInt8.ZERO;
+    public static final FosInt8 RESERVE3 = FosInt8.ZERO;
+    public static final FosInt8 RESERVE4 = FosInt8.ONE;
 
     public static final int CAMERA_ID_LEN = 13;
     public static final int USER_LEN = 13;

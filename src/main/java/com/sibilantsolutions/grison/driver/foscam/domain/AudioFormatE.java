@@ -9,19 +9,19 @@ public enum AudioFormatE
 
     private interface Values
     {
-        int ADPCM = 0;
+        byte ADPCM = 0;
     }
 
     public final FosInt8 value;
 
-    AudioFormatE(int value)
+    AudioFormatE(byte value)
     {
         this.value = FosInt8.create(value);
     }
 
     public static AudioFormatE fromValue(FosInt8 value)
     {
-        switch (value.value())
+        switch (value.toByte())
         {
             case Values.ADPCM:
                 return ADPCM;

@@ -52,6 +52,7 @@ import com.sibilantsolutions.grison.driver.foscam.entity.VideoDataTextEntity;
 import com.sibilantsolutions.grison.driver.foscam.entity.VideoEndTextEntity;
 import com.sibilantsolutions.grison.driver.foscam.entity.VideoStartReqTextEntity;
 import com.sibilantsolutions.grison.driver.foscam.entity.VideoStartRespTextEntity;
+import com.sibilantsolutions.grison.driver.foscam.type.FosInt8;
 
 public final class DtoToEntity {
 
@@ -194,7 +195,7 @@ public final class DtoToEntity {
                 .dns(dns)
                 .sysSoftwareVersion(sysSoftwareVersion)
                 .appSoftwareVersion(appSoftwareVersion)
-                .isDhcpEnabled(dto.dhcpEnabled().value() == 1)
+                .isDhcpEnabled(dto.dhcpEnabled().equals(FosInt8.ONE))
                 .build();
     };
 

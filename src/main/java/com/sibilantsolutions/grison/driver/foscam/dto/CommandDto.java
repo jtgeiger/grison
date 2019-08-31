@@ -13,7 +13,7 @@ import com.sibilantsolutions.grison.driver.foscam.type.FosInt8;
 public abstract class CommandDto {
 
     public static final int PROTOCOL_LEN = 4;
-    public static final FosInt8 RESERVE1 = FosInt8.create(0);
+    public static final FosInt8 RESERVE1 = FosInt8.ZERO;
     public static final int RESERVE2_LEN = 8;
     public static final byte[] RESERVE2 = new byte[RESERVE2_LEN];
     /**

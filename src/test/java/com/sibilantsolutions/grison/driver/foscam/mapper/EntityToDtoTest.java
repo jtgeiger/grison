@@ -130,7 +130,7 @@ public class EntityToDtoTest {
                 .framePerSec(FosInt32.create(UnsignedInteger.valueOf("2566749828")))
                 .videoLength(FosInt32.create(UnsignedInteger.ZERO))
                 .videoData(new byte[0])
-                .reserve(FosInt8.create(0))
+                .reserve(FosInt8.ZERO)
                 .build();
 
         assertEquals(expected.timestampHundredths(), actual.timestampHundredths());
