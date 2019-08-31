@@ -4,6 +4,7 @@ import static com.sibilantsolutions.grison.net.netty.codec.parse.NettyByteBufHel
 
 import java.util.function.Function;
 
+import com.google.common.primitives.Ints;
 import com.sibilantsolutions.grison.driver.foscam.dto.TalkDataTextDto;
 import com.sibilantsolutions.grison.driver.foscam.type.FosInt32;
 import com.sibilantsolutions.grison.driver.foscam.type.FosInt8;
@@ -18,7 +19,7 @@ public class TalkDataTextDtoParser implements Function<ByteBuf, TalkDataTextDto>
         final FosInt32 gatherTimeSecs = NettyFosTypeReader.fosInt32(buf);
         final FosInt8 audioFormat = NettyFosTypeReader.fosInt8(buf);
         final FosInt32 dataLength = NettyFosTypeReader.fosInt32(buf);
-        final byte[] data = readBytes(dataLength.value(), buf);
+        final byte[] data = readBytes(Ints.checkedCast(dataLength.value().longValue()), buf);
 
         return TalkDataTextDto.builder()
                 .timestampMs(timestampMs)

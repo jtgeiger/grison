@@ -50,7 +50,7 @@ public abstract class VideoDataTextDto implements FoscamTextDto {
         public VideoDataTextDto build() {
             final VideoDataTextDto dto = autoBuild();
 
-            checkArgument(dto.videoLength().value() == dto.videoData().length, "video data len expected=%s actual=%s", dto.videoLength().value(), dto.videoData().length);
+            checkArgument(dto.videoLength().value().longValue() == dto.videoData().length, "video data len expected=%s actual=%s", dto.videoLength().value(), dto.videoData().length);
 
             return dto;
         }

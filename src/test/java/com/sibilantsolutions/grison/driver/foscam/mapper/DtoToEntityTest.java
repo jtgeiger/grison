@@ -9,6 +9,7 @@ import java.util.function.UnaryOperator;
 
 import org.junit.Test;
 
+import com.google.common.primitives.UnsignedInteger;
 import com.sibilantsolutions.grison.driver.foscam.domain.ResultCodeE;
 import com.sibilantsolutions.grison.driver.foscam.dto.CommandDto;
 import com.sibilantsolutions.grison.driver.foscam.dto.VerifyRespTextDto;
@@ -74,10 +75,10 @@ public class DtoToEntityTest {
 
         final VideoDataTextDto text = resourceToDto.apply("/samples/video_data.bin");
 
-        assertEquals(0xE6E4, text.timestampHundredths().value());   //59_108
-        assertEquals(0x537CCE75, text.framePerSec().value());   //1_400_688_245
-        assertEquals(0xAE38, text.videoLength().value());   //44_600
-        assertEquals(text.videoLength().value(), text.videoData().length);
+        assertEquals(0xE6E4, text.timestampHundredths().value().longValue());   //59_108
+        assertEquals(0x537CCE75, text.framePerSec().value().longValue());   //1_400_688_245
+        assertEquals(0xAE38, text.videoLength().value().longValue());   //44_600
+        assertEquals(text.videoLength().value().longValue(), text.videoData().length);
 
         final VideoDataTextEntity actual = DtoToEntity.videoDataTextEntity.apply(text);
 
@@ -95,10 +96,10 @@ public class DtoToEntityTest {
 
         final VideoDataTextDto text = resourceToDto.apply("/samples/video_data2.bin");
 
-        assertEquals(0x1937D014, text.timestampHundredths().value());   //423_088_148
-        assertEquals(0x5D62B484, text.framePerSec().value());   //1_566_749_828
-        assertEquals(0x9A0C, text.videoLength().value());   //39_436
-        assertEquals(text.videoLength().value(), text.videoData().length);
+        assertEquals(0x1937D014, text.timestampHundredths().value().longValue());   //423_088_148
+        assertEquals(0x5D62B484, text.framePerSec().value().longValue());   //1_566_749_828
+        assertEquals(0x9A0C, text.videoLength().value().longValue());   //39_436
+        assertEquals(text.videoLength().value().longValue(), text.videoData().length);
 
         final VideoDataTextEntity actual = DtoToEntity.videoDataTextEntity.apply(text);
 
@@ -119,10 +120,11 @@ public class DtoToEntityTest {
                 .reserve(FosInt8.create(0))
                 .build();
 
-        assertEquals(Integer.parseUnsignedInt("2289526357"), text.timestampHundredths().value());   //2_289_526_357
-        assertEquals(0x98FD7E84, text.framePerSec().value());   //2_566_749_828
-        assertEquals(0, text.videoLength().value());
-        assertEquals(text.videoLength().value(), text.videoData().length);
+        assertEquals(UnsignedInteger.valueOf("2289526357"), text.timestampHundredths().value());   //2_289_526_357
+        assertEquals(UnsignedInteger.valueOf(Integer.toUnsignedLong(0x98FD7E84)), text.framePerSec().value());   //2_566_749_828
+        assertEquals(Integer.toUnsignedLong(0x98FD7E84), text.framePerSec().value().longValue());   //2_566_749_828
+        assertEquals(0, text.videoLength().value().longValue());
+        assertEquals(text.videoLength().value().longValue(), text.videoData().length);
 
         final VideoDataTextEntity actual = DtoToEntity.videoDataTextEntity.apply(text);
 

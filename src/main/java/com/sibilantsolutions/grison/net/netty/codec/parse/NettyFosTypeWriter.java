@@ -25,7 +25,7 @@ public final class NettyFosTypeWriter {
     }
 
     public static ByteBuf write(FosInt32 val, ByteBuf buf) {
-        return buf.writeIntLE(val.value());
+        return buf.writeIntLE(val.value().intValue());
     }
 
     public static ByteBuf write(FosInt32R val, ByteBuf buf) {

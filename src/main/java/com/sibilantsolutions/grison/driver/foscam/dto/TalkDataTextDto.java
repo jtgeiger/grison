@@ -55,7 +55,7 @@ public abstract class TalkDataTextDto implements FoscamTextDto {
         public TalkDataTextDto build() {
             final TalkDataTextDto dto = autoBuild();
 
-            checkArgument(dto.dataLength().value() == dto.data().length, "data len expected=%s actual=%s", dto.dataLength(), dto.data().length);
+            checkArgument(dto.dataLength().value().longValue() == dto.data().length, "data len expected=%s actual=%s", dto.dataLength(), dto.data().length);
 
             return dto;
         }
