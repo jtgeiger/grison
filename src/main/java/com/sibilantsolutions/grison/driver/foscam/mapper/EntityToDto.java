@@ -2,6 +2,7 @@ package com.sibilantsolutions.grison.driver.foscam.mapper;
 
 import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
+import java.util.NoSuchElementException;
 import java.util.function.Function;
 
 import com.google.common.base.Strings;
@@ -12,6 +13,7 @@ import com.sibilantsolutions.grison.driver.foscam.dto.AudioStartReqTextDto;
 import com.sibilantsolutions.grison.driver.foscam.dto.AudioStartRespTextDto;
 import com.sibilantsolutions.grison.driver.foscam.dto.LoginReqAudioVideoTextDto;
 import com.sibilantsolutions.grison.driver.foscam.dto.LoginReqOperationTextDto;
+import com.sibilantsolutions.grison.driver.foscam.dto.LoginRespDetailsDto;
 import com.sibilantsolutions.grison.driver.foscam.dto.LoginRespTextDto;
 import com.sibilantsolutions.grison.driver.foscam.dto.SearchReqTextDto;
 import com.sibilantsolutions.grison.driver.foscam.dto.SearchRespTextDto;
@@ -40,6 +42,7 @@ import com.sibilantsolutions.grison.driver.foscam.entity.TalkStartRespTextEntity
 import com.sibilantsolutions.grison.driver.foscam.entity.Unk02TextEntity;
 import com.sibilantsolutions.grison.driver.foscam.entity.VerifyReqTextEntity;
 import com.sibilantsolutions.grison.driver.foscam.entity.VerifyRespTextEntity;
+import com.sibilantsolutions.grison.driver.foscam.entity.VersionEntity;
 import com.sibilantsolutions.grison.driver.foscam.entity.VideoDataTextEntity;
 import com.sibilantsolutions.grison.driver.foscam.entity.VideoEndTextEntity;
 import com.sibilantsolutions.grison.driver.foscam.entity.VideoStartReqTextEntity;
@@ -57,8 +60,25 @@ public final class EntityToDto {
     public static final Function<LoginReqOperationTextEntity, LoginReqOperationTextDto> loginReqOperationTextDto = entity -> LoginReqOperationTextDto.builder()
             .build();
 
-    public static final Function<LoginRespTextEntity, LoginRespTextDto> loginRespTextDto = entity -> LoginRespTextDto.builder()
-            .build();
+    public static final Function<LoginRespTextEntity, LoginRespTextDto> loginRespTextDto = entity -> {
+        final LoginRespTextDto.Builder builder = LoginRespTextDto.builder()
+                .resultCode(entity.resultCode().value);
+        if (entity.resultCode() == ResultCodeE.CORRECT) {
+            final VersionEntity versionEntity = entity.version().orElseThrow(NoSuchElementException::new);
+            byte[] v = new byte[]{
+                    (byte) versionEntity.major(),
+                    (byte) versionEntity.minor(),
+                    (byte) versionEntity.patch(),
+                    (byte) versionEntity.buildNum()};
+            builder.loginRespDetails(LoginRespDetailsDto.builder()
+                    .cameraId(Strings.padEnd(entity.cameraId().orElseThrow(NoSuchElementException::new),
+                            LoginRespDetailsDto.CAMERA_ID_LEN, '\0')
+                            .getBytes(StandardCharsets.ISO_8859_1))
+                    .firmwareVersion(v)
+                    .build());
+        }
+        return builder.build();
+    };
 
     public static final Function<VerifyReqTextEntity, VerifyReqTextDto> verifyReqTextDto = entity -> VerifyReqTextDto.builder()
             .user(Strings.padEnd(entity.username(), VerifyReqTextDto.USER_LEN, '\0').getBytes(StandardCharsets.ISO_8859_1))
