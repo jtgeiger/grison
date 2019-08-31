@@ -26,10 +26,10 @@ public final class LoginRespTextMapper implements DtoToEntityMapper<LoginRespTex
             ByteBuffer buf = ByteBuffer.wrap(loginRespDetailsDto.firmwareVersion());
 
             builder.version(VersionEntity.builder()
-                    .major(buf.get())
-                    .minor(buf.get())
-                    .patch(buf.get())
-                    .buildNum(buf.get())
+                    .major(Byte.toUnsignedInt(buf.get()))
+                    .minor(Byte.toUnsignedInt(buf.get()))
+                    .patch(Byte.toUnsignedInt(buf.get()))
+                    .buildNum(Byte.toUnsignedInt(buf.get()))
                     .build());
         });
 

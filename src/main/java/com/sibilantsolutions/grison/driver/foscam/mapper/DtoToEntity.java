@@ -156,19 +156,19 @@ public final class DtoToEntity {
         ByteBuffer sysSoftwareVersionBuf = ByteBuffer.wrap(dto.sysSoftwareVersion());
 
         VersionEntity sysSoftwareVersion = VersionEntity.builder()
-                .major(sysSoftwareVersionBuf.get())
-                .minor(sysSoftwareVersionBuf.get())
-                .patch(sysSoftwareVersionBuf.get())
-                .buildNum(sysSoftwareVersionBuf.get())
+                .major(Byte.toUnsignedInt(sysSoftwareVersionBuf.get()))
+                .minor(Byte.toUnsignedInt(sysSoftwareVersionBuf.get()))
+                .patch(Byte.toUnsignedInt(sysSoftwareVersionBuf.get()))
+                .buildNum(Byte.toUnsignedInt(sysSoftwareVersionBuf.get()))
                 .build();
 
         ByteBuffer appSoftwareVersionBuf = ByteBuffer.wrap(dto.appSoftwareVersion());
 
         VersionEntity appSoftwareVersion = VersionEntity.builder()
-                .major(appSoftwareVersionBuf.get())
-                .minor(appSoftwareVersionBuf.get())
-                .patch(appSoftwareVersionBuf.get())
-                .buildNum(appSoftwareVersionBuf.get())
+                .major(Byte.toUnsignedInt(appSoftwareVersionBuf.get()))
+                .minor(Byte.toUnsignedInt(appSoftwareVersionBuf.get()))
+                .patch(Byte.toUnsignedInt(appSoftwareVersionBuf.get()))
+                .buildNum(Byte.toUnsignedInt(appSoftwareVersionBuf.get()))
                 .build();
 
         final InetSocketAddress address;

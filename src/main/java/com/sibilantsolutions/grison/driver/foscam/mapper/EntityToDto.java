@@ -6,6 +6,7 @@ import java.util.NoSuchElementException;
 import java.util.function.Function;
 
 import com.google.common.base.Strings;
+import com.google.common.primitives.UnsignedBytes;
 import com.sibilantsolutions.grison.driver.foscam.domain.ResultCodeE;
 import com.sibilantsolutions.grison.driver.foscam.dto.AlarmNotifyTextDto;
 import com.sibilantsolutions.grison.driver.foscam.dto.AudioDataTextDto;
@@ -66,10 +67,10 @@ public final class EntityToDto {
         if (entity.resultCode() == ResultCodeE.CORRECT) {
             final VersionEntity versionEntity = entity.version().orElseThrow(NoSuchElementException::new);
             byte[] v = new byte[]{
-                    (byte) versionEntity.major(),
-                    (byte) versionEntity.minor(),
-                    (byte) versionEntity.patch(),
-                    (byte) versionEntity.buildNum()};
+                    UnsignedBytes.checkedCast(versionEntity.major()),
+                    UnsignedBytes.checkedCast(versionEntity.minor()),
+                    UnsignedBytes.checkedCast(versionEntity.patch()),
+                    UnsignedBytes.checkedCast(versionEntity.buildNum())};
             builder.loginRespDetails(LoginRespDetailsDto.builder()
                     .cameraId(Strings.padEnd(entity.cameraId().orElseThrow(NoSuchElementException::new),
                             LoginRespDetailsDto.CAMERA_ID_LEN, '\0')
