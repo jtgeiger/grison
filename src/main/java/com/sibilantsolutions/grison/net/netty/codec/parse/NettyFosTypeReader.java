@@ -1,5 +1,6 @@
 package com.sibilantsolutions.grison.net.netty.codec.parse;
 
+import com.google.common.primitives.UnsignedInteger;
 import com.sibilantsolutions.grison.driver.foscam.type.FosInt16;
 import com.sibilantsolutions.grison.driver.foscam.type.FosInt16R;
 import com.sibilantsolutions.grison.driver.foscam.type.FosInt32;
@@ -25,11 +26,11 @@ public final class NettyFosTypeReader {
     }
 
     public static FosInt32 fosInt32(ByteBuf buf) {
-        return FosInt32.create(buf.readIntLE());
+        return FosInt32.create(UnsignedInteger.fromIntBits(buf.readIntLE()));
     }
 
     public static FosInt32R fosInt32R(ByteBuf buf) {
-        return FosInt32R.create(buf.readInt());
+        return FosInt32R.create(UnsignedInteger.fromIntBits(buf.readInt()));
     }
 
 }

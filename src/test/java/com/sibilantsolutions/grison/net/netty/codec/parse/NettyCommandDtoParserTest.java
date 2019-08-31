@@ -8,6 +8,7 @@ import java.time.Clock;
 
 import org.junit.Test;
 
+import com.google.common.primitives.UnsignedInteger;
 import com.sibilantsolutions.grison.driver.foscam.domain.ProtocolE;
 import com.sibilantsolutions.grison.driver.foscam.domain.ResultCodeE;
 import com.sibilantsolutions.grison.driver.foscam.dto.CommandDto;
@@ -29,8 +30,8 @@ public class NettyCommandDtoParserTest {
         assertEquals(FoscamOpCode.Login_Resp, dto.operationCode());
         assertEquals(FosInt8.create(0), dto.reserve1());
         assertArrayEquals(new byte[]{0, 0, 0, 0, 0, 0, 0, 0}, dto.reserve2());
-        assertEquals(FosInt32.create(27), dto.textLength());
-        assertEquals(FosInt32.create(27), dto.reserve3());
+        assertEquals(FosInt32.create(UnsignedInteger.valueOf(27)), dto.textLength());
+        assertEquals(FosInt32.create(UnsignedInteger.valueOf(27)), dto.reserve3());
         assertEquals(LoginRespTextDto.builder()
                 .resultCode(ResultCodeE.CORRECT.value)
                 .loginRespDetails(LoginRespDetailsDto.builder()

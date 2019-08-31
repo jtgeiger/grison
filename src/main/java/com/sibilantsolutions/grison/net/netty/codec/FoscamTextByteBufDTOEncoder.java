@@ -1,6 +1,7 @@
 package com.sibilantsolutions.grison.net.netty.codec;
 
-import com.google.common.primitives.Ints;
+import static io.netty.util.internal.ObjectUtil.checkPositiveOrZero;
+
 import com.sibilantsolutions.grison.driver.foscam.dto.CommandDto;
 import com.sibilantsolutions.grison.net.netty.codec.dto.FoscamTextByteBufDTO;
 import com.sibilantsolutions.grison.net.netty.codec.parse.NettyFosTypeWriter;
@@ -32,6 +33,6 @@ public class FoscamTextByteBufDTOEncoder extends MessageToByteEncoder<FoscamText
     }
 
     public static ByteBuf allocateBuf(ChannelHandlerContext ctx, FoscamTextByteBufDTO msg) {
-        return ctx.alloc().buffer(CommandDto.COMMAND_PREFIX_LENGTH + Ints.checkedCast(msg.encodedLength().value().longValue()));
+        return ctx.alloc().buffer(CommandDto.COMMAND_PREFIX_LENGTH + checkPositiveOrZero(msg.encodedLength().value().intValue(), "encodedLength"));
     }
 }

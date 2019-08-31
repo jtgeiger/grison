@@ -7,6 +7,7 @@ import java.util.function.Function;
 
 import com.google.common.base.Strings;
 import com.google.common.primitives.UnsignedBytes;
+import com.google.common.primitives.UnsignedInteger;
 import com.sibilantsolutions.grison.driver.foscam.domain.ResultCodeE;
 import com.sibilantsolutions.grison.driver.foscam.dto.AlarmNotifyTextDto;
 import com.sibilantsolutions.grison.driver.foscam.dto.AudioDataTextDto;
@@ -146,28 +147,28 @@ public final class EntityToDto {
             .build();
 
     public static final Function<VideoDataTextEntity, VideoDataTextDto> videoDataTextDto = entity -> VideoDataTextDto.builder()
-            .timestampHundredths(FosInt32.create((int) (entity.uptime().toMillis() / 10)))
-            .framePerSec(FosInt32.create((int) entity.timestamp().getEpochSecond()))
-            .videoLength(FosInt32.create(entity.videoData().length))
+            .timestampHundredths(FosInt32.create(UnsignedInteger.valueOf(entity.uptime().toMillis() / 10)))
+            .framePerSec(FosInt32.create(UnsignedInteger.valueOf(entity.timestamp().getEpochSecond())))
+            .videoLength(FosInt32.create(UnsignedInteger.valueOf(entity.videoData().length)))
             .videoData(entity.videoData())
             .reserve(FosInt8.create(0))
             .build();
 
     public static final Function<AudioDataTextEntity, AudioDataTextDto> audioDataTextDto = entity -> AudioDataTextDto.builder()
-            .timestampHundredths(FosInt32.create((int) (entity.uptime().toMillis() / 10)))
-            .snOfPacket(FosInt32.create((int) entity.serialNumber()))
-            .gatherTimeSecs(FosInt32.create((int) entity.timestamp().getEpochSecond()))
+            .timestampHundredths(FosInt32.create(UnsignedInteger.valueOf(entity.uptime().toMillis() / 10)))
+            .snOfPacket(FosInt32.create(UnsignedInteger.valueOf(entity.serialNumber())))
+            .gatherTimeSecs(FosInt32.create(UnsignedInteger.valueOf(entity.timestamp().getEpochSecond())))
             .audioFormat(entity.audioFormat().value)
-            .dataLength(FosInt32.create(entity.data().length))
+            .dataLength(FosInt32.create(UnsignedInteger.valueOf(entity.data().length)))
             .data(entity.data())
             .build();
 
     public static final Function<TalkDataTextEntity, TalkDataTextDto> talkDataTextDto = entity -> TalkDataTextDto.builder()
-            .timestampMs(FosInt32.create((int) entity.uptime().toMillis()))
-            .snOfPacket(FosInt32.create((int) entity.serialNumber()))
-            .gatherTimeSecs(FosInt32.create((int) entity.timestamp().getEpochSecond()))
+            .timestampMs(FosInt32.create(UnsignedInteger.valueOf(entity.uptime().toMillis())))
+            .snOfPacket(FosInt32.create(UnsignedInteger.valueOf(entity.serialNumber())))
+            .gatherTimeSecs(FosInt32.create(UnsignedInteger.valueOf(entity.timestamp().getEpochSecond())))
             .audioFormat(entity.audioFormat().value)
-            .dataLength(FosInt32.create(entity.data().length))
+            .dataLength(FosInt32.create(UnsignedInteger.valueOf(entity.data().length)))
             .data(entity.data())
             .build();
 
@@ -176,10 +177,10 @@ public final class EntityToDto {
     public static final Function<SearchRespTextEntity, SearchRespTextDto> searchRespTextDto = entity -> SearchRespTextDto.builder()
             .cameraId(Strings.padEnd(entity.cameraId(), SearchRespTextDto.CAMERA_ID_LEN, '\0').getBytes(StandardCharsets.ISO_8859_1))
             .cameraName(Strings.padEnd(entity.cameraName(), SearchRespTextDto.CAMERA_NAME_LEN, '\0').getBytes(StandardCharsets.ISO_8859_1))
-            .ip(FosInt32R.create(ByteBuffer.wrap(entity.address().getAddress().getAddress()).getInt()))
-            .mask(FosInt32R.create(ByteBuffer.wrap(entity.mask().getAddress()).getInt()))
-            .gateway(FosInt32R.create(ByteBuffer.wrap(entity.gateway().getAddress()).getInt()))
-            .dns(FosInt32R.create(ByteBuffer.wrap(entity.dns().getAddress()).getInt()))
+            .ip(FosInt32R.create(UnsignedInteger.fromIntBits(ByteBuffer.wrap(entity.address().getAddress().getAddress()).getInt())))
+            .mask(FosInt32R.create(UnsignedInteger.fromIntBits(ByteBuffer.wrap(entity.mask().getAddress()).getInt())))
+            .gateway(FosInt32R.create(UnsignedInteger.fromIntBits(ByteBuffer.wrap(entity.gateway().getAddress()).getInt())))
+            .dns(FosInt32R.create(UnsignedInteger.fromIntBits(ByteBuffer.wrap(entity.dns().getAddress()).getInt())))
             .cameraPort(FosInt16R.create(entity.address().getPort()))
             .dhcpEnabled(FosInt8.create(entity.isDhcpEnabled() ? 1 : 0))
             .build();

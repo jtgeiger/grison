@@ -13,15 +13,8 @@ public abstract class FosInt32R {
 
     public abstract UnsignedInteger value();
 
-    /**
-     * Convert the given argument to a long by unsigned conversion and use the result to create a FosInt32R.
-     *
-     * @param value the value to convert to a FosInt32R.
-     *
-     * @return A FosInt32R.
-     */
-    public static FosInt32R create(int value) {
-        return new AutoValue_FosInt32R(UnsignedInteger.valueOf(Integer.toUnsignedLong(value)));
+    public static FosInt32R create(UnsignedInteger value) {
+        return new AutoValue_FosInt32R(value);
     }
 
 }

@@ -1,6 +1,9 @@
 package com.sibilantsolutions.grison.net.netty.codec.dto;
 
+import static io.netty.util.internal.ObjectUtil.checkPositiveOrZero;
+
 import com.google.auto.value.AutoValue;
+import com.google.common.primitives.UnsignedInteger;
 import com.sibilantsolutions.grison.driver.foscam.dto.FoscamOpCode;
 import com.sibilantsolutions.grison.driver.foscam.type.FosInt32;
 import io.netty.buffer.ByteBuf;
@@ -13,7 +16,7 @@ public abstract class FoscamTextByteBufDTO {
     abstract ByteBuf autoTextBuf(); //Not public.
 
     public FosInt32 encodedLength() {
-        return FosInt32.create(autoTextBuf().readableBytes());
+        return FosInt32.create(UnsignedInteger.valueOf(checkPositiveOrZero(autoTextBuf().readableBytes(), "readableBytes")));
     }
 
     public ByteBuf textBuf() {

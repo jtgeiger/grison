@@ -38,7 +38,7 @@ public class NettyCommandDtoParser {
         final FosInt32 textLength = NettyFosTypeReader.fosInt32(buf);
         final FosInt32 reserve3 = NettyFosTypeReader.fosInt32(buf);
 
-        verify(textLength.value().longValue() == buf.readableBytes(), "expected=%s, actual=%s", textLength, buf.readableBytes());
+        verify(textLength.value().intValue() == buf.readableBytes(), "expected=%s, actual=%s", textLength, buf.readableBytes());
 
         ProtocolE p = ProtocolE.fromValue(protocolBytes);
         final FoscamOpCode foscamOpCode = FoscamOpCode.fromValue(p, operationCode);
