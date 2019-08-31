@@ -56,7 +56,7 @@ public class VerifyRespText implements DatastreamI
         ByteBuffer bb = ByteBuffer.allocate(capacity);
         bb.order( ByteOrder.LITTLE_ENDIAN );
 
-        bb.putShort(resultCode.value.value());
+        bb.putShort(resultCode.value.toShort());
 
         /*
          * When result code is CORRECT, then there is an extra byte.  But when result code is USER_WRONG, there is no

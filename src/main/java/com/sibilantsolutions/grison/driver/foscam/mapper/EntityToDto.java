@@ -6,6 +6,7 @@ import java.util.NoSuchElementException;
 import java.util.function.Function;
 
 import com.google.common.base.Strings;
+import com.google.common.primitives.Shorts;
 import com.google.common.primitives.UnsignedBytes;
 import com.google.common.primitives.UnsignedInteger;
 import com.sibilantsolutions.grison.driver.foscam.domain.ResultCodeE;
@@ -181,7 +182,7 @@ public final class EntityToDto {
             .mask(FosInt32R.create(UnsignedInteger.fromIntBits(ByteBuffer.wrap(entity.mask().getAddress()).getInt())))
             .gateway(FosInt32R.create(UnsignedInteger.fromIntBits(ByteBuffer.wrap(entity.gateway().getAddress()).getInt())))
             .dns(FosInt32R.create(UnsignedInteger.fromIntBits(ByteBuffer.wrap(entity.dns().getAddress()).getInt())))
-            .cameraPort(FosInt16R.create(entity.address().getPort()))
+            .cameraPort(FosInt16R.create(Shorts.checkedCast(entity.address().getPort())))
             .dhcpEnabled(entity.isDhcpEnabled() ? FosInt8.ONE : FosInt8.ZERO)
             .build();
 

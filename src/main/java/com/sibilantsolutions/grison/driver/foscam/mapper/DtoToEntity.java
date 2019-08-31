@@ -178,7 +178,7 @@ public final class DtoToEntity {
         final InetAddress dns;
 
         try {
-            address = new InetSocketAddress(InetAddress.getByAddress(Ints.toByteArray(dto.ip().value().intValue())), dto.cameraPort().value());
+            address = new InetSocketAddress(InetAddress.getByAddress(Ints.toByteArray(dto.ip().value().intValue())), dto.cameraPort().value().intValue());
             mask = InetAddress.getByAddress(Ints.toByteArray(dto.mask().value().intValue()));
             gateway = InetAddress.getByAddress(Ints.toByteArray(dto.gateway().value().intValue()));
             dns = InetAddress.getByAddress(Ints.toByteArray(dto.dns().value().intValue()));

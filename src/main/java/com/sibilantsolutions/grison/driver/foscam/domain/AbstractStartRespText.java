@@ -54,7 +54,7 @@ abstract public class AbstractStartRespText implements DatastreamI
         ByteBuffer bb = ByteBuffer.allocate( 2 + 4 );
         bb.order( ByteOrder.LITTLE_ENDIAN );
 
-        bb.putShort(resultCode.value.value());
+        bb.putShort(resultCode.value.toShort());
         bb.put(dataConnectionId);
 
         return bb.array();

@@ -78,7 +78,7 @@ public class LoginRespText implements DatastreamI
         ByteBuffer bb = ByteBuffer.allocate( 2 + 13 + 4 + 4 + 4 );
         bb.order( ByteOrder.LITTLE_ENDIAN );
 
-        bb.putShort(resultCode.value.value());
+        bb.putShort(resultCode.value.toShort());
 
         Convert.put( Convert.padRearOrTruncate( cameraId, 12, (char)0 ), bb ); //12 bytes
         bb.put( (byte)0x00 );   //Null terminator.

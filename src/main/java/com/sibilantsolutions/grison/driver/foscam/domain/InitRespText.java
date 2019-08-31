@@ -37,7 +37,7 @@ public class InitRespText implements DatastreamI
         ByteBuffer bb = ByteBuffer.allocate( 2 );
         bb.order( ByteOrder.LITTLE_ENDIAN );
 
-        bb.putShort(resultCode.value.value());
+        bb.putShort(resultCode.value.toShort());
 
         return bb.array();
     }

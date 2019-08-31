@@ -17,11 +17,11 @@ public final class NettyFosTypeWriter {
     }
 
     public static ByteBuf write(FosInt16 val, ByteBuf buf) {
-        return buf.writeShortLE(val.value());
+        return buf.writeShortLE(val.toShort());
     }
 
     public static ByteBuf write(FosInt16R val, ByteBuf buf) {
-        return buf.writeShort(val.value());
+        return buf.writeShort(val.toShort());
     }
 
     public static ByteBuf write(FosInt32 val, ByteBuf buf) {

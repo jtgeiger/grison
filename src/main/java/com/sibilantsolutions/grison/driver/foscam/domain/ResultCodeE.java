@@ -31,7 +31,7 @@ public enum ResultCodeE
 
     public static ResultCodeE fromValue(FosInt16 value)
     {
-        switch (value.value())
+        switch (value.toShort())
         {
             case Values.CORRECT:
                 return CORRECT;

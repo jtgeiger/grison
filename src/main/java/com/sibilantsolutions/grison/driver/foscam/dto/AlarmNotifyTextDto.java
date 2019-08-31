@@ -7,10 +7,10 @@ import com.sibilantsolutions.grison.driver.foscam.type.FosInt8;
 @AutoValue
 public abstract class AlarmNotifyTextDto implements FoscamTextDto {
 
-    public static final FosInt16 RESERVE1 = FosInt16.create(0);
-    public static final FosInt16 RESERVE2 = FosInt16.create(0);
-    public static final FosInt16 RESERVE3 = FosInt16.create(0);
-    public static final FosInt16 RESERVE4 = FosInt16.create(1);
+    public static final FosInt16 RESERVE1 = FosInt16.ZERO;
+    public static final FosInt16 RESERVE2 = FosInt16.ZERO;
+    public static final FosInt16 RESERVE3 = FosInt16.ZERO;
+    public static final FosInt16 RESERVE4 = FosInt16.ONE;
 
     public abstract FosInt8 type();
 
