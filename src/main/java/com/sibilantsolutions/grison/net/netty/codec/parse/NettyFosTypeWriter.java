@@ -29,7 +29,7 @@ public final class NettyFosTypeWriter {
     }
 
     public static ByteBuf write(FosInt32R val, ByteBuf buf) {
-        return buf.writeInt(val.value());
+        return buf.writeInt(val.value().intValue());
     }
 
 }
