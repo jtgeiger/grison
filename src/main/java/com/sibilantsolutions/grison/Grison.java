@@ -3,6 +3,8 @@ package com.sibilantsolutions.grison;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.sibilantsolutions.grison.demo.Demo;
+
 /**
  * Grisons, also known as South American wolverines, are mustelids native to Central and South America.
  *   -- Wikipedia
@@ -16,8 +18,21 @@ public class Grison
     {
         log.info( "main() started." );
 
-        new NettyDemo().go(args[0], Integer.parseInt(args[1]), args[2], args[3]);
-//        Demo.demo(args[0], Integer.parseInt(args[1]), args[2], args[3]);
+        int i = 0;
+        final String host = args[i++];
+        final int port = Integer.parseInt(args[i++]);
+        final String username = args[i++];
+        final String password = args[i++];
+
+        if (i < args.length) {
+            if (args[i].equals("ui")) {
+                Demo.demo(host, port, username, password);
+            } else {
+                throw new IllegalArgumentException(args[i]);
+            }
+        } else {
+            new NettyDemo().go(host, port, username, password);
+        }
 
         log.info("main() finished.");
 
