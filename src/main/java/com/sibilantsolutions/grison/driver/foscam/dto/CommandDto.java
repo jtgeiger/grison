@@ -67,6 +67,7 @@ public abstract class CommandDto {
         public CommandDto build() {
             CommandDto dto = autoBuild();
             checkArgument(dto.reserve2().length == RESERVE2.length, "reserve2 len expected=%s actual=%s", RESERVE2.length, dto.reserve2().length);
+            checkArgument(dto.operationCode().equals(dto.text().opCode()), "opcode expected=%s actual=%s", dto.operationCode(), dto.text().opCode());
             return dto;
         }
     }
