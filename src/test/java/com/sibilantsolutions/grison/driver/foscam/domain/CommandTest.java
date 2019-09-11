@@ -14,7 +14,7 @@ import org.junit.Test;
 public class CommandTest
 {
 
-    public static byte[] readFile(String filename) {
+    private static byte[] readFile(String filename) {
         try {
             return Files.readAllBytes(Paths.get(CommandTest.class.getResource(filename).toURI()));
         } catch (Exception e) {

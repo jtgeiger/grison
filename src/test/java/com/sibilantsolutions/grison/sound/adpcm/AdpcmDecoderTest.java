@@ -4,7 +4,7 @@ import static org.junit.Assert.assertArrayEquals;
 
 import org.junit.Test;
 
-import com.sibilantsolutions.grison.driver.foscam.domain.CommandTest;
+import com.sibilantsolutions.grison.net.netty.codec.parse.ResourceToByteBuf;
 
 public class AdpcmDecoderTest
 {
@@ -20,14 +20,14 @@ public class AdpcmDecoderTest
         byte[] actual;
         byte[] expected;
 
-        raw = CommandTest.readFile("/samples/sound/audio000.adpcm");
+        raw = new ResourceToByteBuf().apply("/samples/sound/audio000.adpcm").array();
         actual = decoder.decode( raw );
-        expected = CommandTest.readFile("/samples/sound/audio000.pcm");
+        expected = new ResourceToByteBuf().apply("/samples/sound/audio000.pcm").array();
         assertArrayEquals( expected, actual );
 
-        raw = CommandTest.readFile("/samples/sound/audio001.adpcm");
+        raw = new ResourceToByteBuf().apply("/samples/sound/audio001.adpcm").array();
         actual = decoder.decode( raw );
-        expected = CommandTest.readFile("/samples/sound/audio001.pcm");
+        expected = new ResourceToByteBuf().apply("/samples/sound/audio001.pcm").array();
         assertArrayEquals( expected, actual );
     }
 
@@ -51,9 +51,9 @@ public class AdpcmDecoderTest
 
             base += i;
 
-            byte[] raw = CommandTest.readFile(base + ".adpcm");
+            byte[] raw = new ResourceToByteBuf().apply(base + ".adpcm").array();
             byte[] actual = decoder.decode( raw );
-            byte[] expected = CommandTest.readFile(base + ".pcm");
+            byte[] expected = new ResourceToByteBuf().apply(base + ".pcm").array();
 
             assertArrayEquals( expected, actual );
         }
