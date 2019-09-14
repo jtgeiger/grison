@@ -12,8 +12,7 @@ import com.sibilantsolutions.grison.driver.foscam.dto.CommandDto;
 import com.sibilantsolutions.grison.driver.foscam.dto.FoscamOpCode;
 import com.sibilantsolutions.grison.net.netty.codec.FoscamCommandDtoDecoder;
 import com.sibilantsolutions.grison.net.netty.codec.FoscamTextByteBufDTOEncoder;
-import com.sibilantsolutions.grison.net.netty.codec.KeepAliveAudioVideoTextDtoEncoder;
-import com.sibilantsolutions.grison.net.netty.codec.LoginReqAudioVideoTextDtoEncoder;
+import com.sibilantsolutions.grison.net.netty.codec.FoscamTextDtoEncoder;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelFutureListener;
 import io.netty.channel.ChannelHandlerContext;
@@ -57,8 +56,7 @@ public class AudioVideoChannelInitializer extends ChannelInitializer {
                 .addLast(new LengthFieldBasedFrameDecoder(ByteOrder.LITTLE_ENDIAN, MAX_FRAME_LENGTH, 0x0F, 4, 4, 0, true))
                 .addLast(new FoscamCommandDtoDecoder(Clock.systemUTC()))
                 .addLast(new FoscamTextByteBufDTOEncoder())
-                .addLast(new KeepAliveAudioVideoTextDtoEncoder())
-                .addLast(new LoginReqAudioVideoTextDtoEncoder())
+                .addLast(new FoscamTextDtoEncoder())
                 .addLast(new IdleStateHandler(READ_TIMEOUT_SECS, WRITE_TIMEOUT_SECS, 0))
                 .addLast(new IdleStateEventHandler())
                 //Receive and drop inbound pings.  We don't respond to these.  We send outbound
