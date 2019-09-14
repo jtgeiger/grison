@@ -5,7 +5,7 @@ import java.util.concurrent.CancellationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.sibilantsolutions.grison.driver.foscam.dto.FoscamTextDto;
+import com.sibilantsolutions.grison.driver.foscam.entity.FoscamTextEntity;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelFutureListener;
@@ -26,7 +26,7 @@ public class ChannelSender {
         this.channel = channel;
     }
 
-    public Flowable<ChannelSendEvent> doSend(FoscamTextDto text) {
+    public Flowable<ChannelSendEvent> doSend(FoscamTextEntity entity) {
         return Flowable.create(emitter -> {
 
             final Scheduler.Worker worker = Schedulers.io().createWorker();
@@ -38,20 +38,22 @@ public class ChannelSender {
             worker.schedule(() -> emitter.onNext(ChannelSendEvent.IN_FLIGHT));
 
             final ChannelFuture channelFuture = channel
-                    .writeAndFlush(text)
+                    .writeAndFlush(entity)
                     .addListener((ChannelFutureListener) future -> {
-                        if (future.isSuccess()) {
-                            worker.schedule(() -> emitter.onNext(ChannelSendEvent.SENT));
-                        } else if (future.cause() != null) {
-                            LOG.error("Can't send: future={}:", future, future.cause());
-                            worker.schedule(() -> emitter.onNext(ChannelSendEvent.fail(new RuntimeException(future.cause()))));
-                        } else if (future.isCancelled()) {
-                            worker.schedule(() -> emitter.onNext(ChannelSendEvent.fail(new CancellationException("Future was cancelled"))));
-                        } else {
-                            worker.schedule(() -> emitter.onNext(ChannelSendEvent.fail(new IllegalArgumentException("Channel future is in a weird state"))));
-                        }
+                        if (future.isDone()) {
+                            if (future.isSuccess()) {
+                                worker.schedule(() -> emitter.onNext(ChannelSendEvent.SENT));
+                            } else if (future.cause() != null) {
+                                LOG.error("Can't send: future={}:", future, future.cause());
+                                worker.schedule(() -> emitter.onNext(ChannelSendEvent.fail(new RuntimeException(future.cause()))));
+                            } else if (future.isCancelled()) {
+                                worker.schedule(() -> emitter.onNext(ChannelSendEvent.fail(new CancellationException("Future was cancelled"))));
+                            } else {
+                                worker.schedule(() -> emitter.onNext(ChannelSendEvent.fail(new IllegalArgumentException("Channel future is in a weird state"))));
+                            }
 
-                        worker.schedule(worker::dispose);
+                            worker.schedule(worker::dispose);
+                        }
                     });
 
             final CancellableDisposable cancellableDisposable = new CancellableDisposable(() -> channelFuture.cancel(true));

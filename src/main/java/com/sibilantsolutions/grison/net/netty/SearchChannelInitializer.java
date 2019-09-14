@@ -14,6 +14,7 @@ import com.sibilantsolutions.grison.driver.foscam.dto.CommandDto;
 import com.sibilantsolutions.grison.net.netty.codec.FoscamCommandDtoDecoder;
 import com.sibilantsolutions.grison.net.netty.codec.FoscamTextByteBufDTOToDatagramPacketEncoder;
 import com.sibilantsolutions.grison.net.netty.codec.FoscamTextDtoEncoder;
+import com.sibilantsolutions.grison.net.netty.codec.FoscamTextEntityToFoscamTextDto;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelFutureListener;
@@ -73,6 +74,7 @@ public class SearchChannelInitializer extends ChannelInitializer {
                 .addLast(new FoscamCommandDtoDecoder(Clock.systemUTC()))
                 .addLast(new FoscamTextByteBufDTOToDatagramPacketEncoder())
                 .addLast(new FoscamTextDtoEncoder())
+                .addLast(new FoscamTextEntityToFoscamTextDto())
 
                 //Only wait for responses for so long.  Fires ReadTimeoutException and closes the channel.
                 .addLast(new ReadTimeoutHandler(timeoutDuration.toMillis(), TimeUnit.MILLISECONDS))
