@@ -41,7 +41,7 @@
         <junit.version>4.12</junit.version>
         <slf4j.version>1.7.28</slf4j.version>
         <logback.version>1.2.3</logback.version>
-        <netty.version>4.1.39.Final</netty.version>
+        <netty.version>4.1.41.Final</netty.version>
         <rxjava2.version>2.2.12</rxjava2.version>
         <retrofit2.version>2.6.1</retrofit2.version>
         <okhttp3.version>4.1.0</okhttp3.version>
