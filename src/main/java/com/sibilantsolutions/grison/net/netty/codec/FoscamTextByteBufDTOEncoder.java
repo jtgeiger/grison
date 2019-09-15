@@ -15,16 +15,18 @@ public class FoscamTextByteBufDTOEncoder extends MessageToByteEncoder<FoscamText
 
     @Override
     public void encode(ChannelHandlerContext ctx, FoscamTextByteBufDTO msg, ByteBuf out) {
-        out.writeBytes(msg.opCode().protocol.getValue());   //4
-        NettyFosTypeWriter.write(msg.opCode().value, out);  //2
-        NettyFosTypeWriter.write(CommandDto.RESERVE1, out); //1
-        out.writeBytes(CommandDto.RESERVE2);                //8
-        NettyFosTypeWriter.write(msg.encodedLength(), out); //4
-        NettyFosTypeWriter.write(msg.encodedLength(), out); //4
-        out.writeBytes(msg.textBuf());                      //N
-
-        // Each FoscamTextByteBufDTO has a ByteBuf that was allocated to hold the text; it is our job to release it.
-        msg.textBuf().release();
+        try {
+            out.writeBytes(msg.opCode().protocol.getValue());   //4
+            NettyFosTypeWriter.write(msg.opCode().value, out);  //2
+            NettyFosTypeWriter.write(CommandDto.RESERVE1, out); //1
+            out.writeBytes(CommandDto.RESERVE2);                //8
+            NettyFosTypeWriter.write(msg.encodedLength(), out); //4
+            NettyFosTypeWriter.write(msg.encodedLength(), out); //4
+            out.writeBytes(msg.textBuf());                      //N
+        } finally {
+            // Each FoscamTextByteBufDTO has a ByteBuf that was allocated to hold the text; it is our job to release it.
+            msg.textBuf().release();
+        }
     }
 
     @Override
