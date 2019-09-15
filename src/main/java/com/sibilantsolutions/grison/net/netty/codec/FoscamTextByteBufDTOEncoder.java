@@ -10,6 +10,10 @@ import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.MessageToByteEncoder;
 
+/**
+ * This class takes a FoscamTextByteBufDTO, representing just the "text"/payload and encodes it as a full Foscam Command
+ * and writes out the bytes.
+ */
 @ChannelHandler.Sharable
 public class FoscamTextByteBufDTOEncoder extends MessageToByteEncoder<FoscamTextByteBufDTO> {
 
