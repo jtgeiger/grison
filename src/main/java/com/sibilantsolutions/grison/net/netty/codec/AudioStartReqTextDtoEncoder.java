@@ -17,7 +17,7 @@ public class AudioStartReqTextDtoEncoder extends MessageToMessageEncoder<AudioSt
 
         final ByteBuf textBuf = ctx.alloc().buffer(msg.encodedLength(), msg.encodedLength());
 
-        NettyFosTypeWriter.write(msg.reserve(), textBuf);
+        NettyFosTypeWriter.write(msg.data(), textBuf);
 
         out.add(FoscamTextByteBufDTO.create(msg.opCode(), textBuf));
 

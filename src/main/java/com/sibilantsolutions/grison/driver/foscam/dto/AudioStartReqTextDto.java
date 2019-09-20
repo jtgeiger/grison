@@ -6,9 +6,7 @@ import com.sibilantsolutions.grison.driver.foscam.type.FosInt8;
 @AutoValue
 public abstract class AudioStartReqTextDto implements FoscamTextDto {
 
-    public static final FosInt8 RESERVE = FosInt8.ONE;
-
-    public abstract FosInt8 reserve();
+    public abstract FosInt8 data();
 
     @Override
     public final FoscamOpCode opCode() {
@@ -22,12 +20,12 @@ public abstract class AudioStartReqTextDto implements FoscamTextDto {
 
     public static Builder builder() {
         return new AutoValue_AudioStartReqTextDto.Builder()
-                .reserve(RESERVE);
+                .data(FosInt8.create((byte) 2));
     }
 
     @AutoValue.Builder
     public abstract static class Builder {
-        public abstract Builder reserve(FosInt8 reserve);
+        public abstract Builder data(FosInt8 data);
 
         public abstract AudioStartReqTextDto build();
     }

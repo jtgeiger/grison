@@ -68,20 +68,23 @@ public final class EntityToDto {
                 .resultCode(entity.resultCode().value);
         if (entity.resultCode() == ResultCodeE.CORRECT) {
             final VersionEntity versionEntity = entity.version().orElseThrow(NoSuchElementException::new);
-            byte[] v = new byte[]{
-                    UnsignedBytes.checkedCast(versionEntity.major()),
-                    UnsignedBytes.checkedCast(versionEntity.minor()),
-                    UnsignedBytes.checkedCast(versionEntity.patch()),
-                    UnsignedBytes.checkedCast(versionEntity.buildNum())};
             builder.loginRespDetails(LoginRespDetailsDto.builder()
                     .cameraId(Strings.padEnd(entity.cameraId().orElseThrow(NoSuchElementException::new),
                             LoginRespDetailsDto.CAMERA_ID_LEN, '\0')
                             .getBytes(StandardCharsets.ISO_8859_1))
-                    .firmwareVersion(v)
+                    .firmwareVersion(versionToBytes(versionEntity))
                     .build());
         }
         return builder.build();
     };
+
+    private static byte[] versionToBytes(VersionEntity versionEntity) {
+        return new byte[]{
+                        UnsignedBytes.checkedCast(versionEntity.major()),
+                        UnsignedBytes.checkedCast(versionEntity.minor()),
+                        UnsignedBytes.checkedCast(versionEntity.patch()),
+                        UnsignedBytes.checkedCast(versionEntity.buildNum())};
+    }
 
     public static final Function<VerifyReqTextEntity, VerifyReqTextDto> verifyReqTextDto = entity -> VerifyReqTextDto.builder()
             .user(Strings.padEnd(entity.username(), VerifyReqTextDto.USER_LEN, '\0').getBytes(StandardCharsets.ISO_8859_1))
@@ -184,6 +187,8 @@ public final class EntityToDto {
             .dns(FosInt32R.create(UnsignedInteger.fromIntBits(ByteBuffer.wrap(entity.dns().getAddress()).getInt())))
             .cameraPort(FosInt16R.create(Shorts.checkedCast(entity.address().getPort())))
             .dhcpEnabled(entity.isDhcpEnabled() ? FosInt8.ONE : FosInt8.ZERO)
+            .sysSoftwareVersion(versionToBytes(entity.sysSoftwareVersion()))
+            .appSoftwareVersion(versionToBytes(entity.appSoftwareVersion()))
             .build();
 
 }

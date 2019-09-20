@@ -9,6 +9,6 @@ import io.netty.buffer.ByteBuf;
 public class AudioStartReqTextDtoParser implements Function<ByteBuf, AudioStartReqTextDto> {
     @Override
     public AudioStartReqTextDto apply(ByteBuf buf) {
-        return AudioStartReqTextDto.builder().reserve(NettyFosTypeReader.fosInt8(buf)).build();
+        return AudioStartReqTextDto.builder().data(NettyFosTypeReader.fosInt8(buf)).build();
     }
 }

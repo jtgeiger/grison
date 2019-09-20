@@ -1,19 +1,26 @@
 package com.sibilantsolutions.grison.net.netty.codec.parse;
 
+import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertThat;
 
 import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
 import java.time.Clock;
+import java.time.Duration;
+import java.time.Instant;
+import java.util.stream.IntStream;
 
 import org.jetbrains.annotations.NotNull;
 import org.junit.Test;
 
 import com.google.common.primitives.UnsignedInteger;
+import com.sibilantsolutions.grison.driver.foscam.domain.AudioFormatE;
 import com.sibilantsolutions.grison.driver.foscam.domain.ProtocolE;
 import com.sibilantsolutions.grison.driver.foscam.domain.ResultCodeE;
 import com.sibilantsolutions.grison.driver.foscam.dto.AlarmNotifyTextDto;
+import com.sibilantsolutions.grison.driver.foscam.dto.AudioDataTextDto;
 import com.sibilantsolutions.grison.driver.foscam.dto.CommandDto;
 import com.sibilantsolutions.grison.driver.foscam.dto.FoscamOpCode;
 import com.sibilantsolutions.grison.driver.foscam.dto.InitReqTextDto;
@@ -29,6 +36,8 @@ import com.sibilantsolutions.grison.driver.foscam.dto.VerifyRespTextDto;
 import com.sibilantsolutions.grison.driver.foscam.dto.VideoDataTextDto;
 import com.sibilantsolutions.grison.driver.foscam.dto.VideoStartReqTextDto;
 import com.sibilantsolutions.grison.driver.foscam.dto.VideoStartRespTextDto;
+import com.sibilantsolutions.grison.driver.foscam.entity.AudioDataTextEntity;
+import com.sibilantsolutions.grison.driver.foscam.mapper.DtoToEntity;
 import com.sibilantsolutions.grison.driver.foscam.type.FosInt16;
 import com.sibilantsolutions.grison.driver.foscam.type.FosInt16R;
 import com.sibilantsolutions.grison.driver.foscam.type.FosInt32;
@@ -239,6 +248,23 @@ public class NettyCommandDtoParserTest {
         assertEquals(VerifyRespTextDto.builder()
                 .resultCode(FosInt16.ONE)
                 .build(), dto.text());
+    }
+
+    @Test
+    public void parseAudio() {
+        final CommandDto dto = basics("/samples/audio_data-scrubbed.bin", ProtocolE.AUDIO_VIDEO_PROTOCOL, FoscamOpCode.Audio_Data, 177);
+        final AudioDataTextEntity actual = DtoToEntity.audioDataTextEntity.apply((AudioDataTextDto) dto.text());
+        byte[] data = new byte[160];    //0xA0
+        IntStream.range(0, data.length).forEach(i -> data[i] = (byte) (i + 1));
+        final AudioDataTextEntity expected = AudioDataTextEntity
+                .builder()
+                .uptime(Duration.ofMillis(0x0003D918 * 10))
+                .serialNumber(0x0000F5DC)
+                .timestamp(Instant.ofEpochMilli(0x535A756AL * 1000))
+                .audioFormat(AudioFormatE.ADPCM)
+                .data(data)
+                .build();
+        assertThat(actual, is(expected));
     }
 
 }
