@@ -260,7 +260,7 @@ public class NettyCommandDtoParserTest {
                 .builder()
                 .uptime(Duration.ofMillis(0x0003D918 * 10))
                 .serialNumber(0x0000F5DC)
-                .timestamp(Instant.ofEpochMilli(0x535A756AL * 1000))
+                .timestamp(Instant.ofEpochSecond(0x535A756A))
                 .audioFormat(AudioFormatE.ADPCM)
                 .data(data)
                 .build();

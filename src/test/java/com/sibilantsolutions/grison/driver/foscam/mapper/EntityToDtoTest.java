@@ -98,7 +98,7 @@ public class EntityToDtoTest {
         final VideoDataTextEntity entity = VideoDataTextEntity
                 .builder()
                 .uptime(Duration.ofMillis(59_108L * 10))
-                .timestamp(Instant.ofEpochMilli(1_400_688_245L * 1000))
+                .timestamp(Instant.ofEpochSecond(1_400_688_245))
                 .videoData(new byte[44_600])
                 .build();
 
@@ -291,7 +291,7 @@ public class EntityToDtoTest {
                 .builder()
                 .uptime(Duration.ofMillis(0x0003D918 * 10))
                 .serialNumber(0x0000F5DC)
-                .timestamp(Instant.ofEpochMilli(0x535A756AL * 1000))
+                .timestamp(Instant.ofEpochSecond(0x535A756A))
                 .audioFormat(AudioFormatE.ADPCM)
                 .data(data)
                 .build();
@@ -353,7 +353,7 @@ public class EntityToDtoTest {
         final VideoDataTextEntity entity = VideoDataTextEntity
                 .builder()
                 .uptime(Duration.ofMillis(0x0000E6E4 * 10))
-                .timestamp(Instant.ofEpochMilli(0x537CCE75L * 1000))
+                .timestamp(Instant.ofEpochSecond(0x537CCE75))
                 .videoData(data)
                 .build();
 
