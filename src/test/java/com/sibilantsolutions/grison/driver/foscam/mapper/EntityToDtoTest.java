@@ -27,6 +27,7 @@ import com.sibilantsolutions.grison.driver.foscam.entity.AudioDataTextEntity;
 import com.sibilantsolutions.grison.driver.foscam.entity.AudioStartReqTextEntity;
 import com.sibilantsolutions.grison.driver.foscam.entity.AudioStartRespTextEntity;
 import com.sibilantsolutions.grison.driver.foscam.entity.FoscamTextEntity;
+import com.sibilantsolutions.grison.driver.foscam.entity.KeepAliveOperationTextEntity;
 import com.sibilantsolutions.grison.driver.foscam.entity.LoginReqAudioVideoTextEntity;
 import com.sibilantsolutions.grison.driver.foscam.entity.LoginReqOperationTextEntity;
 import com.sibilantsolutions.grison.driver.foscam.entity.LoginRespTextEntity;
@@ -299,7 +300,14 @@ public class EntityToDtoTest {
         assertEntity(entity, "/samples/audio_data-scrubbed.bin");
     }
 
-    //TODO 12
+    @Test
+    public void toDatastream12() {
+        final KeepAliveOperationTextEntity entity = KeepAliveOperationTextEntity
+                .builder()
+                .build();
+
+        assertEntity(entity, "/samples/keep_alive.bin");
+    }
 
     @Test
     public void toDatastream13() {
