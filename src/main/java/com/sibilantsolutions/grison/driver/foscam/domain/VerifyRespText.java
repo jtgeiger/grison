@@ -5,7 +5,7 @@ import java.nio.ByteOrder;
 
 import com.sibilantsolutions.grison.driver.foscam.type.FosInt16;
 
-public class VerifyRespText implements DatastreamI
+public class VerifyRespText
 {
 
     private ResultCodeE resultCode;     //INT16 (2 bytes; little endian)
@@ -45,7 +45,6 @@ public class VerifyRespText implements DatastreamI
         return text;
     }
 
-    @Override
     public byte[] toDatastream()
     {
         int capacity = 2;

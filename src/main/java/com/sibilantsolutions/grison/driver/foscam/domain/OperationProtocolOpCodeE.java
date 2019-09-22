@@ -1,7 +1,6 @@
 package com.sibilantsolutions.grison.driver.foscam.domain;
 
-public enum OperationProtocolOpCodeE implements OpCodeI
-{
+public enum OperationProtocolOpCodeE {
 
     Login_Req( Values.Login_Req ),
     Login_Resp( Values.Login_Resp ),
@@ -23,31 +22,30 @@ public enum OperationProtocolOpCodeE implements OpCodeI
     Keep_Alive( Values.Keep_Alive ),
     ;
 
-    static private interface Values
-    {
-        final static public short Login_Req           = 0;    //user -> IP camera
-        final static public short Login_Resp          = 1;    //IP camera -> user
-        final static public short Verify_Req          = 2;    //user -> IP camera
-        final static public short Verify_Resp         = 3;    //ipcamera -> user
-        final static public short Video_Start_Req     = 4;    //user -> ipcamera
-        final static public short Video_Start_Resp    = 5;    //ipcamera -> user
-        final static public short Video_End           = 6;    //user -> ipcamera
-        final static public short Audio_Start_Req     = 8;    //user -> ipcamera
-        final static public short Audio_Start_Resp    = 9;    //ipcamera -> user
-        final static public short Audio_End           = 10;   //0x0A  //user -> ipcamera
-        final static public short Talk_Start_Req      = 11;   //0x0B  //user -> ipcamera
-        final static public short Talk_Start_Resp     = 12;   //0x0C  //ipcamera -> user
-        final static public short Talk_End            = 13;   //0x0D  //user -> ipcamera
-        final static public short UNK01               = 16;   //0x10  //user -> ipcamera
-        final static public short UNK03               = 17;   //0x11  //ipcamera -> user
-        final static public short Alarm_Notify        = 25;   //0x19  //ipcamera -> user
-        final static public short UNK02               = 28;   //0x1C  //ipcamera -> user
-        final static public short Keep_Alive          = 255;  //0xFF  //ipcamera <-> user
+    private interface Values {
+        short Login_Req           = 0;    //user -> IP camera
+        short Login_Resp          = 1;    //IP camera -> user
+        short Verify_Req          = 2;    //user -> IP camera
+        short Verify_Resp         = 3;    //ipcamera -> user
+        short Video_Start_Req     = 4;    //user -> ipcamera
+        short Video_Start_Resp    = 5;    //ipcamera -> user
+        short Video_End           = 6;    //user -> ipcamera
+        short Audio_Start_Req     = 8;    //user -> ipcamera
+        short Audio_Start_Resp    = 9;    //ipcamera -> user
+        short Audio_End           = 10;   //0x0A  //user -> ipcamera
+        short Talk_Start_Req      = 11;   //0x0B  //user -> ipcamera
+        short Talk_Start_Resp     = 12;   //0x0C  //ipcamera -> user
+        short Talk_End            = 13;   //0x0D  //user -> ipcamera
+        short UNK01               = 16;   //0x10  //user -> ipcamera
+        short UNK03               = 17;   //0x11  //ipcamera -> user
+        short Alarm_Notify        = 25;   //0x19  //ipcamera -> user
+        short UNK02               = 28;   //0x1C  //ipcamera -> user
+        short Keep_Alive          = 255;  //0xFF  //ipcamera <-> user
     }
 
     private short value;
 
-    private OperationProtocolOpCodeE( short value )
+    OperationProtocolOpCodeE( short value )
     {
         this.value = value;
     }
@@ -115,74 +113,9 @@ public enum OperationProtocolOpCodeE implements OpCodeI
         }
     }
 
-    @Override
     public short getValue()
     {
         return value;
-    }
-
-    @Override
-    public DatastreamI parse( byte[] data, int offset, int length )
-    {
-        switch ( this )
-        {
-//            case Login_Req:
-//                return LoginReqText.parse( data, offset, length );
-
-            case Login_Resp:
-                return LoginRespText.parse( data, offset, length );
-
-//            case Verify_Req:
-//                return VerifyReqText.parse( data, offset, length );
-//
-            case Verify_Resp:
-                return VerifyRespText.parse( data, offset, length );
-
-            case Video_Start_Req:
-                return VideoStartReqText.parse( data, offset, length );
-
-            case Video_Start_Resp:
-                return VideoStartRespText.parse( data, offset, length );
-/*
-            case Video_End:
-                return Video_End.parse( data, offset, length );
-*/
-//            case Audio_Start_Req:
-//                return AudioStartReqText.parse( data, offset, length );
-//
-            case Audio_Start_Resp:
-                return AudioStartRespText.parse( data, offset, length );
-/*
-            case Audio_End:
-                return Audio_End.parse( data, offset, length );
-*/
-            case Talk_Start_Req:
-                return TalkStartReqText.parse( data, offset, length );
-
-            case Talk_Start_Resp:
-                return TalkStartRespText.parse( data, offset, length );
-/*
-            case Talk_End:
-                return Talk_End.parse( data, offset, length );
-
-            case UNK01:
-                return UNK01.parse( data, offset, length );
-*/
-//            case UNK03:
-//                return Unk03Text.parse( data, offset, length );
-
-            case Alarm_Notify:
-                return AlarmNotifyText.parse( data, offset, length );
-
-            case UNK02:
-                return Unk02Text.parse( data, offset, length );
-
-            case Keep_Alive:
-                return KeepAliveText.parse( data, offset, length );
-
-            default:
-                throw new IllegalArgumentException( "Unexpected value=" + this );
-        }
     }
 
 }

@@ -3,7 +3,7 @@ package com.sibilantsolutions.grison.driver.foscam.domain;
 
 import com.sibilantsolutions.grison.driver.foscam.type.FosInt8;
 
-public class AlarmNotifyText implements DatastreamI
+public class AlarmNotifyText
 {
 
     private AlarmTypeE alarmType;       //INT8
@@ -31,7 +31,6 @@ public class AlarmNotifyText implements DatastreamI
         return text;
     }
 
-    @Override
     public byte[] toDatastream()
     {
         // TODO Auto-generated method stub

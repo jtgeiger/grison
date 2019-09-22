@@ -1,7 +1,6 @@
 package com.sibilantsolutions.grison.driver.foscam.domain;
 
-public enum AudioVideoProtocolOpCodeE implements OpCodeI
-{
+public enum AudioVideoProtocolOpCodeE {
 
     Login_Req( Values.Login_Req ),
     Video_Data( Values.Video_Data ),
@@ -10,18 +9,18 @@ public enum AudioVideoProtocolOpCodeE implements OpCodeI
     Keep_Alive( Values.Keep_Alive ),
     ;
 
-    static private interface Values
+    private interface Values
     {
-        final static public short Login_Req     = 0;    //user -> ipcamera
-        final static public short Video_Data    = 1;    //ipcamera -> user
-        final static public short Audio_Data    = 2;    //ipcamera -> user
-        final static public short Talk_Data     = 3;    //user -> ipcamera
-        final static public short Keep_Alive    = 255;  //user <-> ipcamera
+        short Login_Req     = 0;    //user -> ipcamera
+        short Video_Data    = 1;    //ipcamera -> user
+        short Audio_Data    = 2;    //ipcamera -> user
+        short Talk_Data     = 3;    //user -> ipcamera
+        short Keep_Alive    = 255;  //user <-> ipcamera
     }
 
     private short value;
 
-    private AudioVideoProtocolOpCodeE( short value )
+    AudioVideoProtocolOpCodeE( short value )
     {
         this.value = value;
     }
@@ -50,31 +49,9 @@ public enum AudioVideoProtocolOpCodeE implements OpCodeI
         }
     }
 
-    @Override
     public short getValue()
     {
         return value;
-    }
-
-    @Override
-    public DatastreamI parse( byte[] data, int offset, int length )
-    {
-        switch ( this )
-        {
-            case Video_Data:
-                return VideoDataText.parse( data, offset, length );
-
-            case Audio_Data:
-                return AudioDataText.parse( data, offset, length );
-
-            case Keep_Alive:
-                return KeepAliveText.parse( data, offset, length );
-
-                //TODO
-
-            default:
-                throw new IllegalArgumentException( "Unexpected value=" + this );
-        }
     }
 
 }

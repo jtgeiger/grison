@@ -1,6 +1,6 @@
 package com.sibilantsolutions.grison.driver.foscam.domain;
 
-public enum SearchProtocolOpCodeE implements OpCodeI
+public enum SearchProtocolOpCodeE
 {
 
     Search_Req( Values.Search_Req ),
@@ -9,17 +9,16 @@ public enum SearchProtocolOpCodeE implements OpCodeI
     Init_Resp( Values.Init_Resp ),
     ;
 
-    static private interface Values
-    {
-        final static public short Search_Req  = 0;    //user -> broadcast address
-        final static public short Search_Resp = 1;    //camera -> broadcast address
-        final static public short Init_Req    = 2;    //user -> broadcast address
-        final static public short Init_Resp   = 3;    //camera -> broadcast address
+    private interface Values {
+        short Search_Req  = 0;    //user -> broadcast address
+        short Search_Resp = 1;    //camera -> broadcast address
+        short Init_Req    = 2;    //user -> broadcast address
+        short Init_Resp   = 3;    //camera -> broadcast address
     }
 
     private short value;
 
-    private SearchProtocolOpCodeE( short value )
+    SearchProtocolOpCodeE( short value )
     {
         this.value = value;
     }
@@ -45,29 +44,9 @@ public enum SearchProtocolOpCodeE implements OpCodeI
         }
     }
 
-    @Override
     public short getValue()
     {
         return value;
-    }
-
-    @Override
-    public DatastreamI parse( byte[] data, int offset, int length )
-    {
-        switch ( this )
-        {
-            case Search_Resp:
-                return SearchRespText.parse( data, offset, length );
-
-            case Init_Req:
-                return InitReqText.parse( data, offset, length );
-
-            case Init_Resp:
-                return InitRespText.parse( data, offset, length );
-
-            default:
-                throw new IllegalArgumentException( "Unexpected value=" + this );
-        }
     }
 
 }
