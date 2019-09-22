@@ -8,6 +8,8 @@ import com.sibilantsolutions.grison.driver.foscam.entity.AudioDataTextEntity;
 import com.sibilantsolutions.grison.driver.foscam.entity.AudioStartReqTextEntity;
 import com.sibilantsolutions.grison.driver.foscam.entity.AudioStartRespTextEntity;
 import com.sibilantsolutions.grison.driver.foscam.entity.FoscamTextEntity;
+import com.sibilantsolutions.grison.driver.foscam.entity.KeepAliveAudioVideoTextEntity;
+import com.sibilantsolutions.grison.driver.foscam.entity.KeepAliveOperationTextEntity;
 import com.sibilantsolutions.grison.driver.foscam.entity.LoginReqAudioVideoTextEntity;
 import com.sibilantsolutions.grison.driver.foscam.entity.LoginReqOperationTextEntity;
 import com.sibilantsolutions.grison.driver.foscam.entity.LoginRespTextEntity;
@@ -80,6 +82,10 @@ public class FoscamTextEntityToFoscamTextDto extends MessageToMessageEncoder<Fos
             dto = EntityToDto.videoStartReqTextDto.apply((VideoStartReqTextEntity) msg);
         } else if (msg instanceof VideoStartRespTextEntity) {
             dto = EntityToDto.videoStartRespTextDto.apply((VideoStartRespTextEntity) msg);
+        } else if (msg instanceof KeepAliveOperationTextEntity) {
+            dto = EntityToDto.keepAliveOperationTextDto.apply((KeepAliveOperationTextEntity) msg);
+        } else if (msg instanceof KeepAliveAudioVideoTextEntity) {
+            dto = EntityToDto.keepAliveAudioVideoTextDto.apply((KeepAliveAudioVideoTextEntity) msg);
         } else {
             throw new UnsupportedOperationException("Unexpected msg=" + msg);
         }

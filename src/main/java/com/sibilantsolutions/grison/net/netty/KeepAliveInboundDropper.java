@@ -24,7 +24,7 @@ public class KeepAliveInboundDropper extends SimpleChannelInboundHandler<Command
     @Override
     protected void channelRead0(ChannelHandlerContext ctx, CommandDto msg) {
         if (msg.text().opCode().equals(keepAliveOpCode)) {
-            LOG.info("Drop inbound keep alive.");
+            LOG.info("{} Drop inbound keep alive={}.", ctx.channel(), keepAliveOpCode);
         } else {
             ctx.fireChannelRead(msg);
         }

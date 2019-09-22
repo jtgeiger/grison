@@ -17,6 +17,8 @@ import com.sibilantsolutions.grison.driver.foscam.dto.AlarmNotifyTextDto;
 import com.sibilantsolutions.grison.driver.foscam.dto.AudioDataTextDto;
 import com.sibilantsolutions.grison.driver.foscam.dto.AudioStartReqTextDto;
 import com.sibilantsolutions.grison.driver.foscam.dto.AudioStartRespTextDto;
+import com.sibilantsolutions.grison.driver.foscam.dto.KeepAliveAudioVideoTextDto;
+import com.sibilantsolutions.grison.driver.foscam.dto.KeepAliveOperationTextDto;
 import com.sibilantsolutions.grison.driver.foscam.dto.LoginReqAudioVideoTextDto;
 import com.sibilantsolutions.grison.driver.foscam.dto.LoginReqOperationTextDto;
 import com.sibilantsolutions.grison.driver.foscam.dto.LoginRespTextDto;
@@ -36,6 +38,8 @@ import com.sibilantsolutions.grison.driver.foscam.entity.AlarmNotifyTextEntity;
 import com.sibilantsolutions.grison.driver.foscam.entity.AudioDataTextEntity;
 import com.sibilantsolutions.grison.driver.foscam.entity.AudioStartReqTextEntity;
 import com.sibilantsolutions.grison.driver.foscam.entity.AudioStartRespTextEntity;
+import com.sibilantsolutions.grison.driver.foscam.entity.KeepAliveAudioVideoTextEntity;
+import com.sibilantsolutions.grison.driver.foscam.entity.KeepAliveOperationTextEntity;
 import com.sibilantsolutions.grison.driver.foscam.entity.LoginReqAudioVideoTextEntity;
 import com.sibilantsolutions.grison.driver.foscam.entity.LoginReqOperationTextEntity;
 import com.sibilantsolutions.grison.driver.foscam.entity.LoginRespTextEntity;
@@ -58,6 +62,10 @@ public final class DtoToEntity {
 
     private DtoToEntity() {
     }
+
+    public static final Function<KeepAliveOperationTextDto, KeepAliveOperationTextEntity> keepAliveOperationTextEntity = dto -> KeepAliveOperationTextEntity.builder().build();
+
+    public static final Function<KeepAliveAudioVideoTextDto, KeepAliveAudioVideoTextEntity> keepAliveAudioVideoTextEntity = dto -> KeepAliveAudioVideoTextEntity.builder().build();
 
     public static final Function<LoginReqOperationTextDto, LoginReqOperationTextEntity> loginReqOperationTextEntity = dto -> LoginReqOperationTextEntity.builder().build();
 
