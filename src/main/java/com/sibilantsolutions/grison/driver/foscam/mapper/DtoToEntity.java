@@ -211,10 +211,38 @@ public final class DtoToEntity {
                 .build();
     };
 
-    public static final Function<InitReqTextDto, InitReqTextEntity> initReqTextEntity = dto -> InitReqTextEntity.builder()
-            .build();
+    public static final Function<InitReqTextDto, InitReqTextEntity> initReqTextEntity = dto -> {
+        final InetSocketAddress address;
+        final InetAddress mask;
+        final InetAddress gateway;
+        final InetAddress dns;
+
+        try {
+            address = new InetSocketAddress(InetAddress.getByAddress(Ints.toByteArray(dto.ip().value().intValue())), dto.cameraPort().value().intValue());
+            mask = InetAddress.getByAddress(Ints.toByteArray(dto.mask().value().intValue()));
+            gateway = InetAddress.getByAddress(Ints.toByteArray(dto.gateway().value().intValue()));
+            dns = InetAddress.getByAddress(Ints.toByteArray(dto.dns().value().intValue()));
+        } catch (UnknownHostException e) {
+            throw new UnsupportedOperationException("TODO (CSB)", e);
+        }
+
+        final String username = new String(dto.user(), StandardCharsets.ISO_8859_1);
+        final String password = new String(dto.password(), StandardCharsets.ISO_8859_1);
+        final String cameraId = new String(dto.cameraId(), StandardCharsets.ISO_8859_1);
+
+        return InitReqTextEntity.builder()
+                .cameraId(cameraId.substring(0, cameraId.indexOf(0)))
+                .username(username.substring(0, username.indexOf(0)))
+                .password(password.substring(0, password.indexOf(0)))
+                .address(address)
+                .mask(mask)
+                .gateway(gateway)
+                .dns(dns)
+                .build();
+    };
 
     public static final Function<InitRespTextDto, InitRespTextEntity> initRespTextEntity = dto -> InitRespTextEntity.builder()
+            .result(ResultCodeE.fromValue(dto.resultCode()))
             .build();
 
 }

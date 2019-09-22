@@ -5,6 +5,9 @@ import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
 
+import java.net.InetAddress;
+import java.net.InetSocketAddress;
+import java.net.UnknownHostException;
 import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
 import java.time.Clock;
@@ -37,6 +40,8 @@ import com.sibilantsolutions.grison.driver.foscam.dto.VideoDataTextDto;
 import com.sibilantsolutions.grison.driver.foscam.dto.VideoStartReqTextDto;
 import com.sibilantsolutions.grison.driver.foscam.dto.VideoStartRespTextDto;
 import com.sibilantsolutions.grison.driver.foscam.entity.AudioDataTextEntity;
+import com.sibilantsolutions.grison.driver.foscam.entity.InitReqTextEntity;
+import com.sibilantsolutions.grison.driver.foscam.entity.InitRespTextEntity;
 import com.sibilantsolutions.grison.driver.foscam.mapper.DtoToEntity;
 import com.sibilantsolutions.grison.driver.foscam.type.FosInt16;
 import com.sibilantsolutions.grison.driver.foscam.type.FosInt16R;
@@ -263,6 +268,73 @@ public class NettyCommandDtoParserTest {
                 .timestamp(Instant.ofEpochSecond(0x535A756A))
                 .audioFormat(AudioFormatE.ADPCM)
                 .data(data)
+                .build();
+        assertThat(actual, is(expected));
+    }
+
+    @Test
+    public void testInitReq() throws UnknownHostException {
+        final CommandDto dto = basics("/samples/init_req.bin", ProtocolE.SEARCH_PROTOCOL, FoscamOpCode.Init_Req, 61);
+        final InitReqTextEntity actual = DtoToEntity.initReqTextEntity.apply((InitReqTextDto) dto.text());
+        final InitReqTextEntity expected = InitReqTextEntity
+                .builder()
+                .cameraId("00626E4E72BF")
+                .username("camvis")
+                .password("vis,FOSbuy1v")
+                .address(new InetSocketAddress("192.168.69.22", 80))
+                .mask(InetAddress.getByName("255.255.255.0"))
+                .gateway(InetAddress.getByName("192.168.69.1"))
+                .dns(InetAddress.getByName("192.168.69.1"))
+                .build();
+        assertThat(actual, is(expected));
+    }
+
+    @Test
+    public void testInitReq02() throws UnknownHostException {
+        final CommandDto dto = basics("/samples/init_req02.bin", ProtocolE.SEARCH_PROTOCOL, FoscamOpCode.Init_Req, 61);
+        final InitReqTextEntity actual = DtoToEntity.initReqTextEntity.apply((InitReqTextDto) dto.text());
+        final InitReqTextEntity expected = InitReqTextEntity
+                .builder()
+                .cameraId("00626E4E72BF")
+                .username("camvis")
+                .password("vis,FOSbuy1v")
+                .address(new InetSocketAddress("192.168.69.22", 61234))
+                .mask(InetAddress.getByName("255.255.255.0"))
+                .gateway(InetAddress.getByName("192.168.69.1"))
+                .dns(InetAddress.getByName("192.168.69.1"))
+                .build();
+        assertThat(actual, is(expected));
+    }
+
+    @Test
+    public void testInitResp_succeed() {
+        final CommandDto dto = basics("/samples/init_resp-succeed.bin", ProtocolE.SEARCH_PROTOCOL, FoscamOpCode.Init_Resp, 2);
+        final InitRespTextEntity actual = DtoToEntity.initRespTextEntity.apply((InitRespTextDto) dto.text());
+        final InitRespTextEntity expected = InitRespTextEntity
+                .builder()
+                .result(ResultCodeE.CORRECT)
+                .build();
+        assertThat(actual, is(expected));
+    }
+
+    @Test
+    public void testInitResp_pri_error() {
+        final CommandDto dto = basics("/samples/init_resp-pri_error.bin", ProtocolE.SEARCH_PROTOCOL, FoscamOpCode.Init_Resp, 2);
+        final InitRespTextEntity actual = DtoToEntity.initRespTextEntity.apply((InitRespTextDto) dto.text());
+        final InitRespTextEntity expected = InitRespTextEntity
+                .builder()
+                .result(ResultCodeE.PRI_ERROR)
+                .build();
+        assertThat(actual, is(expected));
+    }
+
+    @Test
+    public void testInitResp_user_wrong() {
+        final CommandDto dto = basics("/samples/init_resp-user_wrong.bin", ProtocolE.SEARCH_PROTOCOL, FoscamOpCode.Init_Resp, 2);
+        final InitRespTextEntity actual = DtoToEntity.initRespTextEntity.apply((InitRespTextDto) dto.text());
+        final InitRespTextEntity expected = InitRespTextEntity
+                .builder()
+                .result(ResultCodeE.USER_WRONG)
                 .build();
         assertThat(actual, is(expected));
     }

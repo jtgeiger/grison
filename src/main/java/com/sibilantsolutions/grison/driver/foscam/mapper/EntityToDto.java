@@ -215,6 +215,8 @@ public final class EntityToDto {
             .dns(FosInt32R.create(UnsignedInteger.fromIntBits(ByteBuffer.wrap(entity.dns().getAddress()).getInt())))
             .build();
 
-    public static final Function<InitRespTextEntity, InitRespTextDto> initRespTextDto = entity -> InitRespTextDto.builder().build();
+    public static final Function<InitRespTextEntity, InitRespTextDto> initRespTextDto = entity -> InitRespTextDto.builder()
+            .resultCode(entity.result().value)
+            .build();
 
 }
