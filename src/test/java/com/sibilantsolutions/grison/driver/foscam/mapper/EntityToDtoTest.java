@@ -27,6 +27,7 @@ import com.sibilantsolutions.grison.driver.foscam.entity.AudioDataTextEntity;
 import com.sibilantsolutions.grison.driver.foscam.entity.AudioStartReqTextEntity;
 import com.sibilantsolutions.grison.driver.foscam.entity.AudioStartRespTextEntity;
 import com.sibilantsolutions.grison.driver.foscam.entity.FoscamTextEntity;
+import com.sibilantsolutions.grison.driver.foscam.entity.InitReqTextEntity;
 import com.sibilantsolutions.grison.driver.foscam.entity.KeepAliveOperationTextEntity;
 import com.sibilantsolutions.grison.driver.foscam.entity.LoginReqAudioVideoTextEntity;
 import com.sibilantsolutions.grison.driver.foscam.entity.LoginReqOperationTextEntity;
@@ -407,8 +408,37 @@ public class EntityToDtoTest {
         assertEntity(entity, "/samples/search_resp.bin");
     }
 
-    //TODO: 20
-    //TODO: 21
+    @Test
+    public void toDatastream20() throws UnknownHostException {
+        final InitReqTextEntity entity = InitReqTextEntity
+                .builder()
+                .cameraId("00626E4E72BF")
+                .username("camvis")
+                .password("vis,FOSbuy1v")
+                .address(new InetSocketAddress("192.168.69.22", 80))
+                .mask(InetAddress.getByName("255.255.255.0"))
+                .gateway(InetAddress.getByName("192.168.69.1"))
+                .dns(InetAddress.getByName("192.168.69.1"))
+                .build();
+
+        assertEntity(entity, "/samples/init_req.bin");
+    }
+
+    @Test
+    public void toDatastream21() throws UnknownHostException {
+        final InitReqTextEntity entity = InitReqTextEntity
+                .builder()
+                .cameraId("00626E4E72BF")
+                .username("camvis")
+                .password("vis,FOSbuy1v")
+                .address(new InetSocketAddress("192.168.69.22", 61234))
+                .mask(InetAddress.getByName("255.255.255.0"))
+                .gateway(InetAddress.getByName("192.168.69.1"))
+                .dns(InetAddress.getByName("192.168.69.1"))
+                .build();
+
+        assertEntity(entity, "/samples/init_req02.bin");
+    }
 
     @Test
     public void toDatastream22() {

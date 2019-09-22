@@ -17,6 +17,8 @@ import com.sibilantsolutions.grison.driver.foscam.dto.AlarmNotifyTextDto;
 import com.sibilantsolutions.grison.driver.foscam.dto.AudioDataTextDto;
 import com.sibilantsolutions.grison.driver.foscam.dto.AudioStartReqTextDto;
 import com.sibilantsolutions.grison.driver.foscam.dto.AudioStartRespTextDto;
+import com.sibilantsolutions.grison.driver.foscam.dto.InitReqTextDto;
+import com.sibilantsolutions.grison.driver.foscam.dto.InitRespTextDto;
 import com.sibilantsolutions.grison.driver.foscam.dto.KeepAliveAudioVideoTextDto;
 import com.sibilantsolutions.grison.driver.foscam.dto.KeepAliveOperationTextDto;
 import com.sibilantsolutions.grison.driver.foscam.dto.LoginReqAudioVideoTextDto;
@@ -38,6 +40,8 @@ import com.sibilantsolutions.grison.driver.foscam.entity.AlarmNotifyTextEntity;
 import com.sibilantsolutions.grison.driver.foscam.entity.AudioDataTextEntity;
 import com.sibilantsolutions.grison.driver.foscam.entity.AudioStartReqTextEntity;
 import com.sibilantsolutions.grison.driver.foscam.entity.AudioStartRespTextEntity;
+import com.sibilantsolutions.grison.driver.foscam.entity.InitReqTextEntity;
+import com.sibilantsolutions.grison.driver.foscam.entity.InitRespTextEntity;
 import com.sibilantsolutions.grison.driver.foscam.entity.KeepAliveAudioVideoTextEntity;
 import com.sibilantsolutions.grison.driver.foscam.entity.KeepAliveOperationTextEntity;
 import com.sibilantsolutions.grison.driver.foscam.entity.LoginReqAudioVideoTextEntity;
@@ -206,5 +210,11 @@ public final class DtoToEntity {
                 .isDhcpEnabled(dto.dhcpEnabled().equals(FosInt8.ONE))
                 .build();
     };
+
+    public static final Function<InitReqTextDto, InitReqTextEntity> initReqTextEntity = dto -> InitReqTextEntity.builder()
+            .build();
+
+    public static final Function<InitRespTextDto, InitRespTextEntity> initRespTextEntity = dto -> InitRespTextEntity.builder()
+            .build();
 
 }

@@ -1,7 +1,6 @@
 package com.sibilantsolutions.grison.driver.foscam.type;
 
 import com.google.auto.value.AutoValue;
-import com.google.common.primitives.Shorts;
 import com.google.common.primitives.UnsignedInteger;
 
 /**
@@ -22,7 +21,7 @@ public abstract class FosInt16 {
     }
 
     public short toShort() {
-        return Shorts.checkedCast(value().intValue());
+        return Integer.valueOf(value().intValue()).shortValue();
     }
 
 }
