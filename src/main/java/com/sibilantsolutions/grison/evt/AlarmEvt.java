@@ -1,20 +1,20 @@
 package com.sibilantsolutions.grison.evt;
 
-import com.sibilantsolutions.grison.driver.foscam.domain.AlarmNotifyText;
+import com.sibilantsolutions.grison.driver.foscam.domain.AlarmTypeE;
 
 public class AlarmEvt
 {
 
-    private final AlarmNotifyText alarmNotify;
+    private final AlarmTypeE alarmType;
 
-    public AlarmEvt(AlarmNotifyText alarmNotify)
+    public AlarmEvt(AlarmTypeE alarmType)
     {
-        this.alarmNotify = alarmNotify;
+        this.alarmType = alarmType;
     }
 
-    public AlarmNotifyText getAlarmNotify()
+    public AlarmTypeE getAlarmType()
     {
-        return alarmNotify;
+        return alarmType;
     }
 
 }
