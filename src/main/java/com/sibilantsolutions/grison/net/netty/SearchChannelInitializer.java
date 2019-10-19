@@ -34,14 +34,14 @@ public class SearchChannelInitializer extends ChannelInitializer {
 
     private static final Logger LOG = LoggerFactory.getLogger(SearchChannelInitializer.class);
 
-    private static final int READ_TIMEOUT_SECONDS = 13;
+    private static final Duration DEFAULT_READ_TIMEOUT = Duration.ofSeconds(13);
 
     private final Subscriber<CommandDto> searchDataStream;
 
     private final Duration timeoutDuration;
 
     public SearchChannelInitializer(Subscriber<CommandDto> searchDatastream) {
-        this(searchDatastream, Duration.ofSeconds(READ_TIMEOUT_SECONDS));
+        this(searchDatastream, DEFAULT_READ_TIMEOUT);
     }
 
     public SearchChannelInitializer(Subscriber<CommandDto> searchDatastream, Duration timeoutDuration) {

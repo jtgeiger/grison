@@ -2,6 +2,7 @@ package com.sibilantsolutions.grison.net.netty;
 
 import java.nio.ByteOrder;
 import java.time.Clock;
+import java.time.Duration;
 import java.util.concurrent.TimeUnit;
 
 import org.reactivestreams.Subscriber;
@@ -34,9 +35,9 @@ public class AudioVideoChannelInitializer extends ChannelInitializer {
     // Got an image that was 78,785 bytes.
     private static final int MAX_FRAME_LENGTH = 100_000;
 
-    private static final int READ_TIMEOUT_SECS = 65;
-    private static final int KEEPALIVE_SEND_TIMEOUT_SECS = 73;
-    private static final int WRITE_TIMEOUT_SECS = KEEPALIVE_SEND_TIMEOUT_SECS + 5;
+    private static final Duration READ_TIMEOUT = Duration.ofMinutes(2);
+    private static final Duration KEEPALIVE_SEND_TIMEOUT = Duration.ofSeconds(73);
+    private static final Duration WRITE_TIMEOUT = KEEPALIVE_SEND_TIMEOUT.plus(Duration.ofSeconds(5));
 
     private final Subscriber<CommandDto> audioVideoDatastream;
 
@@ -60,13 +61,13 @@ public class AudioVideoChannelInitializer extends ChannelInitializer {
                 .addLast(new FoscamTextDtoEncoder())
                 .addLast(new FoscamTextEntityToFoscamTextDto())
 
-                .addLast(new IdleStateHandler(READ_TIMEOUT_SECS, WRITE_TIMEOUT_SECS, 0))
+                .addLast(new IdleStateHandler((int)READ_TIMEOUT.getSeconds(), (int)WRITE_TIMEOUT.getSeconds(), 0))
                 .addLast(new IdleStateEventHandler())
                 //Receive and drop inbound pings.  We don't respond to these.  We send outbound
                 //pings on a set schedule, not dependent on inbound pings.
                 .addLast(new KeepAliveInboundDropper(FoscamOpCode.Keep_Alive_AudioVideo))
                 //Emit KeepAliveTimerEvents at regular intervals.
-                .addLast(new KeepAliveTimerEventScheduler(KEEPALIVE_SEND_TIMEOUT_SECS))
+                .addLast(new KeepAliveTimerEventScheduler(KEEPALIVE_SEND_TIMEOUT))
                 .addLast(new KeepAliveSender(FoscamOpCode.Keep_Alive_AudioVideo))
                 .addLast(new SimpleChannelInboundHandler<CommandDto>() {
                     @Override
