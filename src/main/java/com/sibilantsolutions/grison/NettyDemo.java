@@ -100,6 +100,7 @@ public class NettyDemo {
                 .compose(new CommandToOperationReceiveResult());
 
         final Flowable<AudioVideoReceiveResult> audioVideoReceiveResults = audioVideoDatastream
+                .onBackpressureLatest()
                 .observeOn(Schedulers.io())
                 .compose(new CommandToAudioVideoReceiveResult());
 
