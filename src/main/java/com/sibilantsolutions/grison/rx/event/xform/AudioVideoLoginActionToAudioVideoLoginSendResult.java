@@ -31,7 +31,7 @@ public class AudioVideoLoginActionToAudioVideoLoginSendResult implements Flowabl
                                 if (channelSendEvent == ChannelSendEvent.IN_FLIGHT) {
                                     return AudioVideoLoginSendResult.IN_FLIGHT;
                                 } else if (channelSendEvent == ChannelSendEvent.SENT) {
-                                    LOG.info("Replacing AudioVideo logger with trace-level logger.");
+                                    LOG.info("{} Replacing AudioVideo logger with trace-level logger.", audioVideoLoginAction.channel);
                                     audioVideoLoginAction.channel
                                             .pipeline()
                                             //Log lifecycle events AND datastream ("io.netty.handler.logging.LoggingHandler"; TRACE level).
