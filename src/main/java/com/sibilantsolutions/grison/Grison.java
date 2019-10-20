@@ -3,6 +3,7 @@ package com.sibilantsolutions.grison;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.sibilantsolutions.grison.demo.ApiDemo;
 import com.sibilantsolutions.grison.demo.Demo;
 
 /**
@@ -31,7 +32,7 @@ public class Grison
                 throw new IllegalArgumentException(args[i]);
             }
         } else {
-            new NettyDemo().go(host, port, username, password);
+            ApiDemo.go(host, port, username, password);
         }
 
         log.info("main() finished.");
