@@ -39,13 +39,13 @@
         <maven-release-plugin.version>2.5.3</maven-release-plugin.version>
         <exec-maven-plugin.version>1.6.0</exec-maven-plugin.version>
         <junit.version>4.12</junit.version>
-        <slf4j.version>1.7.28</slf4j.version>
+        <slf4j.version>1.7.29</slf4j.version>
         <logback.version>1.2.3</logback.version>
-        <netty.version>4.1.42.Final</netty.version>
-        <rxjava2.version>2.2.13</rxjava2.version>
+        <netty.version>4.1.43.Final</netty.version>
+        <rxjava2.version>2.2.14</rxjava2.version>
         <retrofit2.version>2.6.2</retrofit2.version>
-        <okhttp3.version>4.2.1</okhttp3.version>
-        <autoValue.version>1.7</autoValue.version>
+        <okhttp3.version>4.2.2</okhttp3.version>
+        <auto-value.version>1.7</auto-value.version>
         <guava.version>28.1-jre</guava.version>
     </properties>
 
@@ -107,7 +107,17 @@
         </dependency>
         <dependency>
             <groupId>com.squareup.retrofit2</groupId>
+            <artifactId>retrofit</artifactId>
+            <version>${retrofit2.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.squareup.retrofit2</groupId>
             <artifactId>adapter-rxjava2</artifactId>
+            <version>${retrofit2.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.squareup.retrofit2</groupId>
+            <artifactId>converter-scalars</artifactId>
             <version>${retrofit2.version}</version>
         </dependency>
         <dependency>
@@ -116,20 +126,15 @@
             <version>${okhttp3.version}</version>
         </dependency>
         <dependency>
-            <groupId>com.squareup.retrofit2</groupId>
-            <artifactId>converter-scalars</artifactId>
-            <version>${retrofit2.version}</version>
+            <groupId>com.google.auto.value</groupId>
+            <artifactId>auto-value</artifactId>
+            <version>${auto-value.version}</version>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>com.google.auto.value</groupId>
             <artifactId>auto-value-annotations</artifactId>
-            <version>${autoValue.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>com.google.auto.value</groupId>
-            <artifactId>auto-value</artifactId>
-            <version>${autoValue.version}</version>
-            <scope>provided</scope>
+            <version>${auto-value.version}</version>
         </dependency>
         <dependency>
             <groupId>com.google.guava</groupId>
