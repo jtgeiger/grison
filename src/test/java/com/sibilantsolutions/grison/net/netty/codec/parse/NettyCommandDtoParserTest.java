@@ -15,7 +15,6 @@ import java.time.Duration;
 import java.time.Instant;
 import java.util.stream.IntStream;
 
-import org.jetbrains.annotations.NotNull;
 import org.junit.Test;
 
 import com.google.common.primitives.UnsignedInteger;
@@ -53,7 +52,6 @@ import io.netty.buffer.ByteBuf;
 
 public class NettyCommandDtoParserTest {
 
-    @NotNull
     private static CommandDto basics(String path, ProtocolE protocolE, FoscamOpCode foscamOpCode, int textLength) {
         final ByteBuf buf = new ResourceToByteBuf().apply(path);
         final CommandDto dto = new NettyCommandDtoParser(Clock.systemUTC()).parse(buf);
