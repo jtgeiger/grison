@@ -2,6 +2,7 @@ package com.sibilantsolutions.grison.demo;
 
 import java.awt.FlowLayout;
 import java.lang.reflect.InvocationTargetException;
+import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.SwingUtilities;
@@ -13,13 +14,14 @@ class DemoUi {
     }    //Prevent instantiation.
 
     static DemoUi buildUi(final JLabel imageLabel, final JLabel uptimeLabel,
-                          final JLabel timestampLabel, final JLabel fpsLabel)
+                          final JLabel timestampLabel, final JLabel fpsLabel, JButton videoStartButton, JButton videoEndButton)
     {
         final DemoUi demoUi = new DemoUi();
 
         try
         {
-            SwingUtilities.invokeAndWait(() -> demoUi.buildUiImpl(imageLabel, uptimeLabel, timestampLabel, fpsLabel));
+            SwingUtilities.invokeAndWait(
+                    () -> demoUi.buildUiImpl(imageLabel, uptimeLabel, timestampLabel, fpsLabel, videoStartButton, videoEndButton));
         }
         catch ( InvocationTargetException | InterruptedException e )
         {
@@ -32,7 +34,7 @@ class DemoUi {
 
 
     private void buildUiImpl(JLabel imageLabel, JLabel uptimeLabel, JLabel timestampLabel,
-                             JLabel fpsLabel)
+                             JLabel fpsLabel, JButton videoStartButton, JButton videoEndButton)
     {
         JFrame f = new JFrame( "Grison" );
         f.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
@@ -46,6 +48,8 @@ class DemoUi {
         f.getContentPane().add(timestampLabel);
         f.getContentPane().add(new JLabel("FPS:"));
         f.getContentPane().add(fpsLabel);
+        f.getContentPane().add(videoStartButton);
+        f.getContentPane().add(videoEndButton);
 
         //f.pack();
         f.setVisible( true );
