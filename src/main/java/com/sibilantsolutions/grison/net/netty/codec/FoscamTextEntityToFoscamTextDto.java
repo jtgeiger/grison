@@ -5,6 +5,7 @@ import java.util.List;
 import com.sibilantsolutions.grison.driver.foscam.dto.FoscamTextDto;
 import com.sibilantsolutions.grison.driver.foscam.entity.AlarmNotifyTextEntity;
 import com.sibilantsolutions.grison.driver.foscam.entity.AudioDataTextEntity;
+import com.sibilantsolutions.grison.driver.foscam.entity.AudioEndTextEntity;
 import com.sibilantsolutions.grison.driver.foscam.entity.AudioStartReqTextEntity;
 import com.sibilantsolutions.grison.driver.foscam.entity.AudioStartRespTextEntity;
 import com.sibilantsolutions.grison.driver.foscam.entity.FoscamTextEntity;
@@ -54,6 +55,8 @@ public class FoscamTextEntityToFoscamTextDto extends MessageToMessageEncoder<Fos
             dto = EntityToDto.audioStartReqTextDto.apply((AudioStartReqTextEntity) msg);
         } else if (msg instanceof AudioStartRespTextEntity) {
             dto = EntityToDto.audioStartRespTextDto.apply((AudioStartRespTextEntity) msg);
+        } else if (msg instanceof AudioEndTextEntity) {
+            dto = EntityToDto.audioEndTextDto.apply((AudioEndTextEntity) msg);
         } else if (msg instanceof LoginReqAudioVideoTextEntity) {
             dto = EntityToDto.loginReqAudioVideoTextDto.apply((LoginReqAudioVideoTextEntity) msg);
         } else if (msg instanceof LoginReqOperationTextEntity) {

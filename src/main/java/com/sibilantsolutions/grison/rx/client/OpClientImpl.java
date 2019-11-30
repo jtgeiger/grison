@@ -1,5 +1,6 @@
 package com.sibilantsolutions.grison.rx.client;
 
+import com.sibilantsolutions.grison.driver.foscam.entity.AudioEndTextEntity;
 import com.sibilantsolutions.grison.driver.foscam.entity.AudioStartReqTextEntity;
 import com.sibilantsolutions.grison.driver.foscam.entity.LoginReqOperationTextEntity;
 import com.sibilantsolutions.grison.driver.foscam.entity.VerifyReqTextEntity;
@@ -49,6 +50,11 @@ public class OpClientImpl implements OpClient {
     public Flowable<ChannelSendEvent> audioStart() {
 
         return channelSender.doSend(AudioStartReqTextEntity.builder().build());
+    }
+
+    @Override
+    public Flowable<ChannelSendEvent> audioEnd() {
+        return channelSender.doSend(AudioEndTextEntity.builder().build());
     }
 
 }

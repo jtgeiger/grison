@@ -11,6 +11,7 @@ import com.google.common.primitives.UnsignedInteger;
 import com.sibilantsolutions.grison.driver.foscam.domain.ResultCodeE;
 import com.sibilantsolutions.grison.driver.foscam.dto.AlarmNotifyTextDto;
 import com.sibilantsolutions.grison.driver.foscam.dto.AudioDataTextDto;
+import com.sibilantsolutions.grison.driver.foscam.dto.AudioEndTextDto;
 import com.sibilantsolutions.grison.driver.foscam.dto.AudioStartReqTextDto;
 import com.sibilantsolutions.grison.driver.foscam.dto.AudioStartRespTextDto;
 import com.sibilantsolutions.grison.driver.foscam.dto.InitReqTextDto;
@@ -35,6 +36,7 @@ import com.sibilantsolutions.grison.driver.foscam.dto.VideoStartReqTextDto;
 import com.sibilantsolutions.grison.driver.foscam.dto.VideoStartRespTextDto;
 import com.sibilantsolutions.grison.driver.foscam.entity.AlarmNotifyTextEntity;
 import com.sibilantsolutions.grison.driver.foscam.entity.AudioDataTextEntity;
+import com.sibilantsolutions.grison.driver.foscam.entity.AudioEndTextEntity;
 import com.sibilantsolutions.grison.driver.foscam.entity.AudioStartReqTextEntity;
 import com.sibilantsolutions.grison.driver.foscam.entity.AudioStartRespTextEntity;
 import com.sibilantsolutions.grison.driver.foscam.entity.InitReqTextEntity;
@@ -142,6 +144,8 @@ public final class EntityToDto {
         }
         return builder.build();
     };
+
+    public static final Function<AudioEndTextEntity, AudioEndTextDto> audioEndTextDto = entity -> AudioEndTextDto.builder().build();
 
     public static final Function<TalkStartReqTextEntity, TalkStartReqTextDto> talkStartReqTextDto = entity -> TalkStartReqTextDto.builder()
             .build();
