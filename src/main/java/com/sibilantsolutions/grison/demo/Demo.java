@@ -8,7 +8,6 @@ import org.slf4j.LoggerFactory;
 import com.sibilantsolutions.grison.client.AudioVideoClient;
 import com.sibilantsolutions.grison.evt.AudioHandlerI;
 import com.sibilantsolutions.grison.rx.State;
-import com.sibilantsolutions.grison.ui.Ui;
 import io.reactivex.Flowable;
 
 public class Demo
@@ -31,7 +30,7 @@ public class Demo
 
     static public void demo( final String hostname, final int port, final String username, final String password )
     {
-        Ui.buildUi(imageLabel, uptimeLabel, timestampLabel, fpsLabel);
+        DemoUi.buildUi(imageLabel, uptimeLabel, timestampLabel, fpsLabel);
 
         final Flowable<State> stateFlowable = AudioVideoClient.stream(hostname, port, username, password);
 

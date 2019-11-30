@@ -1,4 +1,4 @@
-package com.sibilantsolutions.grison.ui;
+package com.sibilantsolutions.grison.demo;
 
 import java.awt.FlowLayout;
 import java.lang.reflect.InvocationTargetException;
@@ -7,31 +7,19 @@ import javax.swing.JLabel;
 import javax.swing.SwingUtilities;
 import javax.swing.WindowConstants;
 
-public class Ui
-{
+class DemoUi {
 
-    private Ui() {}    //Prevent instantiation.
+    private DemoUi() {
+    }    //Prevent instantiation.
 
-    static public Ui buildUi(final JLabel imageLabel, final JLabel uptimeLabel,
-                             final JLabel timestampLabel, final JLabel fpsLabel)
+    static DemoUi buildUi(final JLabel imageLabel, final JLabel uptimeLabel,
+                          final JLabel timestampLabel, final JLabel fpsLabel)
     {
-        final Ui ui = new Ui();
-
-        Runnable r = new Runnable() {
-
-            @Override
-            public void run()
-            {
-                ui.buildUiImpl(imageLabel, uptimeLabel, timestampLabel, fpsLabel);
-            }
-
-        };
-
-//        r = new DurationLoggingRunnable( r, "build ui" );
+        final DemoUi demoUi = new DemoUi();
 
         try
         {
-            SwingUtilities.invokeAndWait( r );
+            SwingUtilities.invokeAndWait(() -> demoUi.buildUiImpl(imageLabel, uptimeLabel, timestampLabel, fpsLabel));
         }
         catch ( InvocationTargetException | InterruptedException e )
         {
@@ -39,7 +27,7 @@ public class Ui
             throw new UnsupportedOperationException( "OGTE TODO!", e );
         }
 
-        return ui;
+        return demoUi;
     }
 
 
