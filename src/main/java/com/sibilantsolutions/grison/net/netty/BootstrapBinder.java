@@ -6,7 +6,6 @@ import org.slf4j.LoggerFactory;
 import com.sibilantsolutions.grison.rx.net.ChannelConnectEvent;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.ChannelFuture;
-import io.netty.channel.ChannelFutureListener;
 import io.reactivex.BackpressureStrategy;
 import io.reactivex.Flowable;
 import io.reactivex.Scheduler;
@@ -38,13 +37,9 @@ public class BootstrapBinder {
 
             final ChannelFuture channelFuture = bootstrap
                     .bind()
-                    .addListener((ChannelFutureListener) future -> {
+                    .addListener((ChannelFuture future) -> {
 
-                        if (!future.isDone()) {
-                            LOG.error("bind listener fired but not done for bootstrap={}: future={}.", bootstrap, future);
-
-                            worker.schedule(() -> emitter.onNext(ChannelConnectEvent.fail(new RuntimeException("Why did the listener fire if the future isn't done?"))));
-                        } else if (future.isSuccess()) {
+                        if (future.isSuccess()) {
                             worker.schedule(() -> emitter.onNext(ChannelConnectEvent.success(future.channel())));
                         } else {
                             worker.schedule(() -> emitter.onNext(ChannelConnectEvent.fail(new RuntimeException(future.cause()))));

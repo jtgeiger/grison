@@ -16,7 +16,7 @@ import com.sibilantsolutions.grison.net.netty.codec.FoscamTextByteBufDTOEncoder;
 import com.sibilantsolutions.grison.net.netty.codec.FoscamTextDtoEncoder;
 import com.sibilantsolutions.grison.net.netty.codec.FoscamTextEntityToFoscamTextDto;
 import io.netty.channel.Channel;
-import io.netty.channel.ChannelFutureListener;
+import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
 import io.netty.channel.ChannelInitializer;
@@ -90,7 +90,7 @@ public class AudioVideoChannelInitializer extends ChannelInitializer {
                 })
         ;
 
-        ch.closeFuture().addListener((ChannelFutureListener) future -> {
+        ch.closeFuture().addListener((ChannelFuture future) -> {
             final EventLoopGroup group = future.channel().eventLoop().parent();
             LOG.info("{} Channel closed, shutting down group={}.", future.channel(), group);
             group.shutdownGracefully(0, 2, TimeUnit.SECONDS);

@@ -7,7 +7,7 @@ import com.sibilantsolutions.grison.driver.foscam.dto.FoscamOpCode;
 import com.sibilantsolutions.grison.driver.foscam.entity.FoscamTextEntity;
 import com.sibilantsolutions.grison.driver.foscam.entity.KeepAliveAudioVideoTextEntity;
 import com.sibilantsolutions.grison.driver.foscam.entity.KeepAliveOperationTextEntity;
-import io.netty.channel.ChannelFutureListener;
+import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
 
@@ -38,7 +38,7 @@ public class KeepAliveSender extends ChannelInboundHandlerAdapter {
             LOG.info("{} send keep alive={}.", ctx.channel(), keepAliveOpCode);
 
             ctx.writeAndFlush(entity)
-                    .addListener((ChannelFutureListener) future -> {
+                    .addListener((ChannelFuture future) -> {
                         if (!future.isSuccess()) {
                             throw new RuntimeException("Failed to send keepAlive:", future.cause());
                         }
