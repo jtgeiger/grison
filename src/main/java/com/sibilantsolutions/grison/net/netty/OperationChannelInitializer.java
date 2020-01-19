@@ -26,7 +26,7 @@ import io.netty.handler.codec.LengthFieldBasedFrameDecoder;
 import io.netty.handler.logging.LoggingHandler;
 import io.netty.handler.timeout.IdleStateHandler;
 
-public class OperationChannelInitializer extends ChannelInitializer {
+public class OperationChannelInitializer extends ChannelInitializer<Channel> {
 
     private static final Logger LOG = LoggerFactory.getLogger(OperationChannelInitializer.class);
 

@@ -30,7 +30,7 @@ import io.netty.handler.logging.LoggingHandler;
 import io.netty.handler.timeout.ReadTimeoutException;
 import io.netty.handler.timeout.ReadTimeoutHandler;
 
-public class SearchChannelInitializer extends ChannelInitializer {
+public class SearchChannelInitializer extends ChannelInitializer<Channel> {
 
     private static final Logger LOG = LoggerFactory.getLogger(SearchChannelInitializer.class);
 
