@@ -103,7 +103,7 @@ public class SearchChannelInitializer extends ChannelInitializer<Channel> {
                 .addLast(new ChannelInboundHandlerAdapter() {
                     @Override
                     public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) {
-                        LOG.error("{} exception at end of pipeline; closing channel:", ctx.channel(),
+                        LOG.error("{} exception at end of pipeline; closing Search channel:", ctx.channel(),
                                 new RuntimeException(cause));
                         ctx.close();
                     }
@@ -112,7 +112,7 @@ public class SearchChannelInitializer extends ChannelInitializer<Channel> {
 
         ch.closeFuture().addListener((ChannelFuture future) -> {
             final EventLoopGroup group = future.channel().eventLoop().parent();
-            LOG.info("{} Channel closed, shutting down group={}.", future.channel(), group);
+            LOG.info("{} Search channel closed, shutting down group={}.", future.channel(), group);
             group.shutdownGracefully(0, 2, TimeUnit.SECONDS);
         });
     }
