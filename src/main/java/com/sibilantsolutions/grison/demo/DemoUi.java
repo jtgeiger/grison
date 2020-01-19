@@ -14,14 +14,16 @@ class DemoUi {
     }    //Prevent instantiation.
 
     static DemoUi buildUi(final JLabel imageLabel, final JLabel uptimeLabel,
-                          final JLabel timestampLabel, final JLabel fpsLabel, JButton videoStartButton, JButton videoEndButton)
+                          final JLabel timestampLabel, final JLabel fpsLabel, JButton videoStartButton,
+                          JButton videoEndButton, JButton audioStartButton, JButton audioEndButton)
     {
         final DemoUi demoUi = new DemoUi();
 
         try
         {
             SwingUtilities.invokeAndWait(
-                    () -> demoUi.buildUiImpl(imageLabel, uptimeLabel, timestampLabel, fpsLabel, videoStartButton, videoEndButton));
+                    () -> demoUi.buildUiImpl(imageLabel, uptimeLabel, timestampLabel, fpsLabel,
+                            videoStartButton, videoEndButton, audioStartButton, audioEndButton));
         }
         catch ( InvocationTargetException | InterruptedException e )
         {
@@ -34,7 +36,8 @@ class DemoUi {
 
 
     private void buildUiImpl(JLabel imageLabel, JLabel uptimeLabel, JLabel timestampLabel,
-                             JLabel fpsLabel, JButton videoStartButton, JButton videoEndButton)
+                             JLabel fpsLabel, JButton videoStartButton, JButton videoEndButton,
+                             JButton audioStartButton, JButton audioEndButton)
     {
         JFrame f = new JFrame( "Grison" );
         f.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
@@ -50,9 +53,11 @@ class DemoUi {
         f.getContentPane().add(fpsLabel);
         f.getContentPane().add(videoStartButton);
         f.getContentPane().add(videoEndButton);
+        f.getContentPane().add(audioStartButton);
+        f.getContentPane().add(audioEndButton);
 
         //f.pack();
-        f.setVisible( true );
+        f.setVisible(true);
     }
 
 }
