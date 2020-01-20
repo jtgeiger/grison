@@ -28,22 +28,18 @@ public class OperationConnectActionToOperationConnectResult implements FlowableT
     @Override
     public Publisher<OperationConnectResult> apply(Flowable<OperationConnectAction> upstream) {
         final Flowable<ConnectionRequestEvent> connectionRequestEventFlowable = upstream
-                .map(operationConnectAction -> new ConnectionRequestEvent(
-                        InetSocketAddress.createUnresolved(operationConnectAction.host, operationConnectAction.port)));
-//                            operationConnectAction.username, operationConnectAction.password));
+                .map(operationConnectAction -> ConnectionRequestEvent.create(
+                        InetSocketAddress.createUnresolved(operationConnectAction.host, operationConnectAction.port),
+                        new OperationChannelInitializer(operationDatastream)));
 
         final Flowable<Bootstrap> bootstrapFlowable =
                 connectionRequestEventFlowable
-                        .flatMapSingle(connectionRequestEvent -> new NioSocketConnectionBootstrap()
-                                .bootstrap(connectionRequestEvent, operationDatastream,
-                                        new OperationChannelInitializer(operationDatastream)));
+                        .flatMapSingle(NioSocketConnectionBootstrap::bootstrap);
 
         final Flowable<ChannelConnectEvent> channelConnectEventFlowable = bootstrapFlowable
-//                    .doOnNext(bootstrap -> LOG.info("onNext bootstrap={}", bootstrap))
-                .flatMap(new BootstrapConnector()::connect);
+                .flatMap(BootstrapConnector::connect);
 
         return channelConnectEventFlowable
-//                    .doOnNext(channelConnectEvent -> LOG.info("onNext channelConnectEvent={}", channelConnectEvent))
                 .map(channelConnectEvent -> {
                     if (channelConnectEvent == ChannelConnectEvent.IN_FLIGHT) {
                         return OperationConnectResult.IN_FLIGHT;

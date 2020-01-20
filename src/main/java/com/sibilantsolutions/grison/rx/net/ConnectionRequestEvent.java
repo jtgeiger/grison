@@ -2,18 +2,18 @@ package com.sibilantsolutions.grison.rx.net;
 
 import java.net.SocketAddress;
 
-public class ConnectionRequestEvent {
+import com.google.auto.value.AutoValue;
+import io.netty.channel.ChannelHandler;
 
-    public final SocketAddress socketAddress;
+@AutoValue
+public abstract class ConnectionRequestEvent {
 
-    public ConnectionRequestEvent(SocketAddress socketAddress) {
-        this.socketAddress = socketAddress;
+    public abstract SocketAddress socketAddress();
+
+    public abstract ChannelHandler channelHandler();
+
+    public static ConnectionRequestEvent create(SocketAddress socketAddress, ChannelHandler channelHandler) {
+        return new AutoValue_ConnectionRequestEvent(socketAddress, channelHandler);
     }
 
-    @Override
-    public String toString() {
-        return "ConnectionRequestEvent{" +
-                "socketAddress=" + socketAddress +
-                '}';
-    }
 }

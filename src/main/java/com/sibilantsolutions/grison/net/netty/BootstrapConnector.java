@@ -17,7 +17,11 @@ public class BootstrapConnector {
 
     private static final Logger LOG = LoggerFactory.getLogger(BootstrapConnector.class);
 
-    public Flowable<ChannelConnectEvent> connect(Bootstrap bootstrap) {
+    private BootstrapConnector() {
+        throw new IllegalStateException("No instances.");
+    }
+
+    public static Flowable<ChannelConnectEvent> connect(Bootstrap bootstrap) {
         return Flowable.create(emitter -> {
 
             //Use a worker to make sure that all emissions occur on the same thread for the sake of consistency for

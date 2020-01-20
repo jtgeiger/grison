@@ -28,17 +28,16 @@ public class AudioVideoConnectActionToAudioVideoConnectResult implements Flowabl
     @Override
     public Publisher<AudioVideoConnectResult> apply(Flowable<AudioVideoConnectAction> upstream) {
         final Flowable<ConnectionRequestEvent> connectionRequestEventFlowable = upstream
-                .map(operationConnectAction -> new ConnectionRequestEvent(
-                        InetSocketAddress.createUnresolved(operationConnectAction.host, operationConnectAction.port)));
+                .map(operationConnectAction -> ConnectionRequestEvent.create(
+                        InetSocketAddress.createUnresolved(operationConnectAction.host, operationConnectAction.port),
+                        new AudioVideoChannelInitializer(audioVideoDatastream)));
 
         final Flowable<Bootstrap> bootstrapFlowable =
                 connectionRequestEventFlowable
-                        .flatMapSingle(connectionRequestEvent -> new NioSocketConnectionBootstrap()
-                                .bootstrap(connectionRequestEvent, audioVideoDatastream,
-                                        new AudioVideoChannelInitializer(audioVideoDatastream)));
+                        .flatMapSingle(NioSocketConnectionBootstrap::bootstrap);
 
         final Flowable<ChannelConnectEvent> channelConnectEventFlowable = bootstrapFlowable
-                .flatMap(new BootstrapConnector()::connect);
+                .flatMap(BootstrapConnector::connect);
 
         return channelConnectEventFlowable
                 .map(channelConnectEvent -> {
