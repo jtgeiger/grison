@@ -164,9 +164,7 @@ public class StateAndResultToStateBiFunction implements BiFunction<State, Abstra
             if (r.channel != null) {
                 state1 = State.audioVideoConnected(r.channel, state);
 
-                Optional<FosInt32> o = (state1.videoStartRespText != null
-                        ? state1.videoStartRespText.dataConnectionId()
-                        : state1.audioStartRespText.dataConnectionId());
+                Optional<FosInt32> o = Optional.ofNullable(state1.dataConnectionId);
                 final FosInt32 dataConnectionId = o.orElseThrow(VerifyException::new);
 
                 final AudioVideoLoginAction audioVideoLoginAction = new AudioVideoLoginAction(state1.audioVideoChannel, dataConnectionId);

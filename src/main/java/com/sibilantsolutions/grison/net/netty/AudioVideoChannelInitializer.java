@@ -77,7 +77,10 @@ public class AudioVideoChannelInitializer extends ChannelInitializer<Channel> {
 
                     @Override
                     public void channelInactive(ChannelHandlerContext ctx) {
-                        audioVideoDatastream.onComplete();
+                        //TODO: Can't complete the stream here because we might connect another A/V channel later and
+                        //would still want to publish events.  We should publish events instead of data.
+//                        audioVideoDatastream.onComplete();
+                        LOG.info("{} AudioVideo channel inactive.", ctx.channel());
                     }
                 })
                 .addLast(EXCEPTION_TRAPPER, new ChannelInboundHandlerAdapter() {
