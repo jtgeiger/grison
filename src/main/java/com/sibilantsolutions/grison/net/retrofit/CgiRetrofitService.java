@@ -176,4 +176,10 @@ public interface CgiRetrofitService {
     @GET("set_datetime.cgi")
     Single<Result<String>> setTime(@Query("now") long unixEpochSeconds);
 
+    @GET("get_status.cgi")
+    Single<Result<String>> getStatus();
+
+    @GET("get_params.cgi")
+    Single<Result<String>> getParams();
+
 }

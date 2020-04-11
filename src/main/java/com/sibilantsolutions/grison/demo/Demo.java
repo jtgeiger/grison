@@ -20,6 +20,8 @@ import com.sibilantsolutions.grison.rx.net.ChannelSender;
 import io.netty.channel.Channel;
 import io.reactivex.Flowable;
 import io.reactivex.Single;
+import io.reactivex.SingleObserver;
+import io.reactivex.disposables.Disposable;
 import retrofit2.Response;
 import retrofit2.adapter.rxjava2.Result;
 
@@ -36,6 +38,8 @@ public class Demo {
     private static final JButton audioEndButton = new JButton("Audio End");
     private static final JButton audioStartButton = new JButton("Audio Start");
     private static final JButton setTimeButton = new JButton("Set Time");
+    private static final JButton getStatusButton = new JButton("Status");
+    private static final JButton getParamsButton = new JButton("Params");
     private static final DemoImageHandler imageHandler = new DemoImageHandler();
 
     static {
@@ -47,7 +51,7 @@ public class Demo {
 
     static public void demo(final String hostname, final int port, final String username, final String password) {
         DemoUi.buildUi(imageLabel, uptimeLabel, timestampLabel, fpsLabel, videoStartButton, videoEndButton,
-                audioStartButton, audioEndButton, setTimeButton);
+                audioStartButton, audioEndButton, setTimeButton, getStatusButton, getParamsButton);
 
         final MyVideoStartActionListener videoStartActionListener = new MyVideoStartActionListener();
         videoStartButton.addActionListener(videoStartActionListener);
@@ -62,6 +66,7 @@ public class Demo {
         audioEndButton.addActionListener(audioEndActionListener);
 
         final CgiRetrofitService cgiRetrofitService = CgiClient.cgiRetrofitService(CgiClient.retrofit(hostname, port, username, password));
+
         setTimeButton.addActionListener(actionEvent -> {
             final Instant now = Instant.now();
             final long epochSecond = now.getEpochSecond();
@@ -77,8 +82,52 @@ public class Demo {
                     },
                     throwable -> LOG.error("Set time call failed:", throwable)
             );
-
         });
+
+        getStatusButton.addActionListener(actionEvent -> cgiRetrofitService.getStatus()
+                .subscribe(new SingleObserver<Result<String>>() {
+                    @Override
+                    public void onSubscribe(Disposable d) {
+                        //No-op.
+                    }
+
+                    @Override
+                    public void onSuccess(Result<String> result) {
+                        if (result.isError()) {
+                            LOG.error("get status result error:", result.error());
+                        } else {
+                            LOG.info("get status result={}.", responseBody(Objects.requireNonNull(result.response())));
+                        }
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        LOG.error("get status call failed:", e);
+                    }
+                }));
+
+        getParamsButton.addActionListener(actionEvent -> cgiRetrofitService.getParams()
+                .subscribe(new SingleObserver<Result<String>>() {
+                    @Override
+                    public void onSubscribe(Disposable d) {
+                        //No-op.
+                    }
+
+                    @Override
+                    public void onSuccess(Result<String> result) {
+                        if (result.isError()) {
+                            LOG.error("get params result error:", result.error());
+                        } else {
+                            LOG.info("get params result={}.", responseBody(Objects.requireNonNull(result.response())));
+                        }
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        LOG.error("get params call failed:", e);
+                    }
+                }));
+
 
         final Flowable<State> stateFlowable = AudioVideoClient.stream(hostname, port, username, password);
 

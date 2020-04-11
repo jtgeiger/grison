@@ -15,7 +15,8 @@ class DemoUi {
 
     static DemoUi buildUi(final JLabel imageLabel, final JLabel uptimeLabel,
                           final JLabel timestampLabel, final JLabel fpsLabel, JButton videoStartButton,
-                          JButton videoEndButton, JButton audioStartButton, JButton audioEndButton, JButton setTimeButton)
+                          JButton videoEndButton, JButton audioStartButton, JButton audioEndButton,
+                          JButton setTimeButton, JButton getStatusButton, JButton getParamsButton)
     {
         final DemoUi demoUi = new DemoUi();
 
@@ -23,7 +24,8 @@ class DemoUi {
         {
             SwingUtilities.invokeAndWait(
                     () -> demoUi.buildUiImpl(imageLabel, uptimeLabel, timestampLabel, fpsLabel,
-                            videoStartButton, videoEndButton, audioStartButton, audioEndButton, setTimeButton));
+                            videoStartButton, videoEndButton, audioStartButton, audioEndButton, setTimeButton,
+                            getStatusButton, getParamsButton));
         }
         catch ( InvocationTargetException | InterruptedException e )
         {
@@ -37,7 +39,8 @@ class DemoUi {
 
     private void buildUiImpl(JLabel imageLabel, JLabel uptimeLabel, JLabel timestampLabel,
                              JLabel fpsLabel, JButton videoStartButton, JButton videoEndButton,
-                             JButton audioStartButton, JButton audioEndButton, JButton setTimeButton)
+                             JButton audioStartButton, JButton audioEndButton, JButton setTimeButton,
+                             JButton getStatusButton, JButton getParamsButton)
     {
         JFrame f = new JFrame( "Grison" );
         f.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
@@ -56,6 +59,8 @@ class DemoUi {
         f.getContentPane().add(audioStartButton);
         f.getContentPane().add(audioEndButton);
         f.getContentPane().add(setTimeButton);
+        f.getContentPane().add(getStatusButton);
+        f.getContentPane().add(getParamsButton);
 
         //f.pack();
         f.setVisible(true);
