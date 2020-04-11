@@ -26,7 +26,7 @@ public class CgiClient {
         //TODO: Dedicated HTTP logger; use Markers; use Trace level.
         HttpLoggingInterceptor logging = new HttpLoggingInterceptor(LOG::debug);
 // set your desired log level
-        logging.level(HttpLoggingInterceptor.Level.BODY);
+        logging.setLevel(HttpLoggingInterceptor.Level.BODY);
 
         OkHttpClient.Builder httpClient = new OkHttpClient.Builder();
 // add your other interceptors …

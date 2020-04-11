@@ -43,8 +43,9 @@
         <logback.version>1.2.3</logback.version>
         <netty.version>4.1.45.Final</netty.version>
         <rxjava2.version>2.2.17</rxjava2.version>
-        <retrofit2.version>2.7.1</retrofit2.version>
-        <okhttp3.version>4.3.1</okhttp3.version>
+        <retrofit2.version>2.8.1</retrofit2.version>
+        <!-- Use the same version of logger that matches the okhttp3 version used by retrofit2. -->
+        <okhttp3-logging-interceptor.version>3.14.7</okhttp3-logging-interceptor.version>
         <auto-value.version>1.7</auto-value.version>
         <guava.version>28.2-jre</guava.version>
     </properties>
@@ -123,7 +124,7 @@
         <dependency>
             <groupId>com.squareup.okhttp3</groupId>
             <artifactId>logging-interceptor</artifactId>
-            <version>${okhttp3.version}</version>
+            <version>${okhttp3-logging-interceptor.version}</version>
         </dependency>
         <dependency>
             <groupId>com.google.auto.value</groupId>
