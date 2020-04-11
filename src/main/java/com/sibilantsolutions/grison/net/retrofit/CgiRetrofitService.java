@@ -173,4 +173,7 @@ public interface CgiRetrofitService {
     @GET("decoder_control.cgi?command=" + DecoderControlE.Values.IO_OUTPUT_HIGH)
     Single<Result<String>> irOff();
 
+    @GET("set_datetime.cgi")
+    Single<Result<String>> setTime(@Query("now") long unixEpochSeconds);
+
 }
