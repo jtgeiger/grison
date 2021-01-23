@@ -8,8 +8,8 @@ import com.sibilantsolutions.grison.rx.event.action.AudioStartAction;
 import com.sibilantsolutions.grison.rx.event.result.AudioStartSendResult;
 import com.sibilantsolutions.grison.rx.net.ChannelSendEvent;
 import com.sibilantsolutions.grison.rx.net.ChannelSender;
-import io.reactivex.Flowable;
-import io.reactivex.FlowableTransformer;
+import io.reactivex.rxjava3.core.Flowable;
+import io.reactivex.rxjava3.core.FlowableTransformer;
 
 public class AudioStartActionToAudioStartSendResult implements FlowableTransformer<AudioStartAction, AudioStartSendResult> {
     @Override

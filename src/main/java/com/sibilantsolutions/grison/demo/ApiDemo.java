@@ -10,13 +10,13 @@ import com.sibilantsolutions.grison.client.SearchClient;
 import com.sibilantsolutions.grison.net.retrofit.CgiRetrofitService;
 import com.sibilantsolutions.grison.net.retrofit.HttpResult;
 import com.sibilantsolutions.grison.net.retrofit.RetrofitResultToHttpResult;
-import io.reactivex.Flowable;
-import io.reactivex.FlowableSubscriber;
-import io.reactivex.Observer;
-import io.reactivex.Single;
-import io.reactivex.SingleObserver;
-import io.reactivex.disposables.Disposable;
-import retrofit2.adapter.rxjava2.Result;
+import io.reactivex.rxjava3.core.Flowable;
+import io.reactivex.rxjava3.core.FlowableSubscriber;
+import io.reactivex.rxjava3.core.Observer;
+import io.reactivex.rxjava3.core.Single;
+import io.reactivex.rxjava3.core.SingleObserver;
+import io.reactivex.rxjava3.disposables.Disposable;
+import retrofit2.adapter.rxjava3.Result;
 
 public class ApiDemo {
 
@@ -61,7 +61,7 @@ public class ApiDemo {
 
         final Flowable<HttpResult<String>> httpResultFlowable = result
                 .toFlowable()
-                .startWith(HttpResult.inFlight());
+                .startWithItem(HttpResult.inFlight());
 
         httpResultFlowable
                 .subscribe(new LogSubscriber<>());

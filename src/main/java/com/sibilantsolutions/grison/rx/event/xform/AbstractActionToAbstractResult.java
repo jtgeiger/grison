@@ -17,8 +17,8 @@ import com.sibilantsolutions.grison.rx.event.action.VerifyAction;
 import com.sibilantsolutions.grison.rx.event.action.VideoEndAction;
 import com.sibilantsolutions.grison.rx.event.action.VideoStartAction;
 import com.sibilantsolutions.grison.rx.event.result.AbstractResult;
-import io.reactivex.Flowable;
-import io.reactivex.FlowableTransformer;
+import io.reactivex.rxjava3.core.Flowable;
+import io.reactivex.rxjava3.core.FlowableTransformer;
 
 public class AbstractActionToAbstractResult implements FlowableTransformer<AbstractAction, AbstractResult> {
 

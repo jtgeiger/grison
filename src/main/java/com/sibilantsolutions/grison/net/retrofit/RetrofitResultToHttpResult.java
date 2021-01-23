@@ -1,9 +1,9 @@
 package com.sibilantsolutions.grison.net.retrofit;
 
-import io.reactivex.Single;
-import io.reactivex.SingleSource;
-import io.reactivex.SingleTransformer;
-import retrofit2.adapter.rxjava2.Result;
+import io.reactivex.rxjava3.core.Single;
+import io.reactivex.rxjava3.core.SingleSource;
+import io.reactivex.rxjava3.core.SingleTransformer;
+import retrofit2.adapter.rxjava3.Result;
 
 //Convert the Retrofit Result to our own HttpResult.
 public class RetrofitResultToHttpResult<T> implements SingleTransformer<Result<T>, HttpResult<T>> {

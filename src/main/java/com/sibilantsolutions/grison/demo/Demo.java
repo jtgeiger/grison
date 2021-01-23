@@ -19,12 +19,12 @@ import com.sibilantsolutions.grison.rx.State;
 import com.sibilantsolutions.grison.rx.client.OpClientImpl;
 import com.sibilantsolutions.grison.rx.net.ChannelSender;
 import io.netty.channel.Channel;
-import io.reactivex.Flowable;
-import io.reactivex.Single;
-import io.reactivex.SingleObserver;
-import io.reactivex.disposables.Disposable;
+import io.reactivex.rxjava3.core.Flowable;
+import io.reactivex.rxjava3.core.Single;
+import io.reactivex.rxjava3.core.SingleObserver;
+import io.reactivex.rxjava3.disposables.Disposable;
 import retrofit2.Response;
-import retrofit2.adapter.rxjava2.Result;
+import retrofit2.adapter.rxjava3.Result;
 
 public class Demo {
     private static final Logger LOG = LoggerFactory.getLogger(Demo.class);

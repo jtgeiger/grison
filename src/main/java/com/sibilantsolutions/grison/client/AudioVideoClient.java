@@ -13,10 +13,10 @@ import com.sibilantsolutions.grison.rx.event.xform.CommandToAudioVideoReceiveRes
 import com.sibilantsolutions.grison.rx.event.xform.CommandToOperationReceiveResult;
 import com.sibilantsolutions.grison.rx.event.xform.StateAndResultToStateBiFunction;
 import com.sibilantsolutions.grison.rx.event.xform.UiEventToAbstractAction;
-import io.reactivex.Flowable;
-import io.reactivex.processors.FlowableProcessor;
-import io.reactivex.processors.PublishProcessor;
-import io.reactivex.schedulers.Schedulers;
+import io.reactivex.rxjava3.core.Flowable;
+import io.reactivex.rxjava3.processors.FlowableProcessor;
+import io.reactivex.rxjava3.processors.PublishProcessor;
+import io.reactivex.rxjava3.schedulers.Schedulers;
 
 public class AudioVideoClient {
 

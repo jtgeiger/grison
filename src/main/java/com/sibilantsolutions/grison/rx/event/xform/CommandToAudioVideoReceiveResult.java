@@ -12,8 +12,8 @@ import com.sibilantsolutions.grison.driver.foscam.dto.VideoDataTextDto;
 import com.sibilantsolutions.grison.driver.foscam.entity.FoscamTextEntity;
 import com.sibilantsolutions.grison.driver.foscam.mapper.DtoToEntity;
 import com.sibilantsolutions.grison.rx.event.result.AudioVideoReceiveResult;
-import io.reactivex.Flowable;
-import io.reactivex.FlowableTransformer;
+import io.reactivex.rxjava3.core.Flowable;
+import io.reactivex.rxjava3.core.FlowableTransformer;
 
 public class CommandToAudioVideoReceiveResult implements FlowableTransformer<CommandDto, AudioVideoReceiveResult> {
 

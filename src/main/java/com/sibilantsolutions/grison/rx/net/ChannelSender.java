@@ -8,12 +8,12 @@ import org.slf4j.LoggerFactory;
 import com.sibilantsolutions.grison.driver.foscam.entity.FoscamTextEntity;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelFuture;
-import io.reactivex.BackpressureStrategy;
-import io.reactivex.Flowable;
-import io.reactivex.Scheduler;
-import io.reactivex.disposables.CompositeDisposable;
-import io.reactivex.internal.disposables.CancellableDisposable;
-import io.reactivex.schedulers.Schedulers;
+import io.reactivex.rxjava3.core.BackpressureStrategy;
+import io.reactivex.rxjava3.core.Flowable;
+import io.reactivex.rxjava3.core.Scheduler;
+import io.reactivex.rxjava3.disposables.CompositeDisposable;
+import io.reactivex.rxjava3.internal.disposables.CancellableDisposable;
+import io.reactivex.rxjava3.schedulers.Schedulers;
 
 public class ChannelSender {
 

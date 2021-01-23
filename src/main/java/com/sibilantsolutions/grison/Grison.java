@@ -8,8 +8,8 @@ import org.slf4j.LoggerFactory;
 
 import com.sibilantsolutions.grison.demo.ApiDemo;
 import com.sibilantsolutions.grison.demo.Demo;
-import io.reactivex.exceptions.UndeliverableException;
-import io.reactivex.plugins.RxJavaPlugins;
+import io.reactivex.rxjava3.exceptions.UndeliverableException;
+import io.reactivex.rxjava3.plugins.RxJavaPlugins;
 
 /**
  * Grisons, also known as South American wolverines, are mustelids native to Central and South America.

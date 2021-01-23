@@ -36,7 +36,7 @@ import com.sibilantsolutions.grison.rx.event.result.OperationConnectResult;
 import com.sibilantsolutions.grison.rx.event.result.OperationReceiveResult;
 import com.sibilantsolutions.grison.rx.event.result.VerifySendResult;
 import com.sibilantsolutions.grison.rx.event.result.VideoStartSendResult;
-import io.reactivex.functions.BiFunction;
+import io.reactivex.rxjava3.functions.BiFunction;
 
 /**
  * Given a State and an AbstractResult, determine and return the new State.

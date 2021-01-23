@@ -14,8 +14,8 @@ import com.sibilantsolutions.grison.rx.event.result.OperationConnectResult;
 import com.sibilantsolutions.grison.rx.net.ChannelConnectEvent;
 import com.sibilantsolutions.grison.rx.net.ConnectionRequestEvent;
 import io.netty.bootstrap.Bootstrap;
-import io.reactivex.Flowable;
-import io.reactivex.FlowableTransformer;
+import io.reactivex.rxjava3.core.Flowable;
+import io.reactivex.rxjava3.core.FlowableTransformer;
 
 public class OperationConnectActionToOperationConnectResult implements FlowableTransformer<OperationConnectAction, OperationConnectResult> {
 

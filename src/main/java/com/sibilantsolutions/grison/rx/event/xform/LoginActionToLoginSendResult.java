@@ -8,8 +8,8 @@ import com.sibilantsolutions.grison.rx.event.action.LoginAction;
 import com.sibilantsolutions.grison.rx.event.result.LoginSendResult;
 import com.sibilantsolutions.grison.rx.net.ChannelSendEvent;
 import com.sibilantsolutions.grison.rx.net.ChannelSender;
-import io.reactivex.Flowable;
-import io.reactivex.FlowableTransformer;
+import io.reactivex.rxjava3.core.Flowable;
+import io.reactivex.rxjava3.core.FlowableTransformer;
 
 public class LoginActionToLoginSendResult implements FlowableTransformer<LoginAction, LoginSendResult> {
     @Override

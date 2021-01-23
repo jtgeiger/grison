@@ -4,8 +4,8 @@ import org.reactivestreams.Publisher;
 
 import com.sibilantsolutions.grison.rx.event.action.OperationConnectAction;
 import com.sibilantsolutions.grison.rx.event.ui.ConnectUiEvent;
-import io.reactivex.Flowable;
-import io.reactivex.FlowableTransformer;
+import io.reactivex.rxjava3.core.Flowable;
+import io.reactivex.rxjava3.core.FlowableTransformer;
 
 public class ConnectUiEventToOperationConnectAction implements FlowableTransformer<ConnectUiEvent, OperationConnectAction> {
     @Override

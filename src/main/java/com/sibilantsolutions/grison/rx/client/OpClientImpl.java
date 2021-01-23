@@ -8,7 +8,7 @@ import com.sibilantsolutions.grison.driver.foscam.entity.VideoEndTextEntity;
 import com.sibilantsolutions.grison.driver.foscam.entity.VideoStartReqTextEntity;
 import com.sibilantsolutions.grison.rx.net.ChannelSendEvent;
 import com.sibilantsolutions.grison.rx.net.ChannelSender;
-import io.reactivex.Flowable;
+import io.reactivex.rxjava3.core.Flowable;
 
 public class OpClientImpl implements OpClient {
 

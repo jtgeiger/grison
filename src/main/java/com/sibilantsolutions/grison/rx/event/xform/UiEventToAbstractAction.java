@@ -6,8 +6,8 @@ import com.sibilantsolutions.grison.rx.event.action.AbstractAction;
 import com.sibilantsolutions.grison.rx.event.ui.ConnectUiEvent;
 import com.sibilantsolutions.grison.rx.event.ui.UiEvent;
 import com.sibilantsolutions.grison.rx.event.ui.VideoEndUiEvent;
-import io.reactivex.Flowable;
-import io.reactivex.FlowableTransformer;
+import io.reactivex.rxjava3.core.Flowable;
+import io.reactivex.rxjava3.core.FlowableTransformer;
 
 public class UiEventToAbstractAction implements FlowableTransformer<UiEvent, AbstractAction> {
     @Override

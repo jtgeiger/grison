@@ -4,7 +4,7 @@ import com.sibilantsolutions.grison.driver.foscam.entity.LoginReqAudioVideoTextE
 import com.sibilantsolutions.grison.driver.foscam.type.FosInt32;
 import com.sibilantsolutions.grison.rx.net.ChannelSendEvent;
 import com.sibilantsolutions.grison.rx.net.ChannelSender;
-import io.reactivex.Flowable;
+import io.reactivex.rxjava3.core.Flowable;
 
 public class AvClientImpl implements AvClient {
 

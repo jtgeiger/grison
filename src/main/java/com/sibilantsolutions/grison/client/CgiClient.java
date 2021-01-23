@@ -9,7 +9,7 @@ import com.sibilantsolutions.grison.net.retrofit.SetTimeDtoConverterFactory;
 import okhttp3.OkHttpClient;
 import okhttp3.logging.HttpLoggingInterceptor;
 import retrofit2.Retrofit;
-import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory;
+import retrofit2.adapter.rxjava3.RxJava3CallAdapterFactory;
 import retrofit2.converter.scalars.ScalarsConverterFactory;
 
 public class CgiClient {
@@ -38,7 +38,7 @@ public class CgiClient {
         httpClient.addInterceptor(logging);
 
         return new Retrofit.Builder()
-                .addCallAdapterFactory(RxJava2CallAdapterFactory.createAsync())
+                .addCallAdapterFactory(RxJava3CallAdapterFactory.create())
                 .addConverterFactory(ScalarsConverterFactory.create())
                 .addConverterFactory(new SetTimeDtoConverterFactory())
                 .baseUrl(String.format("http://%s:%d", host, port))

@@ -1,8 +1,8 @@
 package com.sibilantsolutions.grison.net.retrofit;
 
 import com.sibilantsolutions.grison.driver.foscam.domain.DecoderControlE;
-import io.reactivex.Single;
-import retrofit2.adapter.rxjava2.Result;
+import io.reactivex.rxjava3.core.Single;
+import retrofit2.adapter.rxjava3.Result;
 import retrofit2.http.GET;
 import retrofit2.http.Query;
 

@@ -4,7 +4,7 @@ import com.sibilantsolutions.grison.rx.net.ConnectionRequestEvent;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.nio.NioSocketChannel;
-import io.reactivex.Single;
+import io.reactivex.rxjava3.core.Single;
 
 public class NioSocketConnectionBootstrap {
 
