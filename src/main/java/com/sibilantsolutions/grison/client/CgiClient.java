@@ -5,6 +5,7 @@ import org.slf4j.LoggerFactory;
 
 import com.sibilantsolutions.grison.net.retrofit.CgiRetrofitService;
 import com.sibilantsolutions.grison.net.retrofit.FoscamInsecureAuthInterceptor;
+import com.sibilantsolutions.grison.net.retrofit.SetTimeDtoConverterFactory;
 import okhttp3.OkHttpClient;
 import okhttp3.logging.HttpLoggingInterceptor;
 import retrofit2.Retrofit;
@@ -39,6 +40,7 @@ public class CgiClient {
         return new Retrofit.Builder()
                 .addCallAdapterFactory(RxJava2CallAdapterFactory.createAsync())
                 .addConverterFactory(ScalarsConverterFactory.create())
+                .addConverterFactory(new SetTimeDtoConverterFactory())
                 .baseUrl(String.format("http://%s:%d", host, port))
                 .client(httpClient.build())
                 .build();

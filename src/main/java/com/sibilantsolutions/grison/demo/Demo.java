@@ -14,6 +14,7 @@ import com.sibilantsolutions.grison.client.AudioVideoClient;
 import com.sibilantsolutions.grison.client.CgiClient;
 import com.sibilantsolutions.grison.evt.AudioHandlerI;
 import com.sibilantsolutions.grison.net.retrofit.CgiRetrofitService;
+import com.sibilantsolutions.grison.net.retrofit.SetTimeDto;
 import com.sibilantsolutions.grison.rx.State;
 import com.sibilantsolutions.grison.rx.client.OpClientImpl;
 import com.sibilantsolutions.grison.rx.net.ChannelSender;
@@ -69,9 +70,8 @@ public class Demo {
 
         setTimeButton.addActionListener(actionEvent -> {
             final Instant now = Instant.now();
-            final long epochSecond = now.getEpochSecond();
-            LOG.info("Setting time now={}, epochSecond={}.", now, epochSecond);
-            final Single<Result<String>> setTime = cgiRetrofitService.setTime(epochSecond);
+            LOG.info("Setting time now={}, epochSecond={}.", now, now.getEpochSecond());
+            final Single<Result<String>> setTime = cgiRetrofitService.setTime(SetTimeDto.create(now));
             setTime.subscribe(
                     result -> {
                         if (result.isError()) {
