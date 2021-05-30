@@ -1,18 +1,32 @@
 # grison
+
 Java API for IP cameras such as those manufactured by Foscam
 
 ## Quick Start
 
+### Clone the repo
+
 ```
 $ git clone https://github.com/jtgeiger/grison.git
 $ cd grison
-$ mvn clean verify exec:java -Dexec.args="cameraAddress cameraPort username password"
+```
+
+### Spring Boot way
+
+```
+$ mvn spring-boot:run -Dspring-boot.run.arguments="--connection.host=<CAMERA_ADDRESS> --connection.port=<CAMERA_PORT> --connection.username=<CAMERA_USERNAME> --connection.password=<CAMERA_PASSWORD>"
 ```
 
 Example:
 
 ```
-$ mvn clean verify exec:java -Dexec.args="192.168.1.20 80 camuser myPassw0rd"
+$ mvn spring-boot:run -Dspring-boot.run.arguments="--connection.host=192.168.1.20 --connection.port=80 --connection.username=camuser --connection.password=myPassw0rd"
+```
+
+### From an existing jar
+
+```
+$ java -jar target/grison-<VERSION>.jar --connection.host=<CAMERA_ADDRESS> --connection.port=<CAMERA_PORT> --connection.username=<CAMERA_USERNAME> --connection.password=<CAMERA_PASSWORD>
 ```
 
 ## [Developers] Releasing
@@ -29,6 +43,7 @@ $ gpg2 -ab grison-0.1.0-sources.jar
 $ jar -cvf bundle.jar grison-0.1.0*
 ```
 
+- The `gpg2` commands will generate *.asc signature files. These should be included in `bundle.jar`.
 - Deploy release artifacts into the staging repository https://oss.sonatype.org/service/local/staging/deploy/maven2
   - Folow instructions at https://central.sonatype.org/publish/release/
   - Note that the legacy host must be used: https://oss.sonatype.org/

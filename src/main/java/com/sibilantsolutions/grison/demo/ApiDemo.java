@@ -1,39 +1,50 @@
 package com.sibilantsolutions.grison.demo;
 
+import javax.annotation.PostConstruct;
+
 import org.reactivestreams.Subscription;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.stereotype.Component;
 
 import com.sibilantsolutions.grison.client.AudioVideoClient;
-import com.sibilantsolutions.grison.client.CgiClient;
 import com.sibilantsolutions.grison.client.SearchClient;
 import com.sibilantsolutions.grison.net.retrofit.CgiRetrofitService;
 import com.sibilantsolutions.grison.net.retrofit.HttpResult;
 import com.sibilantsolutions.grison.net.retrofit.RetrofitResultToHttpResult;
 import io.reactivex.rxjava3.core.Flowable;
 import io.reactivex.rxjava3.core.FlowableSubscriber;
-import io.reactivex.rxjava3.core.Observer;
 import io.reactivex.rxjava3.core.Single;
-import io.reactivex.rxjava3.core.SingleObserver;
-import io.reactivex.rxjava3.disposables.Disposable;
 import retrofit2.adapter.rxjava3.Result;
 
+@Component
+@ConditionalOnProperty(
+        value = Demo.UI_ENABLED_PROPERTY,
+        havingValue = "false"
+)
 public class ApiDemo {
 
     private static final Logger LOG = LoggerFactory.getLogger(ApiDemo.class);
 
-    private ApiDemo() {
+    private final AudioVideoClient audioVideoClient;
+    private final CgiRetrofitService cgiRetrofitService;
+
+    public ApiDemo(AudioVideoClient audioVideoClient, CgiRetrofitService cgiRetrofitService) {
+        this.audioVideoClient = audioVideoClient;
+        this.cgiRetrofitService = cgiRetrofitService;
     }
 
-    public static void go(String host, int port, String username, String password) {
+    @PostConstruct
+    public void go() {
 
-        AudioVideoClient.stream(host, port, username, password)
+        audioVideoClient.stream()
                 .subscribe(new LogSubscriber<>());
 
         SearchClient.search(50_080)
                 .subscribe(new LogSubscriber<>());
 
-        cgi(CgiClient.cgiRetrofitService(CgiClient.retrofit(host, port, username, password)));
+        cgi(cgiRetrofitService);
     }
 
     private static void cgi(CgiRetrofitService cgiRetrofitService) {
@@ -66,47 +77,6 @@ public class ApiDemo {
         httpResultFlowable
                 .subscribe(new LogSubscriber<>());
 
-    }
-
-    private static class LogSingleObserver<T> implements SingleObserver<T> {
-
-        @Override
-        public void onSubscribe(Disposable d) {
-            LOG.info("onSubscribe disposable={}.", d);
-        }
-
-        @Override
-        public void onSuccess(T t) {
-            LOG.info("onSuccess item={}.", t);
-        }
-
-        @Override
-        public void onError(Throwable e) {
-            LOG.error("onError: ", new RuntimeException(e));
-        }
-    }
-
-    private static class LogObserver<T> implements Observer<T> {
-
-        @Override
-        public void onSubscribe(Disposable d) {
-            LOG.info("onSubscribe disposable={}.", d);
-        }
-
-        @Override
-        public void onNext(T t) {
-            LOG.info("onNext item={}.", t);
-        }
-
-        @Override
-        public void onError(Throwable e) {
-            LOG.error("onError: ", new RuntimeException(e));
-        }
-
-        @Override
-        public void onComplete() {
-            LOG.info("onComplete.");
-        }
     }
 
     private static class LogSubscriber<T> implements FlowableSubscriber<T> {

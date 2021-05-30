@@ -1,5 +1,8 @@
 package com.sibilantsolutions.grison.client;
 
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.stereotype.Service;
+
 import com.sibilantsolutions.grison.driver.foscam.dto.CommandDto;
 import com.sibilantsolutions.grison.rx.State;
 import com.sibilantsolutions.grison.rx.event.action.AbstractAction;
@@ -18,14 +21,19 @@ import io.reactivex.rxjava3.processors.FlowableProcessor;
 import io.reactivex.rxjava3.processors.PublishProcessor;
 import io.reactivex.rxjava3.schedulers.Schedulers;
 
+@Service
+@EnableConfigurationProperties(CameraConnectionProperties.class)
 public class AudioVideoClient {
 
-    private AudioVideoClient() {
+    private final CameraConnectionProperties cameraConnectionProperties;
+
+    public AudioVideoClient(CameraConnectionProperties cameraConnectionProperties) {
+        this.cameraConnectionProperties = cameraConnectionProperties;
     }
 
-    public static Flowable<State> stream(String host, int port, String username, String password) {
+    public Flowable<State> stream() {
 
-        Flowable<UiEvent> events = Flowable.just(new ConnectUiEvent(host, port));
+        Flowable<UiEvent> events = Flowable.just(new ConnectUiEvent(cameraConnectionProperties.getHost(), cameraConnectionProperties.getPort()));
 
         //TODO: Handle upstream socket disconnect.
 
@@ -62,7 +70,7 @@ public class AudioVideoClient {
         return results
                 .scanWith(
                         State::init,
-                        new StateAndResultToStateBiFunction(dynamicActions, username, password));
+                        new StateAndResultToStateBiFunction(dynamicActions, cameraConnectionProperties.getUsername(), cameraConnectionProperties.getPassword()));
     }
 
 }

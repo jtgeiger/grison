@@ -4,14 +4,16 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.time.Instant;
 import java.util.Objects;
+import javax.annotation.PostConstruct;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.stereotype.Component;
 
 import com.sibilantsolutions.grison.client.AudioVideoClient;
-import com.sibilantsolutions.grison.client.CgiClient;
 import com.sibilantsolutions.grison.evt.AudioHandlerI;
 import com.sibilantsolutions.grison.net.retrofit.CgiRetrofitService;
 import com.sibilantsolutions.grison.net.retrofit.SetTimeDto;
@@ -26,8 +28,17 @@ import io.reactivex.rxjava3.disposables.Disposable;
 import retrofit2.Response;
 import retrofit2.adapter.rxjava3.Result;
 
+@Component
+@ConditionalOnProperty(
+        value = Demo.UI_ENABLED_PROPERTY,
+        havingValue = "true",
+        matchIfMissing = true
+)
 public class Demo {
     private static final Logger LOG = LoggerFactory.getLogger(Demo.class);
+
+    // Toggle whether to run the UI demo, or the non-UI API demo. Default: true.
+    static final String UI_ENABLED_PROPERTY = "ui.enabled";
 
     private static final AudioHandlerI audioHandler = new DemoAudioHandler();
     private static final JLabel imageLabel = new JLabel();
@@ -50,7 +61,16 @@ public class Demo {
         imageHandler.setFpsLabel(fpsLabel);
     }
 
-    static public void demo(final String hostname, final int port, final String username, final String password) {
+    private final AudioVideoClient audioVideoClient;
+    private final CgiRetrofitService cgiRetrofitService;
+
+    public Demo(AudioVideoClient audioVideoClient, CgiRetrofitService cgiRetrofitService) {
+        this.audioVideoClient = audioVideoClient;
+        this.cgiRetrofitService = cgiRetrofitService;
+    }
+
+    @PostConstruct
+    public void demo() {
         DemoUi.buildUi(imageLabel, uptimeLabel, timestampLabel, fpsLabel, videoStartButton, videoEndButton,
                 audioStartButton, audioEndButton, setTimeButton, getStatusButton, getParamsButton);
 
@@ -65,8 +85,6 @@ public class Demo {
 
         final MyAudioEndActionListener audioEndActionListener = new MyAudioEndActionListener();
         audioEndButton.addActionListener(audioEndActionListener);
-
-        final CgiRetrofitService cgiRetrofitService = CgiClient.cgiRetrofitService(CgiClient.retrofit(hostname, port, username, password));
 
         setTimeButton.addActionListener(actionEvent -> {
             final Instant now = Instant.now();
@@ -129,7 +147,7 @@ public class Demo {
                 }));
 
 
-        final Flowable<State> stateFlowable = AudioVideoClient.stream(hostname, port, username, password);
+        final Flowable<State> stateFlowable = audioVideoClient.stream();
 
         stateFlowable
                 .subscribe(

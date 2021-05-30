@@ -5,45 +5,37 @@ import java.net.SocketException;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.builder.SpringApplicationBuilder;
+import org.springframework.context.ConfigurableApplicationContext;
 
-import com.sibilantsolutions.grison.demo.ApiDemo;
-import com.sibilantsolutions.grison.demo.Demo;
 import io.reactivex.rxjava3.exceptions.UndeliverableException;
 import io.reactivex.rxjava3.plugins.RxJavaPlugins;
 
 /**
  * Grisons, also known as South American wolverines, are mustelids native to Central and South America.
- *   -- Wikipedia
+ * -- Wikipedia
  */
-public class Grison
-{
+@SpringBootApplication
+public class Grison {
 
-    final static private Logger log = LoggerFactory.getLogger( Grison.class );
+    final static private Logger logger = LoggerFactory.getLogger(Grison.class);
 
-    static public void main( final String[] args )
-    {
-        log.info( "main() started." );
-
+    static public void main(final String[] args) {
+        logger.info("main started.");
         rxInit();
 
-        int i = 0;
-        final String host = args[i++];
-        final int port = Integer.parseInt(args[i++]);
-        final String username = args[i++];
-        final String password = args[i++];
+        try {
+            SpringApplicationBuilder builder = new SpringApplicationBuilder(Grison.class);
 
-        if (i < args.length) {
-            if (args[i].equals("ui")) {
-                Demo.demo(host, port, username, password);
-            } else {
-                throw new IllegalArgumentException(args[i]);
-            }
-        } else {
-            ApiDemo.go(host, port, username, password);
+            builder.headless(false);
+
+            ConfigurableApplicationContext ctx = builder.run(args);
+            logger.info("main finished: ctx={}.", ctx);
+        } catch (Exception e) {
+            logger.error("Exiting because initialization failed.");
+            System.exit(9);
         }
-
-        log.info("main() finished.");
-
     }
 
     private static void rxInit() {
@@ -53,7 +45,11 @@ public class Grison
                 isUndeliverableException = true;
                 e = e.getCause();
             }
-            if ((e instanceof IOException) || (e instanceof SocketException)) {
+            if (e instanceof SocketException) {
+                // fine, irrelevant network problem or API that throws on cancellation
+                return;
+            }
+            if (e instanceof IOException) {
                 // fine, irrelevant network problem or API that throws on cancellation
                 return;
             }
@@ -73,7 +69,7 @@ public class Grison
                         .uncaughtException(Thread.currentThread(), e);
                 return;
             }
-            log.warn("Undeliverable exception received, not sure what to do (source was UE={})", isUndeliverableException, e);
+            logger.warn("Undeliverable exception received, not sure what to do (source was UE={})", isUndeliverableException, e);
         });
     }
 
