@@ -22,6 +22,10 @@ $ mvn release:prepare
 $ git checkout grison-0.1.0
 $ JAVA_HOME=/usr/lib/jvm/java-15-openjdk/ mvn clean javadoc:jar source:jar install
 $ cd ~/.m2/repository/com/sibilantsolutions/grison/grison/0.1.0
+$ gpg2 -ab grison-0.1.0.jar
+$ gpg2 -ab grison-0.1.0-javadoc.jar
+$ gpg2 -ab grison-0.1.0.pom
+$ gpg2 -ab grison-0.1.0-sources.jar
 $ jar -cvf bundle.jar grison-0.1.0*
 ```
 
