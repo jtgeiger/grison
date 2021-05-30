@@ -10,6 +10,7 @@
 
     <modules>
         <module>lib</module>
+        <module>demo</module>
     </modules>
 
 </project>

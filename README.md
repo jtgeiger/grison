@@ -14,13 +14,13 @@ $ cd grison
 ### Spring Boot way
 
 ```
-$ mvn spring-boot:run -Dspring-boot.run.arguments="--connection.host=<CAMERA_ADDRESS> --connection.port=<CAMERA_PORT> --connection.username=<CAMERA_USERNAME> --connection.password=<CAMERA_PASSWORD>"
+$ ./mvnw install && ./mvnw spring-boot:run -pl demo -Dspring-boot.run.arguments="--connection.host=<CAMERA_ADDRESS> --connection.port=<CAMERA_PORT> --connection.username=<CAMERA_USERNAME> --connection.password=<CAMERA_PASSWORD>"
 ```
 
 Example:
 
 ```
-$ mvn spring-boot:run -Dspring-boot.run.arguments="--connection.host=192.168.1.20 --connection.port=80 --connection.username=camuser --connection.password=myPassw0rd"
+$ ./mvnw install && ./mvnw spring-boot:run -pl demo -Dspring-boot.run.arguments="--connection.host=192.168.1.20 --connection.port=80 --connection.username=camuser --connection.password=myPassw0rd"
 ```
 
 ### From an existing jar
