@@ -166,6 +166,102 @@ public interface CgiRetrofitService {
     @GET("decoder_control.cgi?command=" + DecoderControlE.Values.GO_TO_PRESET_16)
     Single<Result<String>> goToPreset16();
 
+    @GET("decoder_control.cgi?command=" + DecoderControlE.Values.SET_PRESET_17)
+    Single<Result<String>> setPreset17();
+
+    @GET("decoder_control.cgi?command=" + DecoderControlE.Values.GO_TO_PRESET_17)
+    Single<Result<String>> goToPreset17();
+
+    @GET("decoder_control.cgi?command=" + DecoderControlE.Values.SET_PRESET_18)
+    Single<Result<String>> setPreset18();
+
+    @GET("decoder_control.cgi?command=" + DecoderControlE.Values.GO_TO_PRESET_18)
+    Single<Result<String>> goToPreset18();
+
+    @GET("decoder_control.cgi?command=" + DecoderControlE.Values.SET_PRESET_19)
+    Single<Result<String>> setPreset19();
+
+    @GET("decoder_control.cgi?command=" + DecoderControlE.Values.GO_TO_PRESET_19)
+    Single<Result<String>> goToPreset19();
+
+    @GET("decoder_control.cgi?command=" + DecoderControlE.Values.SET_PRESET_20)
+    Single<Result<String>> setPreset20();
+
+    @GET("decoder_control.cgi?command=" + DecoderControlE.Values.GO_TO_PRESET_20)
+    Single<Result<String>> goToPreset20();
+
+    @GET("decoder_control.cgi?command=" + DecoderControlE.Values.SET_PRESET_21)
+    Single<Result<String>> setPreset21();
+
+    @GET("decoder_control.cgi?command=" + DecoderControlE.Values.GO_TO_PRESET_21)
+    Single<Result<String>> goToPreset21();
+
+    @GET("decoder_control.cgi?command=" + DecoderControlE.Values.SET_PRESET_22)
+    Single<Result<String>> setPreset22();
+
+    @GET("decoder_control.cgi?command=" + DecoderControlE.Values.GO_TO_PRESET_22)
+    Single<Result<String>> goToPreset22();
+
+    @GET("decoder_control.cgi?command=" + DecoderControlE.Values.SET_PRESET_23)
+    Single<Result<String>> setPreset23();
+
+    @GET("decoder_control.cgi?command=" + DecoderControlE.Values.GO_TO_PRESET_23)
+    Single<Result<String>> goToPreset23();
+
+    @GET("decoder_control.cgi?command=" + DecoderControlE.Values.SET_PRESET_24)
+    Single<Result<String>> setPreset24();
+
+    @GET("decoder_control.cgi?command=" + DecoderControlE.Values.GO_TO_PRESET_24)
+    Single<Result<String>> goToPreset24();
+
+    @GET("decoder_control.cgi?command=" + DecoderControlE.Values.SET_PRESET_25)
+    Single<Result<String>> setPreset25();
+
+    @GET("decoder_control.cgi?command=" + DecoderControlE.Values.GO_TO_PRESET_25)
+    Single<Result<String>> goToPreset25();
+
+    @GET("decoder_control.cgi?command=" + DecoderControlE.Values.SET_PRESET_26)
+    Single<Result<String>> setPreset26();
+
+    @GET("decoder_control.cgi?command=" + DecoderControlE.Values.GO_TO_PRESET_26)
+    Single<Result<String>> goToPreset26();
+
+    @GET("decoder_control.cgi?command=" + DecoderControlE.Values.SET_PRESET_27)
+    Single<Result<String>> setPreset27();
+
+    @GET("decoder_control.cgi?command=" + DecoderControlE.Values.GO_TO_PRESET_27)
+    Single<Result<String>> goToPreset27();
+
+    @GET("decoder_control.cgi?command=" + DecoderControlE.Values.SET_PRESET_28)
+    Single<Result<String>> setPreset28();
+
+    @GET("decoder_control.cgi?command=" + DecoderControlE.Values.GO_TO_PRESET_28)
+    Single<Result<String>> goToPreset28();
+
+    @GET("decoder_control.cgi?command=" + DecoderControlE.Values.SET_PRESET_29)
+    Single<Result<String>> setPreset29();
+
+    @GET("decoder_control.cgi?command=" + DecoderControlE.Values.GO_TO_PRESET_29)
+    Single<Result<String>> goToPreset29();
+
+    @GET("decoder_control.cgi?command=" + DecoderControlE.Values.SET_PRESET_30)
+    Single<Result<String>> setPreset30();
+
+    @GET("decoder_control.cgi?command=" + DecoderControlE.Values.GO_TO_PRESET_30)
+    Single<Result<String>> goToPreset30();
+
+    @GET("decoder_control.cgi?command=" + DecoderControlE.Values.SET_PRESET_31)
+    Single<Result<String>> setPreset31();
+
+    @GET("decoder_control.cgi?command=" + DecoderControlE.Values.GO_TO_PRESET_31)
+    Single<Result<String>> goToPreset31();
+
+    @GET("decoder_control.cgi?command=" + DecoderControlE.Values.SET_PRESET_32)
+    Single<Result<String>> setPreset32();
+
+    @GET("decoder_control.cgi?command=" + DecoderControlE.Values.GO_TO_PRESET_32)
+    Single<Result<String>> goToPreset32();
+
 
     @GET("decoder_control.cgi?command=" + DecoderControlE.Values.IO_OUTPUT_LOW)
     Single<Result<String>> irAuto();

@@ -64,13 +64,44 @@ public enum DecoderControlE
     GO_TO_PRESET_15( Values.GO_TO_PRESET_15 ),
     SET_PRESET_16( Values.SET_PRESET_16 ),
     GO_TO_PRESET_16( Values.GO_TO_PRESET_16 ),
-    //...
+    SET_PRESET_17( Values.SET_PRESET_17 ),
+    GO_TO_PRESET_17( Values.GO_TO_PRESET_17 ),
+    SET_PRESET_18( Values.SET_PRESET_18 ),
+    GO_TO_PRESET_18( Values.GO_TO_PRESET_18 ),
+    SET_PRESET_19( Values.SET_PRESET_19 ),
+    GO_TO_PRESET_19( Values.GO_TO_PRESET_19 ),
+    SET_PRESET_20( Values.SET_PRESET_20 ),
+    GO_TO_PRESET_20( Values.GO_TO_PRESET_20 ),
+    SET_PRESET_21( Values.SET_PRESET_21 ),
+    GO_TO_PRESET_21( Values.GO_TO_PRESET_21 ),
+    SET_PRESET_22( Values.SET_PRESET_22 ),
+    GO_TO_PRESET_22( Values.GO_TO_PRESET_22 ),
+    SET_PRESET_23( Values.SET_PRESET_23 ),
+    GO_TO_PRESET_23( Values.GO_TO_PRESET_23 ),
+    SET_PRESET_24( Values.SET_PRESET_24 ),
+    GO_TO_PRESET_24( Values.GO_TO_PRESET_24 ),
+    SET_PRESET_25( Values.SET_PRESET_25 ),
+    GO_TO_PRESET_25( Values.GO_TO_PRESET_25 ),
+    SET_PRESET_26( Values.SET_PRESET_26 ),
+    GO_TO_PRESET_26( Values.GO_TO_PRESET_26 ),
+    SET_PRESET_27( Values.SET_PRESET_27 ),
+    GO_TO_PRESET_27( Values.GO_TO_PRESET_27 ),
+    SET_PRESET_28( Values.SET_PRESET_28 ),
+    GO_TO_PRESET_28( Values.GO_TO_PRESET_28 ),
+    SET_PRESET_29( Values.SET_PRESET_29 ),
+    GO_TO_PRESET_29( Values.GO_TO_PRESET_29 ),
+    SET_PRESET_30( Values.SET_PRESET_30 ),
+    GO_TO_PRESET_30( Values.GO_TO_PRESET_30 ),
+    SET_PRESET_31( Values.SET_PRESET_31 ),
+    GO_TO_PRESET_31( Values.GO_TO_PRESET_31 ),
+    SET_PRESET_32( Values.SET_PRESET_32 ),
+    GO_TO_PRESET_32( Values.GO_TO_PRESET_32 ),
     IO_OUTPUT_HIGH( Values.IO_OUTPUT_HIGH ),
     IO_OUTPUT_LOW( Values.IO_OUTPUT_LOW ),
     MOTOR_TEST_MODE( Values.MOTOR_TEST_MODE ),
     ;
 
-    static public interface Values
+    public interface Values
     {
 
         int UP                      = 0;
@@ -135,15 +166,46 @@ public enum DecoderControlE
         int GO_TO_PRESET_15         = 59;
         int SET_PRESET_16           = 60;
         int GO_TO_PRESET_16         = 61;
-        //.... up to preset 32 (=92/93)??
+        int SET_PRESET_17           = 62;
+        int GO_TO_PRESET_17         = 63;
+        int SET_PRESET_18           = 64;
+        int GO_TO_PRESET_18         = 65;
+        int SET_PRESET_19           = 66;
+        int GO_TO_PRESET_19         = 67;
+        int SET_PRESET_20           = 68;
+        int GO_TO_PRESET_20         = 69;
+        int SET_PRESET_21           = 70;
+        int GO_TO_PRESET_21         = 71;
+        int SET_PRESET_22           = 72;
+        int GO_TO_PRESET_22         = 73;
+        int SET_PRESET_23           = 74;
+        int GO_TO_PRESET_23         = 75;
+        int SET_PRESET_24           = 76;
+        int GO_TO_PRESET_24         = 77;
+        int SET_PRESET_25           = 78;
+        int GO_TO_PRESET_25         = 79;
+        int SET_PRESET_26           = 80;
+        int GO_TO_PRESET_26         = 81;
+        int SET_PRESET_27           = 82;
+        int GO_TO_PRESET_27         = 83;
+        int SET_PRESET_28           = 84;
+        int GO_TO_PRESET_28         = 85;
+        int SET_PRESET_29           = 86;
+        int GO_TO_PRESET_29         = 87;
+        int SET_PRESET_30           = 88;
+        int GO_TO_PRESET_30         = 89;
+        int SET_PRESET_31           = 90;
+        int GO_TO_PRESET_31         = 91;
+        int SET_PRESET_32           = 92;
+        int GO_TO_PRESET_32         = 93;
         int IO_OUTPUT_HIGH = 94;   //Night vision off
         int IO_OUTPUT_LOW = 95;   //Night vision auto
         int MOTOR_TEST_MODE         = 255;
     }
 
-    private int value;
+    private final int value;
 
-    private DecoderControlE( int value )
+    DecoderControlE( int value )
     {
         this.value = value;
     }
