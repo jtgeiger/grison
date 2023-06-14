@@ -49,7 +49,7 @@
         <!-- Use the same version of logger that matches the okhttp3 version used by retrofit2. -->
         <okhttp3-logging-interceptor.version>3.14.9</okhttp3-logging-interceptor.version>
         <auto-value.version>1.9</auto-value.version>
-        <guava.version>31.1-jre</guava.version>
+        <guava.version>32.0.0-jre</guava.version>
     </properties>
 
     <build>
